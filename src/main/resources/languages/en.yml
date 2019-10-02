@@ -1,0 +1,5 @@
+error:
+  cooldown: '%prefix% &cYou must wait %time% seconds to do this again.'
+  already-open: '%prefix% &cYou already have this menu open.'
+  permission: '&cYou don''t have permission to do this.'
+  menu-not-found: '%prefix% &cCouldn''t find the menu %menu%'

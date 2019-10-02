@@ -1,5 +1,9 @@
 name: TDG
 version: ${project.version}
 main: io.github.portlek.tdg.TDG
-api-version: 1.13
 authors: [portlek]
+softdepend:
+  - PlaceholderAPI
+
+commands:
+  tdg:

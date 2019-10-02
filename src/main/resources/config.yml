@@ -1,0 +1,7 @@
+# Plugin language supports 'en' and 'tr'
+Language: 'en'
+
+Plugin-Prefix: '&6[&a&lTDG&6]'
+
+Hooks:
+  PlaceholderAPI: false

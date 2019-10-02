@@ -1,0 +1,5 @@
+error:
+  cooldown: '%prefix% &cTekrar kullanmak için %time% saniye beklemelisin!'
+  already-open: '%prefix% &cZaten açıkta olan bir menün var!'
+  permission: '%prefix% &cBunu yapmak için yetkin yok!'
+  menu-not-found: '%prefix% &cBöyle bir menü bulunamadı! (%menu%)'
