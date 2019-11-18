@@ -3,5 +3,8 @@ Language: 'en'
 
 Plugin-Prefix: '&6[&a&lTDG&6]'
 
+# Time unit is second
+Menu-Cooldown: 10
+
 Hooks:
   PlaceholderAPI: false

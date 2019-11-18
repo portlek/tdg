@@ -2,22 +2,14 @@ package io.github.portlek.tdg;
 
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.mcyaml.YamlOf;
-import io.github.portlek.tdg.file.Config;
-import io.github.portlek.tdg.file.ConfigOptions;
-import io.github.portlek.tdg.file.Language;
-import io.github.portlek.tdg.file.LanguageOptions;
-import io.github.portlek.tdg.mck.MckFileMenu;
-import io.github.portlek.tdg.mck.MckMenu;
-import io.github.portlek.tdg.util.MetaData;
-import io.github.portlek.tdg.util.Targeted;
+import io.github.portlek.tdg.file.*;
+import io.github.portlek.tdg.mock.MckOpenMenu;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,11 +17,17 @@ import java.util.*;
 
 public class TDGAPI {
 
-    private final Map<String, FileMenu> menus = new HashMap<>();
+    /**
+     * menu id and menu
+     */
+    public final Map<String, Menu> menus = new HashMap<>();
 
-    private final Map<UUID, Menu> opened = new HashMap<>();
+    /**
+     * player uuid and opened menu
+     */
+    public final Map<UUID, OpenedMenu> opened = new HashMap<>();
 
-    private final List<Entity> entities = new ArrayList<>();
+    public final List<Entity> entities = new ArrayList<>();
 
     @NotNull
     private final TDG tdg;
@@ -55,37 +53,43 @@ public class TDGAPI {
     @Deprecated
     private IYaml languageFileInstance;
 
+    @NotNull
+    private final IYaml menusFile;
+
     public TDGAPI(@NotNull TDG tdg) {
         this.tdg = tdg;
         configOptions = new ConfigOptions(
             new YamlOf(tdg, "config")
         );
+        menusFile = new YamlOf(tdg, "menus");
     }
 
     public void init() {
         // TODO read menu file
 
         new ListenerBasic<>(PlayerJoinEvent.class, event ->
-            opened.put(event.getPlayer().getUniqueId(), new MckMenu())
+            opened.put(event.getPlayer().getUniqueId(), new MckOpenMenu())
         ).register(tdg);
 
         new ListenerBasic<>(PlayerArmorStandManipulateEvent.class, event -> {
-            if (entities.contains(event.getRightClicked()))
+            if (entities.contains(event.getRightClicked())) {
                 event.setCancelled(true);
+            }
         }).register(tdg);
 
         new ListenerBasic<>(EntityDamageEvent.class, event -> {
-            if (entities.contains(event.getEntity()))
+            if (entities.contains(event.getEntity())) {
                 event.setCancelled(true);
+            }
         }).register(tdg);
 
         new ListenerBasic<>(PlayerChangedWorldEvent.class, event -> {
-            Menu menu = opened.getOrDefault(event.getPlayer().getUniqueId(), new MckMenu());
-            if (!(menu instanceof MckMenu))
-                menu.close();
-        }).register(tdg);
+            final OpenedMenu openedMenu = opened.getOrDefault(event.getPlayer().getUniqueId(), new MckOpenMenu());
 
-        menus.values().forEach(fileMenu -> fileMenu.register(tdg));
+            if (!(openedMenu instanceof MckOpenMenu)) {
+                openedMenu.close();
+            }
+        }).register(tdg);
     }
 
     public void reloadPlugin() {
@@ -100,34 +104,36 @@ public class TDGAPI {
     }
 
     @NotNull
-    public List<Entity> getEntities() {
-        return entities;
+    public Menu findMenuById(@NotNull String id) {
+        return menus.getOrDefault(id, new MckOpenMenu());
     }
 
     @NotNull
-    public Map<UUID, Menu> getOpened() {
-        return opened;
+    public OpenedMenu findOpenMenuByUUID(@NotNull UUID uuid) {
+        return opened.getOrDefault(uuid, new MckOpenMenu());
     }
 
     public boolean hasOpen(@NotNull Player player) {
-        return !(opened.getOrDefault(player.getUniqueId(), new MckMenu()) instanceof MckMenu);
+        return !(opened.getOrDefault(player.getUniqueId(), new MckOpenMenu()) instanceof MckOpenMenu);
     }
 
     @NotNull
     public Config getConfigs() {
-        if (configInstance == null)
+        if (configInstance == null) {
             configInstance = configOptions.value();
+        }
 
         return configInstance;
     }
 
     @NotNull
     public Language getLanguage() {
-        if (languageInstance == null)
+        if (languageInstance == null) {
             languageInstance = new LanguageOptions(
-                getConfigs().getPrefix(),
+                getConfigs(),
                 getLanguageFile()
             ).value();
+        }
 
         return languageInstance;
     }
@@ -138,7 +144,7 @@ public class TDGAPI {
             languageFileInstance = new YamlOf(
                 tdg,
                 "languages",
-                getConfigs().getChosenLanguage()
+                getConfigs().language
             );
             languageFileInstance.create();
         }

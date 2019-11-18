@@ -33,7 +33,7 @@ public final class TDG extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        api.getEntities().forEach(Entity::remove);
+        api.entities.forEach(Entity::remove);
     }
 
     public static TDGAPI getAPI() {

@@ -4,8 +4,4 @@ public interface Menu {
 
     void open();
 
-    void close();
-
-    boolean isOpen();
-
 }
