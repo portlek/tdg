@@ -11,17 +11,19 @@ public final class TDG extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        if (api != null)
+        if (api != null) {
             throw new RuntimeException("TDG cannot start twice!");
+        }
 
         api = new TDGAPI(this);
 
-        PluginCommand pluginCommand = getCommand("tdg");
+        final PluginCommand pluginCommand = getCommand("tdg");
 
-        if (pluginCommand == null)
+        if (pluginCommand == null) {
             return;
+        }
 
-        TDGCommand tdgCommand = new TDGCommand(api);
+        final TDGCommand tdgCommand = new TDGCommand(api);
 
         pluginCommand.setTabCompleter(tdgCommand);
         pluginCommand.setExecutor(tdgCommand);
