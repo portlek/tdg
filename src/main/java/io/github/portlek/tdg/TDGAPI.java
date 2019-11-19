@@ -36,7 +36,7 @@ public class TDGAPI {
     public final List<Entity> entities = new ArrayList<>();
 
     @NotNull
-    private final TDG tdg;
+    public final TDG tdg;
 
     @NotNull
     private final ConfigOptions configOptions;
@@ -130,7 +130,7 @@ public class TDGAPI {
         }).register(tdg);
 
         new ListenerBasic<>(PlayerCommandPreprocessEvent.class, event -> {
-            
+
         }).register(tdg);
     }
 

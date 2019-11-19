@@ -16,12 +16,17 @@ public final class Language {
     @NotNull
     private final String errorMenuNotFound;
 
-    public Language(@NotNull String errorCooldown, @NotNull String errorAlreadyOpen, @NotNull String errorPermission, @NotNull String errorMenuNotFound) {
-        this.errorCooldown = errorCooldown;
-        this.errorAlreadyOpen = errorAlreadyOpen;
-        this.errorPermission = errorPermission;
-        this.errorMenuNotFound = errorMenuNotFound;
-    }
+    @NotNull
+    public final String errorInvalidArgument;
+
+    @NotNull
+    public final String generalAvailableMenus;
+
+    @NotNull
+    public final String generalReloadComplete;
+
+    @NotNull
+    public final String commands;
 
     @NotNull
     public String errorCooldown(int time) {

@@ -3,6 +3,11 @@ error:
   already-open: '%prefix% &cZaten açıkta olan bir menün var!'
   permission: '%prefix% &cBunu yapmak için yetkin yok!'
   menu-not-found: '%prefix% &cBöyle bir menü bulunamadı! (%menu%)'
+  invalid-argument: '%prefix% &cGeçersiz arguman!'
+  invalid-menu: '%prefix% &cGeçersiz menü!'
+
+general:
+  available-menus: '%prefix% &7Kullanılabilir menuler:'
 
 commands:
   - '&8------[ &e&lTDG &8]------'

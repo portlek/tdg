@@ -3,6 +3,11 @@ error:
   already-open: '%prefix% &cYou already have this menu open.'
   permission: '&cYou don''t have permission to do this.'
   menu-not-found: '%prefix% &cCouldn''t find the menu %menu%'
+  invalid-argument: '%prefix% &cInvalid arguments!'
+  invalid-menu: '%prefix% &cInvalid menu!'
+
+general:
+  available-menus: '%prefix% §7Available menus:'
 
 commands:
   - '&8------[ &e&lTDG &8]------'
