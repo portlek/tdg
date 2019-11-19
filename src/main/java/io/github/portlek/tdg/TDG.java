@@ -15,14 +15,13 @@ public final class TDG extends JavaPlugin {
             throw new RuntimeException("TDG cannot start twice!");
         }
 
-        api = new TDGAPI(this);
-
         final PluginCommand pluginCommand = getCommand("tdg");
 
         if (pluginCommand == null) {
             return;
         }
 
+        api = new TDGAPI(this);
         final TDGCommand tdgCommand = new TDGCommand(api);
 
         pluginCommand.setTabCompleter(tdgCommand);

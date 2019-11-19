@@ -95,8 +95,150 @@ public class TDGAPI {
         init();
     }
 
+    @NotNull
+    public Map.Entry<Icon, OpenedMenu> findIconAndOpenedMenuByPlayer(@NotNull Player player) {
+        final Entity targeted = new Targeted(player).value();
+
+        if (targeted.equals(player)) {
+            return new MapEntry<>(
+                new MckIcon(),
+                new MckOpenMenu()
+            );
+        }
+
+        final OpenedMenu menu = new TargetMenu(
+            targeted
+        ).value();
+
+        if (menu instanceof MckOpenMenu) {
+            return new MapEntry<>(
+                new MckIcon(),
+                new MckOpenMenu()
+            );
+        }
+
+        final Icon icon = findIconByEntity(menu, targeted);
+
+        if (icon instanceof MckIcon) {
+            return new MapEntry<>(
+                new MckIcon(),
+                new MckOpenMenu()
+            );
+        }
+
+        return new MapEntry<>(icon, menu);
+    }
+
+    @NotNull
+    public Icon findIconByEntity(@NotNull OpenedMenu openedMenu, @NotNull Entity entity) {
+        for (Icon icon : openedMenu.getIconsFor()) {
+            if (icon.is(entity)) {
+                return icon;
+            }
+        }
+
+        return new MckIcon();
+    }
+
+    @NotNull
+    public Menu findMenuByCommand(@NotNull String command) {
+        for (Menu menu : menus.values()) {
+            if (menu.getCommands().contains(command)) {
+                return menu;
+            }
+        }
+
+        return new MckMenu();
+    }
+
+    @NotNull
+    public Menu findMenuById(@NotNull String id) {
+        return menus.getOrDefault(id, new MckOpenMenu());
+    }
+
+    @NotNull
+    public OpenedMenu findOpenMenuByUUID(@NotNull UUID uuid) {
+        return opened.getOrDefault(uuid, new MckOpenMenu());
+    }
+
+    public boolean hasOpen(@NotNull Player player) {
+        return !(opened.getOrDefault(player.getUniqueId(), new MckOpenMenu()) instanceof MckOpenMenu);
+    }
+
+    @NotNull
+    public Config getConfigs() {
+        if (configInstance == null) {
+            configInstance = configOptions.value();
+        }
+
+        return configInstance;
+    }
+
+    @NotNull
+    public Language getLanguage() {
+        if (languageInstance == null) {
+            languageInstance = new LanguageOptions(
+                getConfigs().pluginPrefix,
+                getLanguageFile()
+            ).value();
+        }
+
+        return languageInstance;
+    }
+
+    @NotNull
+    private IYaml getLanguageFile() {
+        if (languageFileInstance == null) {
+            languageFileInstance = new YamlOf(
+                tdg,
+                "languages",
+                getConfigs().language
+            );
+            languageFileInstance.create();
+        }
+
+        return languageFileInstance;
+    }
+
     private void init() {
-        loadMenus();
+        menus.putAll(
+            new MapOf<String, Menu>(
+                new Mapped<>(
+                    menuId -> new MapEntry<>(
+                        menuId,
+                        new BasicMenu(
+                            menuId,
+                            menusFile.getStringList("menus." + menuId + ".commands"),
+                            CloseAction.parse(menusFile, menuId),
+                            OpenAction.parse(menusFile, menuId),
+                            menusFile.getInt("menus." + menuId + "distances.x1"),
+                            menusFile.getInt("menus." + menuId + "distances.x2"),
+                            menusFile.getInt("menus." + menuId + "distances.x4"),
+                            menusFile.getInt("menus." + menuId + "distances.x5"),
+                            new ListOf<>(
+                                new Mapped<>(
+                                    iconId -> new BasicIcon(
+                                        iconId,
+                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".name").orElse(""),
+                                        IconType.fromString(
+                                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".icon-type").orElse("")
+                                        ),
+                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".material").orElse(""),
+                                        menusFile.getByte("menus." + menuId + ".icons." + iconId + ".material-data"),
+                                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-x"),
+                                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-y"),
+                                        ClickAction.parse(menusFile, menuId, iconId),
+                                        new HoverAction()
+                                    ),
+                                    menusFile.getSection("menus." + menuId + ".icons").getKeys(false)
+                                )
+                            )
+                        )
+                    ),
+                    menusFile.getSection("menus").getKeys(false)
+                )
+            )
+        );
 
         new ListenerBasic<>(PlayerJoinEvent.class, event -> {
             final Player player = event.getPlayer();
@@ -220,152 +362,6 @@ public class TDGAPI {
 
             icon.acceptHoverEvent(iconHoverEvent);
         }).register(tdg);
-    }
-
-    @NotNull
-    public Map.Entry<Icon, OpenedMenu> findIconAndOpenedMenuByPlayer(@NotNull Player player) {
-        final Entity targeted = new Targeted(player).value();
-
-        if (targeted.equals(player)) {
-            return new MapEntry<>(
-                new MckIcon(),
-                new MckOpenMenu()
-            );
-        }
-
-        final OpenedMenu menu = new TargetMenu(
-            targeted
-        ).value();
-
-        if (menu instanceof MckOpenMenu) {
-            return new MapEntry<>(
-                new MckIcon(),
-                new MckOpenMenu()
-            );
-        }
-
-        final Icon icon = findIconByEntity(menu, targeted);
-
-        if (icon instanceof MckIcon) {
-            return new MapEntry<>(
-                new MckIcon(),
-                new MckOpenMenu()
-            );
-        }
-
-        return new MapEntry<>(icon, menu);
-    }
-
-    @NotNull
-    public Icon findIconByEntity(@NotNull OpenedMenu openedMenu, @NotNull Entity entity) {
-        for (Icon icon : openedMenu.getIconsFor()) {
-            if (icon.is(entity)) {
-                return icon;
-            }
-        }
-
-        return new MckIcon();
-    }
-
-    @NotNull
-    public Menu findMenuByCommand(@NotNull String command) {
-        for (Menu menu : menus.values()) {
-            if (menu.getCommands().contains(command)) {
-                return menu;
-            }
-        }
-
-        return new MckMenu();
-    }
-
-    @NotNull
-    public Menu findMenuById(@NotNull String id) {
-        return menus.getOrDefault(id, new MckOpenMenu());
-    }
-
-    @NotNull
-    public OpenedMenu findOpenMenuByUUID(@NotNull UUID uuid) {
-        return opened.getOrDefault(uuid, new MckOpenMenu());
-    }
-
-    public boolean hasOpen(@NotNull Player player) {
-        return !(opened.getOrDefault(player.getUniqueId(), new MckOpenMenu()) instanceof MckOpenMenu);
-    }
-
-    @NotNull
-    public Config getConfigs() {
-        if (configInstance == null) {
-            configInstance = configOptions.value();
-        }
-
-        return configInstance;
-    }
-
-    @NotNull
-    public Language getLanguage() {
-        if (languageInstance == null) {
-            languageInstance = new LanguageOptions(
-                getConfigs().pluginPrefix,
-                getLanguageFile()
-            ).value();
-        }
-
-        return languageInstance;
-    }
-
-    @NotNull
-    private IYaml getLanguageFile() {
-        if (languageFileInstance == null) {
-            languageFileInstance = new YamlOf(
-                tdg,
-                "languages",
-                getConfigs().language
-            );
-            languageFileInstance.create();
-        }
-
-        return languageFileInstance;
-    }
-
-    private void loadMenus() {
-        menus.putAll(
-            new MapOf<String, Menu>(
-                new Mapped<>(
-                    menuId -> new MapEntry<>(
-                        menuId,
-                        new BasicMenu(
-                            menuId,
-                            menusFile.getStringList("menus." + menuId + ".commands"),
-                            CloseAction.parse(menusFile, menuId),
-                            OpenAction.parse(menusFile, menuId),
-                            menusFile.getInt("menus." + menuId + "distances.x1"),
-                            menusFile.getInt("menus." + menuId + "distances.x2"),
-                            menusFile.getInt("menus." + menuId + "distances.x4"),
-                            menusFile.getInt("menus." + menuId + "distances.x5"),
-                            new ListOf<>(
-                                new Mapped<>(
-                                    iconId -> new BasicIcon(
-                                        iconId,
-                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".name").orElse(""),
-                                        IconType.fromString(
-                                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".icon-type").orElse("")
-                                        ),
-                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".material").orElse(""),
-                                        menusFile.getByte("menus." + menuId + ".icons." + iconId + ".material-data"),
-                                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-x"),
-                                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-y"),
-                                        ClickAction.parse(menusFile, menuId, iconId),
-                                        new HoverAction()
-                                    ),
-                                    menusFile.getSection("menus." + menuId + ".icons").getKeys(false)
-                                )
-                            )
-                        )
-                    ),
-                    menusFile.getSection("menus").getKeys(false)
-                )
-            )
-        );
     }
 
 }
