@@ -12,10 +12,12 @@ public interface Icon {
 
     void playSound(@NotNull Player player);
 
-    void acceptClickEvent(@NotNull IconClickedEvent event);
+    void accept(@NotNull IconClickedEvent event);
 
-    void acceptHoverEvent(@NotNull IconHoverEvent event);
+    void accept(@NotNull IconHoverEvent event);
 
     void close();
+
+    void open();
 
 }

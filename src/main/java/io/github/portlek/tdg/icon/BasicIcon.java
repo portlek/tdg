@@ -4,13 +4,21 @@ import io.github.portlek.tdg.Icon;
 import io.github.portlek.tdg.api.IconClickedEvent;
 import io.github.portlek.tdg.api.IconHoverEvent;
 import io.github.portlek.tdg.types.IconType;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class BasicIcon implements Icon {
+
+    private final List<Player> view = new ArrayList<>();
+
+    private final List<Player> toHide = new ArrayList<>();
+
+    private final List<ArmorStand> icons = new ArrayList<>();
 
     @NotNull
     private final String id;
@@ -61,12 +69,22 @@ public final class BasicIcon implements Icon {
     }
 
     @Override
-    public void acceptClickEvent(@NotNull IconClickedEvent event) {
+    public void accept(@NotNull IconClickedEvent event) {
 
     }
 
     @Override
-    public void acceptHoverEvent(@NotNull IconHoverEvent event) {
+    public void accept(@NotNull IconHoverEvent event) {
+
+    }
+
+    @Override
+    public void close() {
+
+    }
+
+    @Override
+    public void open() {
 
     }
 }

@@ -11,14 +11,10 @@ import org.bukkit.entity.Player;
 import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class BasicOpenMenu implements OpenedMenu {
 
-    private List<Player> view = new ArrayList<>();
-
-    private List<Player> toHide = new ArrayList<>();
 
     @NotNull
     private final Menu menu;
@@ -42,9 +38,8 @@ public final class BasicOpenMenu implements OpenedMenu {
         }
 
         getIconsFor().forEach(Icon::close);
-        acceptCloseEvent(menuCloseEvent);
+        accept(menuCloseEvent);
         TDG.getAPI().opened.remove(player.getUniqueId());
-        view.remove(player);
     }
 
     @NotNull
@@ -71,12 +66,12 @@ public final class BasicOpenMenu implements OpenedMenu {
     }
 
     @Override
-    public void acceptCloseEvent(@NotNull MenuCloseEvent event) {
-        menu.acceptCloseEvent(event);
+    public void accept(@NotNull MenuCloseEvent event) {
+        menu.accept(event);
     }
 
     @Override
-    public void acceptOpenEvent(@NotNull MenuOpenEvent event) {
-        menu.acceptOpenEvent(event);
+    public void accept(@NotNull MenuOpenEvent event) {
+        menu.accept(event);
     }
 }

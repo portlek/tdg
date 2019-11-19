@@ -17,7 +17,7 @@ public interface Menu {
 
     void open(@NotNull Player player);
 
-    void acceptCloseEvent(@NotNull MenuCloseEvent event);
+    void accept(@NotNull MenuCloseEvent event);
 
-    void acceptOpenEvent(@NotNull MenuOpenEvent event);
+    void accept(@NotNull MenuOpenEvent event);
 }

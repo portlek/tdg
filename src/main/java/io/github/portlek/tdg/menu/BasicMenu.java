@@ -8,7 +8,6 @@ import io.github.portlek.tdg.api.MenuCloseEvent;
 import io.github.portlek.tdg.api.MenuOpenEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -74,18 +73,19 @@ public final class BasicMenu implements Menu {
             return;
         }
 
-        acceptOpenEvent(menuOpenEvent);
+        openedMenu.getIconsFor().forEach(Icon::open);
+        accept(menuOpenEvent);
         TDG.getAPI().opened.put(player.getUniqueId(), openedMenu);
     }
 
     @Override
-    public void acceptCloseEvent(@NotNull MenuCloseEvent event) {
-
+    public void accept(@NotNull MenuCloseEvent event) {
+        closeAction.forEach(action -> action.apply(event));
     }
 
     @Override
-    public void acceptOpenEvent(@NotNull MenuOpenEvent event) {
-
+    public void accept(@NotNull MenuOpenEvent event) {
+        openAction.forEach(action -> action.apply(event));
     }
 
 }
