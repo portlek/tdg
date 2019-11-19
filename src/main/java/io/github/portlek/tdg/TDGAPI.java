@@ -3,6 +3,7 @@ package io.github.portlek.tdg;
 import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.mcyaml.YamlOf;
+import io.github.portlek.tdg.api.IconClickedEvent;
 import io.github.portlek.tdg.file.Config;
 import io.github.portlek.tdg.file.ConfigOptions;
 import io.github.portlek.tdg.file.Language;
@@ -183,6 +184,14 @@ public class TDGAPI {
             }
 
             if (clickedIcon == null) {
+                return;
+            }
+
+            final IconClickedEvent iconClickedEvent = new IconClickedEvent(player, openedMenu, clickedIcon);
+
+            tdg.getServer().getPluginManager().callEvent(iconClickedEvent);
+
+            if (iconClickedEvent.isCancelled()) {
                 return;
             }
 
