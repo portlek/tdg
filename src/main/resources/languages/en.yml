@@ -1,13 +1,17 @@
 error:
   cooldown: '%prefix% &cYou must wait %time% seconds to do this again.'
   already-open: '%prefix% &cYou already have this menu open.'
-  permission: '&cYou don''t have permission to do this.'
+  permission: '%prefix% &cYou don''t have permission to do this.'
   menu-not-found: '%prefix% &cCouldn''t find the menu %menu%'
   invalid-argument: '%prefix% &cInvalid arguments!'
-  invalid-menu: '%prefix% &cInvalid menu!'
+  in-game-command: '%prefix% To use this command you have to be in the game!'
 
 general:
   available-menus: '%prefix% §7Available menus:'
+  reload-complete: '%prefix% &7Reload completed'
+  plugin-version: '%prefix% &aActually running TDG &ev%version%'
+  new-version-found: '%prefix% &aA new version has been found: &e %version%'
+  latest-version: '%prefix% &aRunning the latest version!'
 
 commands:
   - '&8------[ &e&lTDG &8]------'

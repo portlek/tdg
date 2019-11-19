@@ -7,13 +7,13 @@ import org.jetbrains.annotations.NotNull;
 public final class LanguageOptions implements Scalar<Language> {
 
     @NotNull
-    private final Config config;
+    private final String prefix;
 
     @NotNull
     private final IYaml yaml;
 
-    public LanguageOptions(@NotNull Config config, @NotNull IYaml yaml) {
-        this.config = config;
+    public LanguageOptions(@NotNull String prefix, @NotNull IYaml yaml) {
+        this.prefix = prefix;
         this.yaml = yaml;
     }
 

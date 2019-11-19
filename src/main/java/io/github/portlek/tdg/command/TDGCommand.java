@@ -82,14 +82,15 @@ public class TDGCommand implements TabExecutor {
                         } else {
                             sender.sendMessage(api.getLanguage().generalLatestVersion);
                         }
-                    } catch (Exception ex) {
+                    } catch (Exception exception) {
                         api.tdg.getLogger().severe("[TDG] Update checker failed, could not connect to the API.");
-                        ex.printStackTrace();
+                        exception.printStackTrace();
                     }
 
                     return true;
                 default:
                     sender.sendMessage(api.getLanguage().errorInvalidArgument);
+
                     return true;
             }
         }

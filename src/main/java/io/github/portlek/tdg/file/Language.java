@@ -40,6 +40,26 @@ public final class Language {
     @NotNull
     public final String commands;
 
+    public Language(@NotNull String errorCooldown, @NotNull String errorAlreadyOpen, @NotNull String errorPermission,
+                    @NotNull String errorMenuNotFound, @NotNull String errorInvalidArgument,
+                    @NotNull String errorInGameCommand, @NotNull String generalAvailableMenus,
+                    @NotNull String generalReloadComplete, @NotNull String generalPluginVersion,
+                    @NotNull String generalNewVersionFound, @NotNull String generalLatestVersion,
+                    @NotNull String commands) {
+        this.errorCooldown = errorCooldown;
+        this.errorAlreadyOpen = errorAlreadyOpen;
+        this.errorPermission = errorPermission;
+        this.errorMenuNotFound = errorMenuNotFound;
+        this.errorInvalidArgument = errorInvalidArgument;
+        this.errorInGameCommand = errorInGameCommand;
+        this.generalAvailableMenus = generalAvailableMenus;
+        this.generalReloadComplete = generalReloadComplete;
+        this.generalPluginVersion = generalPluginVersion;
+        this.generalNewVersionFound = generalNewVersionFound;
+        this.generalLatestVersion = generalLatestVersion;
+        this.commands = commands;
+    }
+
     @NotNull
     public String errorCooldown(int time) {
         return time(time, errorCooldown);

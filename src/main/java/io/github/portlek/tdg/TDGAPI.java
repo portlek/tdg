@@ -161,7 +161,7 @@ public class TDGAPI {
     public Language getLanguage() {
         if (languageInstance == null) {
             languageInstance = new LanguageOptions(
-                getConfigs(),
+                getConfigs().pluginPrefix,
                 getLanguageFile()
             ).value();
         }
