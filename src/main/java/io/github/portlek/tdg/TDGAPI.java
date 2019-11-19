@@ -3,15 +3,23 @@ package io.github.portlek.tdg;
 import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.mcyaml.YamlOf;
+import io.github.portlek.mcyaml.mck.MckFileConfiguration;
 import io.github.portlek.tdg.api.IconClickedEvent;
 import io.github.portlek.tdg.api.IconHoverEvent;
 import io.github.portlek.tdg.file.Config;
 import io.github.portlek.tdg.file.ConfigOptions;
 import io.github.portlek.tdg.file.Language;
 import io.github.portlek.tdg.file.LanguageOptions;
+import io.github.portlek.tdg.icon.BasicIcon;
+import io.github.portlek.tdg.icon.ClickAction;
+import io.github.portlek.tdg.icon.HoverAction;
+import io.github.portlek.tdg.menu.BasicMenu;
+import io.github.portlek.tdg.menu.CloseAction;
+import io.github.portlek.tdg.menu.OpenAction;
 import io.github.portlek.tdg.mock.MckIcon;
 import io.github.portlek.tdg.mock.MckMenu;
 import io.github.portlek.tdg.mock.MckOpenMenu;
+import io.github.portlek.tdg.types.IconType;
 import io.github.portlek.tdg.util.TargetMenu;
 import io.github.portlek.tdg.util.Targeted;
 import io.github.portlek.tdg.util.UpdateChecker;
@@ -22,8 +30,12 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
+import org.cactoos.iterable.Mapped;
+import org.cactoos.list.ListOf;
 import org.cactoos.map.MapEntry;
+import org.cactoos.map.MapOf;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -47,22 +59,13 @@ public class TDGAPI {
     @NotNull
     private final ConfigOptions configOptions;
 
-    /**
-     * @deprecated Use {@link #getConfigs()}
-     */
-    @Deprecated
+    @Nullable
     private Config configInstance;
 
-    /**
-     * @deprecated Use {@link #getLanguage()} ()}
-     */
-    @Deprecated
+    @Nullable
     private Language languageInstance;
 
-    /**
-     * @deprecated Use {@link #getLanguageFile()} ()}
-     */
-    @Deprecated
+    @Nullable
     private IYaml languageFileInstance;
 
     @NotNull
@@ -83,6 +86,11 @@ public class TDGAPI {
         entities.clear();
         menus.clear();
         opened.clear();
+        menusFile.create();
+
+        if (menusFile.getSection("menus") instanceof MckFileConfiguration) {
+            menusFile.createSection("menus");
+        }
 
         init();
     }
@@ -320,7 +328,44 @@ public class TDGAPI {
     }
 
     private void loadMenus() {
-
+        menus.putAll(
+            new MapOf<String, Menu>(
+                new Mapped<>(
+                    menuId -> new MapEntry<>(
+                        menuId,
+                        new BasicMenu(
+                            menuId,
+                            menusFile.getStringList("menus." + menuId + ".commands"),
+                            CloseAction.parse(menusFile, menuId),
+                            OpenAction.parse(menusFile, menuId),
+                            menusFile.getInt("menus." + menuId + "distances.x1"),
+                            menusFile.getInt("menus." + menuId + "distances.x2"),
+                            menusFile.getInt("menus." + menuId + "distances.x4"),
+                            menusFile.getInt("menus." + menuId + "distances.x5"),
+                            new ListOf<>(
+                                new Mapped<>(
+                                    iconId -> new BasicIcon(
+                                        iconId,
+                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".name").orElse(""),
+                                        IconType.fromString(
+                                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".icon-type").orElse("")
+                                        ),
+                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".material").orElse(""),
+                                        menusFile.getByte("menus." + menuId + ".icons." + iconId + ".material-data"),
+                                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-x"),
+                                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-y"),
+                                        ClickAction.parse(menusFile, menuId, iconId),
+                                        new HoverAction()
+                                    ),
+                                    menusFile.getSection("menus." + menuId + ".icons").getKeys(false)
+                                )
+                            )
+                        )
+                    ),
+                    menusFile.getSection("menus").getKeys(false)
+                )
+            )
+        );
     }
 
 }

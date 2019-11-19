@@ -1,9 +1,10 @@
 menus:
   example:
-    command:
+    commands:
       - 'tdgexample'
-    open-action: ''
-    close-action:
+    open-actions:
+      - 'sound: '
+    close-actions:
       action: PARTICLES
       value: 'cloud'
       amount: 10
