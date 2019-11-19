@@ -1,7 +1,6 @@
 package io.github.portlek.tdg.util;
 
 import io.github.portlek.nbt.base.EntityNBTOf;
-import io.github.portlek.tdg.Menu;
 import io.github.portlek.tdg.OpenedMenu;
 import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.mock.MckOpenMenu;

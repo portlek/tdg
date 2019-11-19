@@ -7,16 +7,17 @@ import io.github.portlek.tdg.file.Config;
 import io.github.portlek.tdg.file.ConfigOptions;
 import io.github.portlek.tdg.file.Language;
 import io.github.portlek.tdg.file.LanguageOptions;
+import io.github.portlek.tdg.mock.MckMenu;
 import io.github.portlek.tdg.mock.MckOpenMenu;
+import io.github.portlek.tdg.util.TargetMenu;
+import io.github.portlek.tdg.util.Targeted;
 import io.github.portlek.tdg.util.UpdateChecker;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
-import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -130,8 +131,74 @@ public class TDGAPI {
         }).register(tdg);
 
         new ListenerBasic<>(PlayerCommandPreprocessEvent.class, event -> {
+            final Player player = event.getPlayer();
+            final String command = event.getMessage();
+            final Menu menu = findMenuByCommand(command);
 
+            if (menu instanceof MckMenu) {
+                return;
+            }
+
+            event.setCancelled(true);
+
+            if (opened.containsKey(player.getUniqueId())) {
+                player.sendMessage(getLanguage().errorAlreadyOpen);
+                return;
+            }
+
+            if (!player.hasPermission("tdg.open." + menu.getId())) {
+                player.sendMessage(getLanguage().errorPermission);
+                return;
+            }
+
+            menu.open(player);
         }).register(tdg);
+
+        new ListenerBasic<>(PlayerInteractEvent.class, event -> {
+            if (event.getAction() != Action.LEFT_CLICK_AIR) {
+                return;
+            }
+
+            final Player player = event.getPlayer();
+            final Entity entity = new Targeted(player).value();
+
+            if (entity == player) {
+                return;
+            }
+
+            final OpenedMenu openedMenu = new TargetMenu(entity).value();
+
+            if (openedMenu instanceof MckOpenMenu) {
+                return;
+            }
+
+            final List<Icon> icons = openedMenu.getIconsFor();
+            Icon clickedIcon = null;
+
+            for (Icon icon : icons) {
+                if (icon.is(entity)) {
+                    clickedIcon = icon;
+                    break;
+                }
+            }
+
+            if (clickedIcon == null) {
+                return;
+            }
+
+            clickedIcon.acceptClickEvent(player);
+        }).register(tdg);
+    }
+
+    @NotNull
+    public Menu findMenuByCommand(@NotNull String command) {
+        for (Menu menu : menus.values()) {
+            if (menu.getCommands().contains(command)) {
+                return menu;
+            }
+        }
+
+        return new MckMenu();
     }
 
     @NotNull

@@ -3,8 +3,17 @@ package io.github.portlek.tdg;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public interface Menu {
 
-    void open(@NotNull Player player);
+    @NotNull
+    String getId();
+
+    @NotNull
+    List<String> getCommands();
+
+    @NotNull
+    OpenedMenu open(@NotNull Player player);
 
 }
