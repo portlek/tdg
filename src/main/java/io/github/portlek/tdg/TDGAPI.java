@@ -64,8 +64,19 @@ public class TDGAPI {
         menusFile = new YamlOf(tdg, "menus");
     }
 
-    public void init() {
-        // TODO read menu file
+    public void reloadPlugin() {
+        tdg.getServer().getScheduler().cancelTasks(tdg);
+        HandlerList.unregisterAll(tdg);
+        entities.forEach(Entity::remove);
+        entities.clear();
+        menus.clear();
+        opened.clear();
+
+        init();
+    }
+
+    private void init() {
+        loadMenus();
 
         new ListenerBasic<>(PlayerJoinEvent.class, event ->
             opened.put(event.getPlayer().getUniqueId(), new MckOpenMenu())
@@ -90,17 +101,6 @@ public class TDGAPI {
                 openedMenu.close();
             }
         }).register(tdg);
-    }
-
-    public void reloadPlugin() {
-        tdg.getServer().getScheduler().cancelTasks(tdg);
-        HandlerList.unregisterAll(tdg);
-        entities.forEach(Entity::remove);
-        entities.clear();
-        menus.clear();
-        opened.clear();
-
-        init();
     }
 
     @NotNull
@@ -150,6 +150,10 @@ public class TDGAPI {
         }
 
         return languageFileInstance;
+    }
+
+    private void loadMenus() {
+
     }
 
 }

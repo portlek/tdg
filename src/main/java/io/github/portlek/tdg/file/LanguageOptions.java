@@ -19,6 +19,8 @@ public final class LanguageOptions implements Scalar<Language> {
 
     @Override
     public Language value() {
+        yaml.create();
+
         return new Language(
 
         );

@@ -1,1 +1,140 @@
-menus: {}
+menus:
+  example:
+    command:
+      - 'tdgexample'
+    open-action: ''
+    close-action:
+      action: PARTICLES
+      value: 'cloud'
+      amount: 10
+      speed: 1
+    distances:
+      x1: 4
+      x2: 2
+      x4: 2
+      x5: 4
+    icons:
+      message-test:
+        name: '&6Test message'
+        icon-type: ITEM
+        material: SIGN
+        material-data: 0
+        position-x: 1
+        position-y: 1
+        click-sound:
+          enabled: true
+          sound: 'CHICKEN_EGG_POP'
+          pitch: 0
+        click-action:
+          action: MESSAGE
+          value: '&eHey, &a%player%&e, this is a test message!'
+      free-diamonds:
+        name: '&bFree diamonds!'
+        icon-type: ITEM
+        material: DIAMOND
+        material-data: 0
+        positionX: 2
+        positionY: 1
+        click-sound:
+          enabled: true
+          sound: 'CHICKEN_EGG_POP'
+          pitch: 0
+        click-action:
+          action: COMMAND
+          value: 'give %player% diamond 1'
+          executefrom: console
+      run-command-as-op:
+        name: '&9Command as op'
+        icon-type: TOOL
+        material: IRON_AXE
+        material-data: 0
+        positionX: 3
+        positionY: 1
+        click-sound:
+          enabled: true
+          sound: 'CHICKEN_EGG_POP'
+          pitch: 0
+        click-action:
+          action: COMMAND
+          value: 'op: say Hello World!'
+          executefrom: player
+      command-test:
+        name: '&fCommand test'
+        icon-type: BLOCK
+        material: BOOKSHELF
+        material-data: 0
+        positionX: 4
+        positionY: 1
+        click-sound:
+          enabled: true
+          sound: 'CHICKEN_EGG_POP'
+          pitch: 0
+        click-action:
+          action: COMMAND
+          value: 'commandtoexecutehere'
+          executefrom: player
+      open-menu-test:
+        name: '&aSocials'
+        icon-type: HEAD
+        material: none
+        material-data: 0
+        value: 'http://textures.minecraft.net/texture/b1dd4fe4a429abd665dfdb3e21321d6efa6a6b5e7b956db9c5d59c9efab25'
+        positionX: 5
+        positionY: 1
+        click-sound:
+          enabled: true
+          sound: 'CHICKEN_EGG_POP'
+          pitch: 0
+        click-action:
+          action: OPEN_MENU
+          value: 'socials'
+      cooldown-test:
+        name: '&5Cooldown test'
+        icon-type: TOOL
+        material: BLAZE_ROD
+        material-data: 0
+        positionX: 1
+        positionY: 2
+        click-cooldown:
+          enabled: true
+          time: 3
+        click-sound:
+          enabled: true
+          sound: 'CHICKEN_EGG_POP'
+          pitch: 0
+        click-action:
+          action: MESSAGE
+          value: '&aClick this icon fast and you will see a cooldown! :)'
+      player-head:
+        name: '&e%player%'
+        icon-type: HEAD
+        material: none
+        material-data: 0
+        value: '%player%'
+        positionX: 3
+        positionY: 2
+        select-action:
+          action: ADD_TEXT
+          value: '&eThis is your head!'
+        click-sound:
+          enabled: true
+          sound: 'CHICKEN_EGG_POP'
+          pitch: 0
+        click-action:
+          action: MESSAGE
+          value: '&aYou just clicked your head!'
+      close-test:
+        name: '&cClose menu'
+        icon-type: HEAD
+        material: none
+        material-data: 0
+        value: 'http://textures.minecraft.net/texture/5a6787ba32564e7c2f3a0ce64498ecbb23b89845e5a66b5cec7736f729ed37'
+        positionX: 5
+        positionY: 2
+        click-sound:
+          enabled: true
+          sound: 'CHICKEN_EGG_POP'
+          pitch: 0
+        click-action:
+          action: CLOSE
+          value: ''

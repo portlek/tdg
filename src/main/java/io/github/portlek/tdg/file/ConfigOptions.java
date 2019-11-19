@@ -15,6 +15,8 @@ public class ConfigOptions implements Scalar<Config> {
 
     @Override
     public Config value() {
+        yaml.create();
+
         return new Config(
 
         );
