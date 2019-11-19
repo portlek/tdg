@@ -2,7 +2,6 @@ package io.github.portlek.tdg.menu;
 
 import io.github.portlek.tdg.Icon;
 import io.github.portlek.tdg.Menu;
-import io.github.portlek.tdg.OpenedMenu;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

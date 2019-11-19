@@ -1,5 +1,7 @@
 package io.github.portlek.tdg;
 
+import io.github.portlek.tdg.api.IconClickedEvent;
+import io.github.portlek.tdg.api.IconHoverEvent;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -10,8 +12,8 @@ public interface Icon {
 
     void playSound(@NotNull Player player);
 
-    void acceptClickEvent(@NotNull Player player);
+    void acceptClickEvent(@NotNull IconClickedEvent event);
 
-    void acceptHoverEvent(@NotNull Player player);
+    void acceptHoverEvent(@NotNull IconHoverEvent event);
 
 }

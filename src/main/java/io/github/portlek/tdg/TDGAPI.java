@@ -4,21 +4,25 @@ import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.mcyaml.YamlOf;
 import io.github.portlek.tdg.api.IconClickedEvent;
+import io.github.portlek.tdg.api.IconHoverEvent;
 import io.github.portlek.tdg.file.Config;
 import io.github.portlek.tdg.file.ConfigOptions;
 import io.github.portlek.tdg.file.Language;
 import io.github.portlek.tdg.file.LanguageOptions;
+import io.github.portlek.tdg.mock.MckIcon;
 import io.github.portlek.tdg.mock.MckMenu;
 import io.github.portlek.tdg.mock.MckOpenMenu;
 import io.github.portlek.tdg.util.TargetMenu;
 import io.github.portlek.tdg.util.Targeted;
 import io.github.portlek.tdg.util.UpdateChecker;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
+import org.cactoos.map.MapEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
@@ -156,38 +160,21 @@ public class TDGAPI {
         }).register(tdg);
 
         new ListenerBasic<>(PlayerInteractEvent.class, event -> {
-            if (event.getAction() != Action.LEFT_CLICK_AIR) {
-                return;
-            }
-
             final Player player = event.getPlayer();
-            final Entity entity = new Targeted(player).value();
 
-            if (entity == player) {
+            if (event.getAction() != Action.LEFT_CLICK_AIR || !opened.containsKey(player.getUniqueId())) {
                 return;
             }
 
-            final OpenedMenu openedMenu = new TargetMenu(entity).value();
+            final Map.Entry<Icon, OpenedMenu> entry = findIconAndOpenedMenuByPlayer(player);
+            final Icon icon = entry.getKey();
+            final OpenedMenu openedMenu = entry.getValue();
 
-            if (openedMenu instanceof MckOpenMenu) {
+            if (icon instanceof MckIcon || openedMenu instanceof MckOpenMenu) {
                 return;
             }
 
-            final List<Icon> icons = openedMenu.getIconsFor();
-            Icon clickedIcon = null;
-
-            for (Icon icon : icons) {
-                if (icon.is(entity)) {
-                    clickedIcon = icon;
-                    break;
-                }
-            }
-
-            if (clickedIcon == null) {
-                return;
-            }
-
-            final IconClickedEvent iconClickedEvent = new IconClickedEvent(player, openedMenu, clickedIcon);
+            final IconClickedEvent iconClickedEvent = new IconClickedEvent(player, openedMenu, icon);
 
             tdg.getServer().getPluginManager().callEvent(iconClickedEvent);
 
@@ -195,8 +182,81 @@ public class TDGAPI {
                 return;
             }
 
-            clickedIcon.acceptClickEvent(player);
+            icon.acceptClickEvent(iconClickedEvent);
         }).register(tdg);
+
+        new ListenerBasic<>(PlayerMoveEvent.class, event -> {
+            final Location to = event.getTo();
+            final Location from = event.getFrom();
+            final Player player = event.getPlayer();
+
+            if (to == null || from.distance(to) == 0 || !opened.containsKey(player.getUniqueId())) {
+                return;
+            }
+
+            final Map.Entry<Icon, OpenedMenu> entry = findIconAndOpenedMenuByPlayer(player);
+            final Icon icon = entry.getKey();
+            final OpenedMenu openedMenu = entry.getValue();
+
+            if (icon instanceof MckIcon || openedMenu instanceof MckOpenMenu) {
+                return;
+            }
+
+            final IconHoverEvent iconHoverEvent = new IconHoverEvent(player, openedMenu, icon);
+
+            tdg.getServer().getPluginManager().callEvent(iconHoverEvent);
+
+            if (iconHoverEvent.isCancelled()) {
+                return;
+            }
+
+            icon.acceptHoverEvent(iconHoverEvent);
+        }).register(tdg);
+    }
+
+    @NotNull
+    public Map.Entry<Icon, OpenedMenu> findIconAndOpenedMenuByPlayer(@NotNull Player player) {
+        final Entity targeted = new Targeted(player).value();
+
+        if (targeted.equals(player)) {
+            return new MapEntry<>(
+                new MckIcon(),
+                new MckOpenMenu()
+            );
+        }
+
+        final OpenedMenu menu = new TargetMenu(
+            targeted
+        ).value();
+
+        if (menu instanceof MckOpenMenu) {
+            return new MapEntry<>(
+                new MckIcon(),
+                new MckOpenMenu()
+            );
+        }
+
+        final Icon icon = findIconByEntity(menu, targeted);
+
+        if (icon instanceof MckIcon) {
+            return new MapEntry<>(
+                new MckIcon(),
+                new MckOpenMenu()
+            );
+        }
+
+        return new MapEntry<>(icon, menu);
+    }
+
+    @NotNull
+    public Icon findIconByEntity(@NotNull OpenedMenu openedMenu, @NotNull Entity entity) {
+        for (Icon icon : openedMenu.getIconsFor()) {
+            if (icon.is(entity)) {
+                return icon;
+            }
+        }
+
+        return new MckIcon();
     }
 
     @NotNull
