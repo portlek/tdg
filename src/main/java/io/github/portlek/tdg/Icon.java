@@ -16,4 +16,6 @@ public interface Icon {
 
     void acceptHoverEvent(@NotNull IconHoverEvent event);
 
+    void close();
+
 }

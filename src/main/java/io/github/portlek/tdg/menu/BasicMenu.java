@@ -3,7 +3,9 @@ package io.github.portlek.tdg.menu;
 import io.github.portlek.tdg.Icon;
 import io.github.portlek.tdg.Menu;
 import io.github.portlek.tdg.OpenedMenu;
+import io.github.portlek.tdg.TDG;
 import org.bukkit.entity.Player;
+import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -58,10 +60,13 @@ public final class BasicMenu implements Menu {
         return commands;
     }
 
-    @NotNull
     @Override
-    public OpenedMenu open(@NotNull Player player) {
-        return null;
+    public void open(@NotNull Player player) {
+        final OpenedMenu openedMenu = new BasicOpenMenu(this, player);
+
+
+
+        TDG.getAPI().opened.put(player.getUniqueId(), openedMenu);
     }
 
 }

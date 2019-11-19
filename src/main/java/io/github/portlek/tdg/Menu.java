@@ -13,7 +13,6 @@ public interface Menu {
     @NotNull
     List<String> getCommands();
 
-    @NotNull
-    OpenedMenu open(@NotNull Player player);
+    void open(@NotNull Player player);
 
 }
