@@ -73,7 +73,7 @@ public final class BasicMenu implements Menu {
             return;
         }
 
-        openedMenu.getIconsFor().forEach(Icon::open);
+        openedMenu.getIcons().forEach(Icon::open);
         accept(menuOpenEvent);
         TDG.getAPI().opened.put(player.getUniqueId(), openedMenu);
     }

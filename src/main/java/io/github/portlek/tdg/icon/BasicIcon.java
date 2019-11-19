@@ -1,8 +1,6 @@
 package io.github.portlek.tdg.icon;
 
 import io.github.portlek.tdg.Icon;
-import io.github.portlek.tdg.api.IconClickedEvent;
-import io.github.portlek.tdg.api.IconHoverEvent;
 import io.github.portlek.tdg.types.IconType;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -14,11 +12,11 @@ import java.util.List;
 
 public final class BasicIcon implements Icon {
 
-    private final List<Player> view = new ArrayList<>();
+    private static final List<Player> view = new ArrayList<>();
 
-    private final List<Player> toHide = new ArrayList<>();
+    private static final List<Player> toHide = new ArrayList<>();
 
-    private final List<ArmorStand> icons = new ArrayList<>();
+    private static final List<ArmorStand> icons = new ArrayList<>();
 
     @NotNull
     private final String id;
@@ -38,15 +36,9 @@ public final class BasicIcon implements Icon {
 
     private final int positionY;
 
-    @NotNull
-    private final List<ClickAction> clickAction;
-
-    @NotNull
-    private final HoverAction hoverAction;
 
     public BasicIcon(@NotNull String id, @NotNull String name, @NotNull IconType iconType, @NotNull String material,
-                     byte materialData, int positionX, int positionY, @NotNull List<ClickAction> clickAction,
-                     @NotNull HoverAction hoverAction) {
+                     byte materialData, int positionX, int positionY) {
         this.id = id;
         this.name = name;
         this.iconType = iconType;
@@ -54,8 +46,6 @@ public final class BasicIcon implements Icon {
         this.materialData = materialData;
         this.positionX = positionX;
         this.positionY = positionY;
-        this.clickAction = clickAction;
-        this.hoverAction = hoverAction;
     }
 
     @Override
@@ -65,26 +55,21 @@ public final class BasicIcon implements Icon {
 
     @Override
     public void playSound(@NotNull Player player) {
+        // TODO: 19/11/2019  
+    }
+
+    @Override
+    public void accept(@NotNull Player player) {
 
     }
 
     @Override
-    public void accept(@NotNull IconClickedEvent event) {
-
+    public void closeFor(@NotNull Player player) {
+        view.remove(player);
     }
 
     @Override
-    public void accept(@NotNull IconHoverEvent event) {
-
-    }
-
-    @Override
-    public void close() {
-
-    }
-
-    @Override
-    public void open() {
+    public void openFor(@NotNull Player player) {
 
     }
 }

@@ -37,14 +37,14 @@ public final class BasicOpenMenu implements OpenedMenu {
             return;
         }
 
-        getIconsFor().forEach(Icon::close);
+        getIcons().forEach(icon -> icon.closeFor(player));
         accept(menuCloseEvent);
         TDG.getAPI().opened.remove(player.getUniqueId());
     }
 
     @NotNull
     @Override
-    public List<Icon> getIconsFor() {
+    public List<Icon> getIcons() {
         return new ListOf<>();
     }
 

@@ -7,7 +7,7 @@ import java.util.List;
 public interface OpenedMenu extends Menu {
 
     @NotNull
-    List<Icon> getIconsFor();
+    List<Icon> getIcons();
 
     void close();
 

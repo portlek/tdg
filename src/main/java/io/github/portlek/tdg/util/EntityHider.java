@@ -83,6 +83,14 @@ public class EntityHider implements Listener {
         manager.addPacketListener(
                 protocolListener = constructProtocol(plugin));
     }
+
+    /**
+     * Construct a new entity hider.
+     * @param plugin - the plugin that controls this entity hider.
+     */
+    public EntityHider(Plugin plugin) {
+        this(plugin, Policy.BLACKLIST);
+    }
     
     /**
      * Set the visibility status of a given entity for a particular observer.

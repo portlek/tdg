@@ -19,7 +19,7 @@ public final class MckOpenMenu implements OpenedMenu {
     }
 
     @Override
-    public @NotNull List<Icon> getIconsFor() {
+    public @NotNull List<Icon> getIcons() {
         throw new UnsupportedOperationException();
     }
 

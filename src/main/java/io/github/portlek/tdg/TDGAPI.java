@@ -4,15 +4,12 @@ import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.mcyaml.YamlOf;
 import io.github.portlek.mcyaml.mck.MckFileConfiguration;
-import io.github.portlek.tdg.api.IconClickedEvent;
-import io.github.portlek.tdg.api.IconHoverEvent;
 import io.github.portlek.tdg.file.Config;
 import io.github.portlek.tdg.file.ConfigOptions;
 import io.github.portlek.tdg.file.Language;
 import io.github.portlek.tdg.file.LanguageOptions;
 import io.github.portlek.tdg.icon.BasicIcon;
 import io.github.portlek.tdg.icon.ClickAction;
-import io.github.portlek.tdg.icon.HoverAction;
 import io.github.portlek.tdg.menu.BasicMenu;
 import io.github.portlek.tdg.menu.CloseAction;
 import io.github.portlek.tdg.menu.OpenAction;
@@ -23,7 +20,6 @@ import io.github.portlek.tdg.types.IconType;
 import io.github.portlek.tdg.util.TargetMenu;
 import io.github.portlek.tdg.util.Targeted;
 import io.github.portlek.tdg.util.UpdateChecker;
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -131,7 +127,7 @@ public class TDGAPI {
 
     @NotNull
     public Icon findIconByEntity(@NotNull OpenedMenu openedMenu, @NotNull Entity entity) {
-        for (Icon icon : openedMenu.getIconsFor()) {
+        for (Icon icon : openedMenu.getIcons()) {
             if (icon.is(entity)) {
                 return icon;
             }
@@ -227,8 +223,7 @@ public class TDGAPI {
                                         menusFile.getByte("menus." + menuId + ".icons." + iconId + ".material-data"),
                                         menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-x"),
                                         menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-y"),
-                                        ClickAction.parse(menusFile, menuId, iconId),
-                                        new HoverAction()
+                                        ClickAction.parse(menusFile, menuId, iconId)
                                     ),
                                     menusFile.getSection("menus." + menuId + ".icons").getKeys(false)
                                 )
@@ -324,43 +319,7 @@ public class TDGAPI {
                 return;
             }
 
-            final IconClickedEvent iconClickedEvent = new IconClickedEvent(player, openedMenu, icon);
-
-            tdg.getServer().getPluginManager().callEvent(iconClickedEvent);
-
-            if (iconClickedEvent.isCancelled()) {
-                return;
-            }
-
-            icon.acceptClickEvent(iconClickedEvent);
-        }).register(tdg);
-
-        new ListenerBasic<>(PlayerMoveEvent.class, event -> {
-            final Location to = event.getTo();
-            final Location from = event.getFrom();
-            final Player player = event.getPlayer();
-
-            if (to == null || from.distance(to) == 0 || !opened.containsKey(player.getUniqueId())) {
-                return;
-            }
-
-            final Map.Entry<Icon, OpenedMenu> entry = findIconAndOpenedMenuByPlayer(player);
-            final Icon icon = entry.getKey();
-            final OpenedMenu openedMenu = entry.getValue();
-
-            if (icon instanceof MckIcon || openedMenu instanceof MckOpenMenu) {
-                return;
-            }
-
-            final IconHoverEvent iconHoverEvent = new IconHoverEvent(player, openedMenu, icon);
-
-            tdg.getServer().getPluginManager().callEvent(iconHoverEvent);
-
-            if (iconHoverEvent.isCancelled()) {
-                return;
-            }
-
-            icon.acceptHoverEvent(iconHoverEvent);
+            icon.accept(player);
         }).register(tdg);
     }
 

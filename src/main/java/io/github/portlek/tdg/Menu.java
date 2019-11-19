@@ -1,7 +1,5 @@
 package io.github.portlek.tdg;
 
-import io.github.portlek.tdg.api.MenuCloseEvent;
-import io.github.portlek.tdg.api.MenuOpenEvent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +15,6 @@ public interface Menu {
 
     void open(@NotNull Player player);
 
-    void accept(@NotNull MenuCloseEvent event);
+    void accept(@NotNull Player player);
 
-    void accept(@NotNull MenuOpenEvent event);
 }
