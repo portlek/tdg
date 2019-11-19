@@ -3,3 +3,10 @@ error:
   already-open: '%prefix% &cYou already have this menu open.'
   permission: '&cYou don''t have permission to do this.'
   menu-not-found: '%prefix% &cCouldn''t find the menu %menu%'
+
+commands:
+  - '&8------[ &e&lTDG &8]------'
+  - '&7/tdg open &e<menu-id> &8-> &7Opens the menu if exist'
+  - '&7/tdg list &8-> &7Displays the list of menus'
+  - '&7/tdg reload &8-> &7Reloads the plugin configuration'
+  - '&7/tdg version &8-> &7Sees the current plugin version you are running!'

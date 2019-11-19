@@ -1,14 +1,14 @@
 package io.github.portlek.tdg.util;
 
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-
-import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.jetbrains.annotations.NotNull;
 
 /*
  * @author iShadey
@@ -39,6 +39,11 @@ public class UpdateChecker {
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @NotNull
+    public String getLatestVersion() {
+        return newVersion;
     }
 
     @NotNull

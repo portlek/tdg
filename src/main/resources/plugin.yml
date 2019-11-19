@@ -6,4 +6,27 @@ softdepend:
   - PlaceholderAPI
 
 commands:
-  tdg:
+  threedimentiongui:
+    description: Main command of TDG plugin
+    permission: tdg.use
+    permission-message: You dont have permissions to do that!
+    usage: /tdg [list|reload|version|open <menu-id>]
+    aliases:
+      - tdg
+
+permissions:
+  tdg.version:
+    description: Allows you to check updates
+    default: op
+  tdg.reload:
+    description: Allows you to reload the plugin
+    default: op
+  tdg.list:
+    description: Allows you to show list of menus
+    default: op
+  tdg.use:
+    description: Allows you to show help message
+    default: op
+  tdg.chestupdates:
+    description: Allows you to show new updates if exist on join.
+    default: op

@@ -11,16 +11,20 @@ public class PAPIHook implements Hook<PlaceholderAPIPlugin> {
 
     @Override
     public boolean initiate() {
-        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
             papi = PlaceholderAPIPlugin.getInstance();
+        }
+
         return papi != null;
     }
 
     @NotNull
     @Override
     public PlaceholderAPIPlugin get() {
-        if (papi == null)
+        if (papi == null) {
             throw new RuntimeException("PlaceholderAPI not initiated! Use ASkyBlockHook#initiate() method.");
+        }
+
         return papi;
     }
 

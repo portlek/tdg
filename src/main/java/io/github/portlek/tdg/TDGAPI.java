@@ -1,15 +1,21 @@
 package io.github.portlek.tdg;
 
+import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.mcyaml.YamlOf;
-import io.github.portlek.tdg.file.*;
+import io.github.portlek.tdg.file.Config;
+import io.github.portlek.tdg.file.ConfigOptions;
+import io.github.portlek.tdg.file.Language;
+import io.github.portlek.tdg.file.LanguageOptions;
 import io.github.portlek.tdg.mock.MckOpenMenu;
+import io.github.portlek.tdg.util.UpdateChecker;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -78,9 +84,30 @@ public class TDGAPI {
     private void init() {
         loadMenus();
 
-        new ListenerBasic<>(PlayerJoinEvent.class, event ->
-            opened.put(event.getPlayer().getUniqueId(), new MckOpenMenu())
-        ).register(tdg);
+        new ListenerBasic<>(PlayerJoinEvent.class, event -> {
+            final Player player = event.getPlayer();
+
+            if (getConfigs().updateCheck && player.hasPermission("tdg.version")) {
+                final UpdateChecker updater = new UpdateChecker(tdg, 0);
+
+                try {
+                    if (updater.checkForUpdates()) {
+                        player.sendMessage(
+                            new Colored(
+                                "&8[&cTDG&8] &bA new update of TDG &f&l(" +
+                                    updater.getLatestVersion() +
+                                    ") &bis available! Download it at &f&l" + updater.getResourceURL()
+                            ).value()
+                        );
+                    }
+                } catch (Exception ex) {
+                    tdg.getLogger().severe("[TDG] Update checker failed, could not connect to the API!");
+                    ex.printStackTrace();
+                }
+            }
+
+            opened.put(player.getUniqueId(), new MckOpenMenu());
+        }).register(tdg);
 
         new ListenerBasic<>(PlayerArmorStandManipulateEvent.class, event -> {
             if (entities.contains(event.getRightClicked())) {
@@ -100,6 +127,10 @@ public class TDGAPI {
             if (!(openedMenu instanceof MckOpenMenu)) {
                 openedMenu.close();
             }
+        }).register(tdg);
+
+        new ListenerBasic<>(PlayerCommandPreprocessEvent.class, event -> {
+            
         }).register(tdg);
     }
 
