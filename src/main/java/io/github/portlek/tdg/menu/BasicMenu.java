@@ -4,6 +4,9 @@ import io.github.portlek.tdg.Icon;
 import io.github.portlek.tdg.Menu;
 import io.github.portlek.tdg.OpenedMenu;
 import io.github.portlek.tdg.TDG;
+import io.github.portlek.tdg.api.MenuCloseEvent;
+import io.github.portlek.tdg.api.MenuOpenEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
@@ -63,10 +66,26 @@ public final class BasicMenu implements Menu {
     @Override
     public void open(@NotNull Player player) {
         final OpenedMenu openedMenu = new BasicOpenMenu(this, player);
+        final MenuOpenEvent menuOpenEvent = new MenuOpenEvent(player, openedMenu);
 
+        Bukkit.getServer().getPluginManager().callEvent(menuOpenEvent);
 
+        if (menuOpenEvent.isCancelled()) {
+            return;
+        }
 
+        acceptOpenEvent(menuOpenEvent);
         TDG.getAPI().opened.put(player.getUniqueId(), openedMenu);
+    }
+
+    @Override
+    public void acceptCloseEvent(@NotNull MenuCloseEvent event) {
+
+    }
+
+    @Override
+    public void acceptOpenEvent(@NotNull MenuOpenEvent event) {
+
     }
 
 }
