@@ -3,12 +3,24 @@ menus:
     commands:
       - 'tdgexample'
     open-actions:
-      - 'sound: '
+      sound-action-1:
+        action: SOUND
+        value: 'ENTITY_ENDERMAN_TELEPORT'
+      message-action-1:
+        action: MESSAGE
+        value:
+          - '&6Menu opened'
     close-actions:
-      action: PARTICLES
-      value: 'cloud'
-      amount: 10
-      speed: 1
+      command-action-1:
+        action: COMMANDS
+        as-player: false
+        value:
+          - 'give minecraft:apple %player% 1'
+      particle-action-1:
+        action: PARTICLES
+        value: 'cloud'
+        amount: 10
+        speed: 1
     distances:
       x1: 4
       x2: 2
