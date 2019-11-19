@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PAPIHook implements Hook<PlaceholderAPIPlugin> {
 
-    private PlaceholderAPIPlugin papi;
+    private static PlaceholderAPIPlugin papi;
 
     @Override
     public boolean initiate() {
