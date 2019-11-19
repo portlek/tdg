@@ -5,7 +5,6 @@ import io.github.portlek.tdg.Menu;
 import io.github.portlek.tdg.TDGAPI;
 import io.github.portlek.tdg.mock.MckMenu;
 import io.github.portlek.tdg.util.UpdateChecker;
-import net.sf.cglib.asm.$ByteVector;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -14,7 +13,6 @@ import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.logging.Logger;
 
 public class TDGCommand implements TabExecutor {
 
@@ -98,7 +96,7 @@ public class TDGCommand implements TabExecutor {
 
         final String arg2 = args[1];
 
-        if (args[0].equals("open")) {
+        if (arg1.equals("open")) {
             if (!(sender instanceof Player)) {
                 sender.sendMessage(api.getLanguage().errorInGameCommand);
                 return true;
@@ -107,11 +105,11 @@ public class TDGCommand implements TabExecutor {
             final Menu menu = api.findMenuById(arg1);
 
             if (menu instanceof MckMenu) {
-                sender.sendMessage(api.getLanguage().errorInvalidMenu);
+                sender.sendMessage(api.getLanguage().errorMenuNotFound(arg2));
                 return true;
             }
 
-            if (!sender.hasPermission("tdg.open." + args[1])) {
+            if (!sender.hasPermission("tdg.open." + arg2)) {
                 sender.sendMessage(api.getLanguage().errorPermission);
                 return true;
             }
@@ -124,7 +122,7 @@ public class TDGCommand implements TabExecutor {
             }
 
             menu.open(player);
-            
+
             return true;
         }
 

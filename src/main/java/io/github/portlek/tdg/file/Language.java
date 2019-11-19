@@ -20,10 +20,22 @@ public final class Language {
     public final String errorInvalidArgument;
 
     @NotNull
+    public final String errorInGameCommand;
+
+    @NotNull
     public final String generalAvailableMenus;
 
     @NotNull
     public final String generalReloadComplete;
+
+    @NotNull
+    public final String generalPluginVersion;
+
+    @NotNull
+    private final String generalNewVersionFound;
+
+    @NotNull
+    public final String generalLatestVersion;
 
     @NotNull
     public final String commands;
@@ -31,6 +43,11 @@ public final class Language {
     @NotNull
     public String errorCooldown(int time) {
         return time(time, errorCooldown);
+    }
+
+    @NotNull
+    public String generalNewVersionFound(@NotNull String version) {
+        return version(version, generalNewVersionFound);
     }
 
     @NotNull
@@ -48,4 +65,8 @@ public final class Language {
         return text.replaceAll("%time%", String.valueOf(true));
     }
 
+    @NotNull
+    private String version(@NotNull String version, @NotNull String text) {
+        return text.replaceAll("%version%", version);
+    }
 }
