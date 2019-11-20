@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 public class TDGAPI {
 
@@ -91,40 +92,6 @@ public class TDGAPI {
         }
 
         init();
-    }
-
-    @NotNull
-    public Map.Entry<Icon, OpenedMenu> findIconAndOpenedMenuByPlayer(@NotNull Player player) {
-        final Entity targeted = new Targeted(player).value();
-
-        if (targeted.equals(player)) {
-            return new MapEntry<>(
-                new MckIcon(),
-                new MckOpenMenu()
-            );
-        }
-
-        final OpenedMenu menu = new TargetMenu(
-            targeted
-        ).value();
-
-        if (menu instanceof MckOpenMenu) {
-            return new MapEntry<>(
-                new MckIcon(),
-                new MckOpenMenu()
-            );
-        }
-
-        final Icon icon = findIconByEntity(menu, targeted);
-
-        if (icon instanceof MckIcon) {
-            return new MapEntry<>(
-                new MckIcon(),
-                new MckOpenMenu()
-            );
-        }
-
-        return new MapEntry<>(icon, menu);
     }
 
     @NotNull
@@ -309,28 +276,32 @@ public class TDGAPI {
         new ListenerBasic<>(PlayerInteractEvent.class, event -> {
             final Player player = event.getPlayer();
 
-            if (event.getAction() != Action.LEFT_CLICK_AIR || !opened.containsKey(player.getUniqueId())) {
-                return;
-            }
-
-            getIconOptional(player).ifPresent(icon -> icon.accept(player));
+            getIconOptional(
+                playerPredicate -> event.getAction() == Action.LEFT_CLICK_AIR &&
+                    opened.containsKey(playerPredicate.getUniqueId()),
+                player
+            ).ifPresent(icon -> icon.accept(player));
         }).register(tdg);
 
         new ListenerBasic<>(PlayerMoveEvent.class, event -> {
             final Location to = event.getTo();
-            final Location from = event.getFrom();
             final Player player = event.getPlayer();
 
-            if (to == null || from.distance(to) == 0 || !opened.containsKey(player.getUniqueId())) {
-                return;
-            }
-
-            getIconOptional(player).ifPresent(icon -> icon.accept(player));
+            getIconOptional(
+                playerPredicate -> to != null &&
+                    event.getFrom().distance(to) != 0 &&
+                    opened.containsKey(playerPredicate.getUniqueId()),
+                player
+            ).ifPresent(icon -> icon.accept(player));
         }).register(tdg);
     }
 
     @NotNull
-    private Optional<Icon> getIconOptional(Player player) {
+    private Optional<Icon> getIconOptional(@NotNull Predicate<Player> predicate, @NotNull Player player) {
+        if (!predicate.test(player)) {
+            return Optional.empty();
+        }
+
         final Map.Entry<Icon, OpenedMenu> entry = findIconAndOpenedMenuByPlayer(player);
         final Icon icon = entry.getKey();
         final OpenedMenu openedMenu = entry.getValue();
@@ -340,6 +311,40 @@ public class TDGAPI {
         }
 
         return Optional.of(icon);
+    }
+
+    @NotNull
+    private Map.Entry<Icon, OpenedMenu> findIconAndOpenedMenuByPlayer(@NotNull Player player) {
+        final Entity targeted = new Targeted(player).value();
+
+        if (targeted.equals(player)) {
+            return new MapEntry<>(
+                new MckIcon(),
+                new MckOpenMenu()
+            );
+        }
+
+        final OpenedMenu menu = new TargetMenu(
+            targeted
+        ).value();
+
+        if (menu instanceof MckOpenMenu) {
+            return new MapEntry<>(
+                new MckIcon(),
+                new MckOpenMenu()
+            );
+        }
+
+        final Icon icon = findIconByEntity(menu, targeted);
+
+        if (icon instanceof MckIcon) {
+            return new MapEntry<>(
+                new MckIcon(),
+                new MckOpenMenu()
+            );
+        }
+
+        return new MapEntry<>(icon, menu);
     }
 
 }
