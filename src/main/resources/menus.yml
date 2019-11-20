@@ -34,13 +34,15 @@ menus:
         material-data: 0
         position-x: 1
         position-y: 1
-        click-sound:
-          enabled: true
-          sound: 'CHICKEN_EGG_POP'
-          pitch: 0
-        click-action:
-          action: MESSAGE
-          value: '&eHey, &a%player%&e, this is a test message!'
+        click-actions:
+          click-sound:
+            action: SOUND
+            value: 'CHICKEN_EGG_POP'
+            pitch: 0
+          click-message:
+            action: MESSAGE
+            value:
+              - '&eHey, &a%player%&e, this is a test message!'
       free-diamonds:
         name: '&bFree diamonds!'
         icon-type: ITEM

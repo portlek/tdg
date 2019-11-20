@@ -36,7 +36,6 @@ public final class BasicIcon implements Icon {
 
     private final int positionY;
 
-
     public BasicIcon(@NotNull String id, @NotNull String name, @NotNull IconType iconType, @NotNull String material,
                      byte materialData, int positionX, int positionY) {
         this.id = id;
@@ -49,27 +48,8 @@ public final class BasicIcon implements Icon {
     }
 
     @Override
-    public boolean is(@NotNull Entity entity) {
-        return false;
-    }
-
-    @Override
-    public void playSound(@NotNull Player player) {
-        // TODO: 19/11/2019  
-    }
-
-    @Override
-    public void accept(@NotNull Player player) {
-
-    }
-
-    @Override
-    public void closeFor(@NotNull Player player) {
-        view.remove(player);
-    }
-
-    @Override
     public void openFor(@NotNull Player player) {
 
     }
+
 }

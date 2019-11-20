@@ -4,8 +4,7 @@ import io.github.portlek.tdg.Icon;
 import io.github.portlek.tdg.Menu;
 import io.github.portlek.tdg.OpenedMenu;
 import io.github.portlek.tdg.TDG;
-import io.github.portlek.tdg.api.MenuCloseEvent;
-import io.github.portlek.tdg.api.MenuOpenEvent;
+import io.github.portlek.tdg.events.MenuOpenEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -62,6 +61,12 @@ public final class BasicMenu implements Menu {
         return commands;
     }
 
+    @NotNull
+    @Override
+    public List<Icon> getIcons() {
+        return icons;
+    }
+
     @Override
     public void open(@NotNull Player player) {
         final OpenedMenu openedMenu = new BasicOpenMenu(this, player);
@@ -73,19 +78,19 @@ public final class BasicMenu implements Menu {
             return;
         }
 
-        openedMenu.getIcons().forEach(Icon::open);
+        openedMenu.getIcons().forEach(icon -> icon.openFor(player));
         accept(menuOpenEvent);
         TDG.getAPI().opened.put(player.getUniqueId(), openedMenu);
     }
 
     @Override
-    public void accept(@NotNull MenuCloseEvent event) {
-        closeAction.forEach(action -> action.apply(event));
+    public void acceptOpen(@NotNull Player player) {
+        openAction.forEach(action -> action.apply(player));
     }
 
     @Override
-    public void accept(@NotNull MenuOpenEvent event) {
-        openAction.forEach(action -> action.apply(event));
+    public void acceptClose(@NotNull Player player) {
+        closeAction.forEach(action -> action.apply(player));
     }
 
 }

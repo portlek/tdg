@@ -28,13 +28,13 @@ public final class IconUtil {
     private final EntityHider entityHider = new EntityHider(TDG.getAPI().tdg);
 
     public void addIconHead(@NotNull Player player, @NotNull Location location, String name, @NotNull ItemStack itemStack,
-                        int positionY) {
+                            int positionY) {
         Vector playerDirection = player.getLocation().getDirection();
         Vector direction = playerDirection.normalize();
         direction.multiply(-2);
         location.setDirection(direction);
-        float yaw = (float)Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
-        float pitch = (float)Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
+        float yaw = (float) Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
+        float pitch = (float) Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
         location.setYaw(yaw);
         location.setPitch(pitch);
         if (positionY == 2) {
@@ -53,7 +53,6 @@ public final class IconUtil {
         Location locb = a.getLocation();
 
         new BukkitRunnable() {
-
             @Override
             public void run() {
                 if (a.isValid()) {
@@ -99,13 +98,13 @@ public final class IconUtil {
     }
 
     public void addIconHead(@NotNull Player player, @NotNull Location location, @NotNull String name,
-                        @NotNull String texture, int positionY) {
+                            @NotNull String texture, int positionY) {
         Vector playerDirection = player.getLocation().getDirection();
         Vector direction = playerDirection.normalize();
         direction.multiply(-2);
         location.setDirection(direction);
-        float yaw = (float)Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
-        float pitch = (float)Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
+        float yaw = (float) Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
+        float pitch = (float) Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
         location.setYaw(yaw);
         location.setPitch(pitch);
         if (positionY == 2) {
@@ -117,8 +116,7 @@ public final class IconUtil {
         a.setCustomNameVisible(true);
         if (texture.contains("textures.minecraft.net")) {
             a.setHelmet(new Skull(texture).value());
-        }
-        else {
+        } else {
             ItemStack skull = new ItemStack(XMaterial.PLAYER_HEAD.parseMaterial(), 1, (short) 3);
             SkullMeta meta = (SkullMeta) skull.getItemMeta();
             meta.setOwner(texture.replace("%player%", player.getName()));
@@ -173,13 +171,13 @@ public final class IconUtil {
     }
 
     public void addIconItem(@NotNull Player player, @NotNull Location location, @NotNull String name,
-                        @NotNull ItemStack item, int positionY) {
+                            @NotNull ItemStack item, int positionY) {
         Vector playerDirection = player.getLocation().getDirection();
         Vector direction = playerDirection.normalize();
         direction.multiply(-2);
         location.setDirection(direction);
-        float yaw = (float)Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
-        float pitch = (float)Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
+        float yaw = (float) Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
+        float pitch = (float) Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
         location.setYaw(yaw);
         location.setPitch(pitch);
         if (positionY == 2) {
@@ -268,13 +266,13 @@ public final class IconUtil {
     }
 
     public void addIconTool(@NotNull Player player, @NotNull Location location, @NotNull String name,
-                        @NotNull ItemStack item, int positionY) {
+                            @NotNull ItemStack item, int positionY) {
         Vector playerDirection = player.getLocation().getDirection();
         Vector direction = playerDirection.normalize();
         direction.multiply(-2);
         location.setDirection(direction);
-        float yaw = (float)Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
-        float pitch = (float)Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
+        float yaw = (float) Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
+        float pitch = (float) Math.toDegrees(Math.atan2(player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX())) - 90;
         location.setYaw(yaw);
         location.setPitch(pitch);
         if (positionY == 2) {

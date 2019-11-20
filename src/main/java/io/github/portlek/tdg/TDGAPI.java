@@ -229,17 +229,17 @@ public class TDGAPI {
             opened.put(player.getUniqueId(), new MckOpenMenu());
         }).register(tdg);
 
-        new ListenerBasic<>(PlayerArmorStandManipulateEvent.class, event -> {
-            if (entities.contains(event.getRightClicked())) {
-                event.setCancelled(true);
-            }
-        }).register(tdg);
+        new ListenerBasic<>(
+            PlayerArmorStandManipulateEvent.class,
+            event -> entities.contains(event.getRightClicked()),
+            event -> event.setCancelled(true)
+        ).register(tdg);
 
-        new ListenerBasic<>(EntityDamageEvent.class, event -> {
-            if (entities.contains(event.getEntity())) {
-                event.setCancelled(true);
-            }
-        }).register(tdg);
+        new ListenerBasic<>(
+            EntityDamageEvent.class,
+            event -> entities.contains(event.getEntity()),
+            event -> event.setCancelled(true)
+        ).register(tdg);
 
         new ListenerBasic<>(PlayerChangedWorldEvent.class, event -> {
             final OpenedMenu openedMenu = opened.getOrDefault(event.getPlayer().getUniqueId(), new MckOpenMenu());
@@ -273,35 +273,27 @@ public class TDGAPI {
             menu.open(player);
         }).register(tdg);
 
-        new ListenerBasic<>(PlayerInteractEvent.class, event -> {
-            final Player player = event.getPlayer();
+        new ListenerBasic<>(PlayerInteractEvent.class,
+            event -> event.getAction() == Action.LEFT_CLICK_AIR &&
+                opened.containsKey(event.getPlayer().getUniqueId()),
+            event ->
+                getIconOptional(
+                    event.getPlayer()
+                ).ifPresent(icon -> icon.acceptClick(event.getPlayer()))
+        ).register(tdg);
 
-            getIconOptional(
-                playerPredicate -> event.getAction() == Action.LEFT_CLICK_AIR &&
-                    opened.containsKey(playerPredicate.getUniqueId()),
-                player
-            ).ifPresent(icon -> icon.accept(player));
-        }).register(tdg);
-
-        new ListenerBasic<>(PlayerMoveEvent.class, event -> {
-            final Location to = event.getTo();
-            final Player player = event.getPlayer();
-
-            getIconOptional(
-                playerPredicate -> to != null &&
-                    event.getFrom().distance(to) != 0 &&
-                    opened.containsKey(playerPredicate.getUniqueId()),
-                player
-            ).ifPresent(icon -> icon.accept(player));
-        }).register(tdg);
+        new ListenerBasic<>(PlayerMoveEvent.class,
+            event -> event.getTo() != null &&
+                event.getFrom().distance(event.getTo()) != 0 &&
+                opened.containsKey(event.getPlayer().getUniqueId()),
+            event -> getIconOptional(
+                event.getPlayer()
+            ).ifPresent(icon -> icon.acceptHover(event.getPlayer()))
+        ).register(tdg);
     }
 
     @NotNull
-    private Optional<Icon> getIconOptional(@NotNull Predicate<Player> predicate, @NotNull Player player) {
-        if (!predicate.test(player)) {
-            return Optional.empty();
-        }
-
+    private Optional<Icon> getIconOptional(@NotNull Player player) {
         final Map.Entry<Icon, OpenedMenu> entry = findIconAndOpenedMenuByPlayer(player);
         final Icon icon = entry.getKey();
         final OpenedMenu openedMenu = entry.getValue();

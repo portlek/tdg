@@ -1,5 +1,7 @@
 package io.github.portlek.tdg.types;
 
+import org.cactoos.iterable.IterableOf;
+import org.cactoos.scalar.FirstOf;
 import org.jetbrains.annotations.NotNull;
 
 public enum IconType {
@@ -16,13 +18,17 @@ public enum IconType {
 	}
 
 	public static IconType fromString(@NotNull String name) {
-		for (IconType iconType : values()) {
-			if (iconType.type.equalsIgnoreCase(name)) {
-				return iconType;
-			}
+		try {
+			return new FirstOf<>(
+				s -> s.type.equalsIgnoreCase(name),
+				new IterableOf<>(
+					values()
+				),
+				() -> HEAD
+			).value();
+		} catch (Exception exception) {
+			return HEAD;
 		}
-
-		return HEAD;
 	}
 
 }

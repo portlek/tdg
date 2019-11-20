@@ -15,7 +15,6 @@ import java.util.List;
 
 public final class BasicOpenMenu implements OpenedMenu {
 
-
     @NotNull
     private final Menu menu;
 
