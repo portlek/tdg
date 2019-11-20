@@ -20,6 +20,7 @@ import io.github.portlek.tdg.types.IconType;
 import io.github.portlek.tdg.util.TargetMenu;
 import io.github.portlek.tdg.util.Targeted;
 import io.github.portlek.tdg.util.UpdateChecker;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -30,6 +31,7 @@ import org.cactoos.iterable.Mapped;
 import org.cactoos.list.ListOf;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
+import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -311,16 +313,33 @@ public class TDGAPI {
                 return;
             }
 
-            final Map.Entry<Icon, OpenedMenu> entry = findIconAndOpenedMenuByPlayer(player);
-            final Icon icon = entry.getKey();
-            final OpenedMenu openedMenu = entry.getValue();
+            getIconOptional(player).ifPresent(icon -> icon.accept(player));
+        }).register(tdg);
 
-            if (icon instanceof MckIcon || openedMenu instanceof MckOpenMenu) {
+        new ListenerBasic<>(PlayerMoveEvent.class, event -> {
+            final Location to = event.getTo();
+            final Location from = event.getFrom();
+            final Player player = event.getPlayer();
+
+            if (to == null || from.distance(to) == 0 || !opened.containsKey(player.getUniqueId())) {
                 return;
             }
 
-            icon.accept(player);
+            getIconOptional(player).ifPresent(icon -> icon.accept(player));
         }).register(tdg);
+    }
+
+    @NotNull
+    private Optional<Icon> getIconOptional(Player player) {
+        final Map.Entry<Icon, OpenedMenu> entry = findIconAndOpenedMenuByPlayer(player);
+        final Icon icon = entry.getKey();
+        final OpenedMenu openedMenu = entry.getValue();
+
+        if (icon instanceof MckIcon || openedMenu instanceof MckOpenMenu) {
+            return Optional.empty();
+        }
+
+        return Optional.of(icon);
     }
 
 }
