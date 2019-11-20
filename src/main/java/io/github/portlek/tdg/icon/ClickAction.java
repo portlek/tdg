@@ -5,6 +5,7 @@ import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.events.IconClickEvent;
 import io.github.portlek.tdg.types.ActionType;
+import io.github.portlek.tdg.util.XSound;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.cactoos.iterable.Filtered;
@@ -56,8 +57,11 @@ public final class ClickAction implements Consumer<IconClickEvent> {
                                 new Colored(s).value()
                             )));
                         case COMMAND:
-                            return new ClickAction(event -> {
-                                final List<String> commands = new Joined<>(
+                            return new ClickAction(event -> new Mapped<>(
+                                command -> new Colored(
+                                    command.replaceAll("%player%", event.getPlayer().getName())
+                                ).value(),
+                                new Joined<>(
                                     new ListOf<>(
                                         new Filtered<>(
                                             filtered -> !filtered.isEmpty(),
@@ -65,42 +69,34 @@ public final class ClickAction implements Consumer<IconClickEvent> {
                                         )
                                     ),
                                     yaml.getStringList(path + "value")
-                                );
+                                )
+                            ).forEach(s -> Bukkit.getScheduler().callSyncMethod(
+                                TDG.getAPI().tdg,
+                                () -> {
+                                    if (yaml.getBoolean(path + "as-player")) {
+                                        return event.getPlayer().performCommand(s);
+                                    }
 
-                                final boolean asPlayer = yaml.getBoolean(path + "as-player");
-                                final Player player = event.getPlayer();
-                                final Stream<String> cmd = commands
-                                    .stream()
-                                    .flatMap(s -> Stream.of(
-                                        new Colored(
-                                            s.replaceAll("%player%", player.getName())
-                                        ).value())
-                                    );
-                                
-                                if (asPlayer) {
-                                    cmd.forEach(command -> Bukkit.getScheduler().callSyncMethod(
-                                            TDG.getAPI().tdg,
-                                        () ->
-                                            player.performCommand(
-                                                command
-                                            )
-                                        )
-                                    );
-                                    return;
-                                }
-
-                                cmd.forEach(command -> Bukkit.getScheduler().callSyncMethod(
-                                        TDG.getAPI().tdg,
-                                    () -> Bukkit.getServer().dispatchCommand(
+                                    return Bukkit.dispatchCommand(
                                         Bukkit.getConsoleSender(),
-                                        command
-                                    )
-                                ));
-                            });
+                                        s
+                                    );
+                                }
+                            )));
                         case SOUND:
-                            return new ClickAction(event -> {});
+                            return new ClickAction(event -> XSound
+                                .matchXSound(
+                                    yaml.getString(path + "value").orElse("BLOCK_GLASS_BREAK"),
+                                    XSound.BLOCK_GLASS_BREAK
+                                ).playSound(
+                                    event.getPlayer(),
+                                    (float) yaml.getDouble(path + "volume"),
+                                    (float) yaml.getDouble(path + "pitch")
+                                ));
                         case OPEN_MENU:
-                            return new ClickAction(event -> {});
+                            return new ClickAction(event -> {
+                                
+                            });
                         case PARTICLES:
                             return new ClickAction(event -> {});
                         case CLOSE_MENU:

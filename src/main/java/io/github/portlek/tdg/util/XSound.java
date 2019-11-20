@@ -694,9 +694,9 @@ public enum XSound {
         return Arrays.stream(VALUES).anyMatch(s -> s.name().equals(formatted));
     }
 
-    @Nullable
-    public static XSound matchXSound(@NotNull String name) {
-        return Arrays.stream(VALUES).filter(s -> s.name().equals(format(name)) || s.matchAnyLegacy(name)).findFirst().orElse(null);
+    @NotNull
+    public static XSound matchXSound(@NotNull String name, @NotNull XSound fallback) {
+        return Arrays.stream(VALUES).filter(s -> s.name().equals(format(name)) || s.matchAnyLegacy(name)).findFirst().orElse(fallback);
     }
 
     public static void playSoundFromString(@NotNull Player player, @NotNull String sound) {
@@ -711,7 +711,7 @@ public enum XSound {
 
         try {
             final String name = split[0];
-            final XSound xType = matchXSound(name);
+            final XSound xType = matchXSound(name, BLOCK_GLASS_BREAK);
 
             if (xType == null) {
                 throw new IllegalArgumentException("Invalid sound name: " + name);
