@@ -10,8 +10,8 @@ public abstract class IconEvent extends MenuEvent {
     @NotNull
     private final LiveIcon liveIcon;
 
-    public IconEvent(@NotNull Player who, @NotNull OpenedMenu menu, @NotNull LiveIcon liveIcon) {
-        super(who, menu);
+    public IconEvent(@NotNull Player who, @NotNull OpenedMenu openedMenu, @NotNull LiveIcon liveIcon) {
+        super(who, openedMenu);
         this.liveIcon = liveIcon;
     }
 

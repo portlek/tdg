@@ -10,8 +10,8 @@ public class MenuCloseEvent extends MenuEvent implements Cancellable {
 
     private boolean cancelled;
 
-    public MenuCloseEvent(@NotNull Player who, @NotNull OpenedMenu menu) {
-        super(who, menu);
+    public MenuCloseEvent(@NotNull Player who, @NotNull OpenedMenu openedMenu) {
+        super(who, openedMenu);
     }
 
     @Override

@@ -1,14 +1,12 @@
 package io.github.portlek.tdg.menu;
 
-import io.github.portlek.tdg.Icon;
+import io.github.portlek.tdg.LiveIcon;
 import io.github.portlek.tdg.Menu;
 import io.github.portlek.tdg.OpenedMenu;
 import io.github.portlek.tdg.TDG;
-import io.github.portlek.tdg.api.MenuCloseEvent;
-import io.github.portlek.tdg.api.MenuOpenEvent;
+import io.github.portlek.tdg.events.MenuCloseEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -16,14 +14,18 @@ import java.util.List;
 public final class BasicOpenMenu implements OpenedMenu {
 
     @NotNull
+    private final Player player;
+
+    @NotNull
     private final Menu menu;
 
     @NotNull
-    private final Player player;
+    private final List<LiveIcon> liveIcons;
 
-    public BasicOpenMenu(@NotNull Menu menu, @NotNull Player player) {
-        this.menu = menu;
+    public BasicOpenMenu(@NotNull Player player, @NotNull Menu menu, @NotNull List<LiveIcon> liveIcons) {
         this.player = player;
+        this.menu = menu;
+        this.liveIcons = liveIcons;
     }
 
     @Override
@@ -36,41 +38,9 @@ public final class BasicOpenMenu implements OpenedMenu {
             return;
         }
 
-        getIcons().forEach(icon -> icon.closeFor(player));
-        accept(menuCloseEvent);
+        liveIcons.forEach(LiveIcon::close);
+        menu.accept(menuCloseEvent);
         TDG.getAPI().opened.remove(player.getUniqueId());
     }
 
-    @NotNull
-    @Override
-    public List<Icon> getIcons() {
-        return new ListOf<>();
-    }
-
-    @NotNull
-    @Override
-    public String getId() {
-        return menu.getId();
-    }
-
-    @NotNull
-    @Override
-    public List<String> getCommands() {
-        return menu.getCommands();
-    }
-
-    @Override
-    public void open(@NotNull Player player) {
-        menu.open(player);
-    }
-
-    @Override
-    public void accept(@NotNull MenuCloseEvent event) {
-        menu.accept(event);
-    }
-
-    @Override
-    public void accept(@NotNull MenuOpenEvent event) {
-        menu.accept(event);
-    }
 }

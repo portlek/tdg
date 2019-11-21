@@ -20,7 +20,6 @@ import io.github.portlek.tdg.types.IconType;
 import io.github.portlek.tdg.util.TargetMenu;
 import io.github.portlek.tdg.util.Targeted;
 import io.github.portlek.tdg.util.UpdateChecker;
-import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -31,12 +30,10 @@ import org.cactoos.iterable.Mapped;
 import org.cactoos.list.ListOf;
 import org.cactoos.map.MapEntry;
 import org.cactoos.map.MapOf;
-import org.graalvm.compiler.nodes.calc.IntegerDivRemNode;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
-import java.util.function.Predicate;
 
 public class TDGAPI {
 

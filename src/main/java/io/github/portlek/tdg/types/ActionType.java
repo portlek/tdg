@@ -2,7 +2,6 @@ package io.github.portlek.tdg.types;
 
 import org.cactoos.iterable.IterableOf;
 import org.cactoos.list.ListOf;
-import org.cactoos.list.Mapped;
 import org.cactoos.scalar.FirstOf;
 import org.jetbrains.annotations.NotNull;
 

@@ -22,6 +22,6 @@ public interface Menu {
 
     void accept(@NotNull MenuOpenEvent event);
 
-    void acceptClose(@NotNull MenuCloseEvent event);
+    void accept(@NotNull MenuCloseEvent event);
 
 }

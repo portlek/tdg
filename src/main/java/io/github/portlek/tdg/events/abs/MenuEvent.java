@@ -7,15 +7,15 @@ import org.jetbrains.annotations.NotNull;
 public abstract class MenuEvent extends TDGEvent {
 
     @NotNull
-    private final OpenedMenu menu;
+    private final OpenedMenu openedMenu;
 
-    public MenuEvent(@NotNull Player who, @NotNull OpenedMenu menu) {
+    public MenuEvent(@NotNull Player who, @NotNull OpenedMenu openedMenu) {
         super(who);
-        this.menu = menu;
+        this.openedMenu = openedMenu;
     }
 
     @NotNull
-    public OpenedMenu getMenu() {
-        return menu;
+    public OpenedMenu getOpenedMenu() {
+        return openedMenu;
     }
 }
