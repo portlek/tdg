@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class BasicOpenMenu implements OpenedMenu {
@@ -20,12 +21,11 @@ public final class BasicOpenMenu implements OpenedMenu {
     private final Menu menu;
 
     @NotNull
-    private final List<LiveIcon> liveIcons;
+    private final List<LiveIcon> liveIcons = new ArrayList<>();
 
-    public BasicOpenMenu(@NotNull Player player, @NotNull Menu menu, @NotNull List<LiveIcon> liveIcons) {
+    public BasicOpenMenu(@NotNull Player player, @NotNull Menu menu) {
         this.player = player;
         this.menu = menu;
-        this.liveIcons = liveIcons;
     }
 
     @Override
@@ -41,6 +41,11 @@ public final class BasicOpenMenu implements OpenedMenu {
         liveIcons.forEach(LiveIcon::close);
         menu.accept(menuCloseEvent);
         TDG.getAPI().opened.remove(player.getUniqueId());
+    }
+
+    @Override
+    public void addIcons(@NotNull List<LiveIcon> liveIcons) {
+        this.liveIcons.addAll(liveIcons);
     }
 
 }

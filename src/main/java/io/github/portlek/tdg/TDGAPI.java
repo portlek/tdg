@@ -4,6 +4,9 @@ import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.mcyaml.YamlOf;
 import io.github.portlek.mcyaml.mck.MckFileConfiguration;
+import io.github.portlek.tdg.events.MenuCloseEvent;
+import io.github.portlek.tdg.events.MenuOpenEvent;
+import io.github.portlek.tdg.events.abs.IconEvent;
 import io.github.portlek.tdg.file.Config;
 import io.github.portlek.tdg.file.ConfigOptions;
 import io.github.portlek.tdg.file.Language;
@@ -171,25 +174,27 @@ public class TDGAPI {
                         new BasicMenu(
                             menuId,
                             menusFile.getStringList("menus." + menuId + ".commands"),
-                            CloseAction.parse(menusFile, menuId),
-                            OpenAction.parse(menusFile, menuId),
+                            ActionBase.parse(menusFile, menuId),
+                            ActionBase.parse(menusFile, menuId),
                             menusFile.getInt("menus." + menuId + "distances.x1"),
                             menusFile.getInt("menus." + menuId + "distances.x2"),
                             menusFile.getInt("menus." + menuId + "distances.x4"),
                             menusFile.getInt("menus." + menuId + "distances.x5"),
                             new ListOf<>(
                                 new Mapped<>(
-                                    iconId -> new BasicIcon(
+                                    iconId -> new BasicIcon<>(
                                         iconId,
-                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".name").orElse(""),
+                                        new Colored(
+                                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".name").orElse("")
+                                        ).value(),
                                         IconType.fromString(
                                             menusFile.getString("menus." + menuId + ".icons." + iconId + ".icon-type").orElse("")
                                         ),
                                         menusFile.getString("menus." + menuId + ".icons." + iconId + ".material").orElse(""),
                                         menusFile.getByte("menus." + menuId + ".icons." + iconId + ".material-data"),
+                                        ActionBase.parse(menusFile, menuId, iconId),
                                         menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-x"),
-                                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-y"),
-                                        ClickAction.parse(menusFile, menuId, iconId)
+                                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-y")
                                     ),
                                     menusFile.getSection("menus." + menuId + ".icons").getKeys(false)
                                 )

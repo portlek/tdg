@@ -1,11 +1,15 @@
 package io.github.portlek.tdg.icon;
 
+import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.tdg.ActionBase;
 import io.github.portlek.tdg.Icon;
+import io.github.portlek.tdg.LiveIcon;
 import io.github.portlek.tdg.events.abs.IconEvent;
 import io.github.portlek.tdg.types.IconType;
+import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -52,9 +56,42 @@ public final class BasicIcon<T extends IconEvent> implements Icon {
         this.positionY = positionY;
     }
 
+    @NotNull
     @Override
-    public void openFor(@NotNull Player player) {
+    public LiveIcon createFor(@NotNull Player player) {
+        final Location location = player.getLocation();
+        final Vector playerDirection = player.getLocation().getDirection();
+        final Vector direction = playerDirection.normalize();
 
+        direction.multiply(-2);
+        location.setDirection(direction);
+
+        final float yaw = (float) Math.toDegrees(
+            Math.atan2(
+                player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX()
+            )
+        ) - 90;
+        final float pitch = (float) Math.toDegrees(
+            Math.atan2(
+                player.getLocation().getZ() - location.getZ(), player.getLocation().getX() - location.getX()
+            )
+        ) - 90;
+
+        location.setYaw(yaw);
+        location.setPitch(pitch);
+
+        if (positionY == 2) {
+            location.add(0.0, 1.5, 0.0);
+        }
+
+        final ArmorStand armorStand = player.getWorld().spawn(location, ArmorStand.class);
+        final LiveIcon liveIcon = new BasicLiveIcon(this, armorStand, player);
+
+        armorStand.setVisible(false);
+        armorStand.setCustomName(new Colored(name).value());
+        armorStand.setCustomNameVisible(true);
+
+        return liveIcon;
     }
 
 }

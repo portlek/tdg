@@ -6,6 +6,7 @@ menus:
       sound-action-1:
         action: SOUND
         value: 'ENTITY_ENDERMAN_TELEPORT'
+        pitch: 0
       message-action-1:
         action: MESSAGE
         value:

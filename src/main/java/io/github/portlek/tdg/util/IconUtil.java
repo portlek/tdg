@@ -5,7 +5,6 @@ import io.github.portlek.tdg.TDG;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -69,14 +68,6 @@ public final class IconUtil {
                         entityHider.hideEntity(hide, a);
                     }
 
-                    if (new Targeted(player).value() == a) {
-                        a.setGravity(true);
-                        a.setVelocity(player.getLocation().toVector().subtract(a.getLocation().toVector()).multiply(0.1));
-                        a.teleport(locb);
-                    } else {
-                        a.setGravity(false);
-                    }
-
                     if (player.getLocation().distanceSquared(a.getLocation()) >= 120) {
                         view.remove(player);
                     }
@@ -138,28 +129,26 @@ public final class IconUtil {
                     a.teleport(locb);
                     a.setFireTicks(0);
                     toHide.clear();
+
                     for (Player all : Bukkit.getOnlinePlayers()) {
                         toHide.add(all);
                         toHide.remove(player);
                     }
+
                     for (Player hide : toHide) {
                         entityHider.hideEntity(hide, a);
                     }
-                    if (new Targeted(player).value() == a) {
-                        a.setGravity(true);
-                        a.setVelocity(player.getLocation().toVector().subtract(a.getLocation().toVector()).multiply(0.1));
-                        a.teleport(locb);
-                    } else {
-                        a.setGravity(false);
-                    }
+
                     if (player.getLocation().distanceSquared(a.getLocation()) >= 120) {
                         view.remove(player);
                     }
+
                     if (!player.isOnline()) {
                         TDG.getAPI().entities.remove(a);
                         a.remove();
                         view.remove(player);
                     }
+
                     if (!view.contains(player)) {
                         TDG.getAPI().entities.remove(a);
                         a.remove();
@@ -226,19 +215,6 @@ public final class IconUtil {
                     for (Player hide : toHide) {
                         entityHider.hideEntity(hide, a);
                         entityHider.hideEntity(hide, a2);
-                    }
-
-                    final Entity targetd = new Targeted(player).value();
-                    if (targetd == a || targetd == a2) {
-                        a.setGravity(true);
-                        a.setVelocity(player.getLocation().toVector().subtract(a.getLocation().toVector()).multiply(0.1));
-                        a.teleport(locb);
-                        a2.setGravity(true);
-                        a2.setVelocity(player.getLocation().toVector().subtract(a.getLocation().toVector()).multiply(0.1));
-                        a2.teleport(locs);
-                    } else {
-                        a.setGravity(false);
-                        a2.setGravity(false);
                     }
 
                     if (player.getLocation().distanceSquared(a.getLocation()) >= 120) {
@@ -318,19 +294,6 @@ public final class IconUtil {
                     for (Player hide : toHide) {
                         entityHider.hideEntity(hide, a);
                         entityHider.hideEntity(hide, a2);
-                    }
-
-                    final Entity targetd = new Targeted(player).value();
-                    if (targetd == a || targetd == a2) {
-                        a.setGravity(true);
-                        a.setVelocity(player.getLocation().toVector().subtract(a.getLocation().toVector()).multiply(0.1));
-                        a.teleport(locb);
-                        a2.setGravity(true);
-                        a2.setVelocity(player.getLocation().toVector().subtract(a.getLocation().toVector()).multiply(0.1));
-                        a2.teleport(locs);
-                    } else {
-                        a.setGravity(false);
-                        a2.setGravity(false);
                     }
 
                     if (player.getLocation().distanceSquared(a.getLocation()) >= 120) {

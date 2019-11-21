@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 
 public interface Icon {
 
-    void openFor(@NotNull Player player);
+    @NotNull
+    LiveIcon createFor(@NotNull Player player);
 
 }
