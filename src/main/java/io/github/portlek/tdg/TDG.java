@@ -36,8 +36,9 @@ public final class TDG extends JavaPlugin {
     }
 
     public static TDGAPI getAPI() {
-        if (api == null)
+        if (api == null) {
             throw new RuntimeException("TDG cannot use before start!");
+        }
         return api;
     }
 
