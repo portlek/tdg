@@ -1,7 +1,8 @@
-package io.github.portlek.tdg;
+package io.github.portlek.tdg.action;
 
 import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
+import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.events.abs.MenuEvent;
 import io.github.portlek.tdg.particle.Particles;
 import io.github.portlek.tdg.types.ActionType;

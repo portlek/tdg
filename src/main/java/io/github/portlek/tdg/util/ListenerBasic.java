@@ -1,4 +1,4 @@
-package io.github.portlek.tdg;
+package io.github.portlek.tdg.util;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Event;

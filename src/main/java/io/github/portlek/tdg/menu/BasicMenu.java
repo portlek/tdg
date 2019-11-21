@@ -1,6 +1,10 @@
 package io.github.portlek.tdg.menu;
 
-import io.github.portlek.tdg.*;
+import io.github.portlek.tdg.Icon;
+import io.github.portlek.tdg.Menu;
+import io.github.portlek.tdg.OpenedMenu;
+import io.github.portlek.tdg.TDG;
+import io.github.portlek.tdg.action.ActionBase;
 import io.github.portlek.tdg.events.MenuCloseEvent;
 import io.github.portlek.tdg.events.MenuOpenEvent;
 import org.bukkit.Bukkit;
