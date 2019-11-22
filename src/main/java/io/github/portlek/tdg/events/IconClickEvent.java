@@ -11,9 +11,8 @@ public final class IconClickEvent extends IconEvent implements Cancellable {
 
     private boolean cancelled;
 
-    public IconClickEvent(@NotNull Player who, @NotNull OpenedMenu menu, @NotNull LiveIcon liveIcon, boolean cancelled) {
+    public IconClickEvent(@NotNull Player who, @NotNull OpenedMenu menu, @NotNull LiveIcon liveIcon) {
         super(who, menu, liveIcon);
-        this.cancelled = cancelled;
     }
 
     @Override

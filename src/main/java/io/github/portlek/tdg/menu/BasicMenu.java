@@ -7,7 +7,11 @@ import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.action.ActionBase;
 import io.github.portlek.tdg.events.MenuCloseEvent;
 import io.github.portlek.tdg.events.MenuOpenEvent;
+import io.github.portlek.tdg.util.Metadata;
+import io.github.portlek.tdg.util.Utils;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.cactoos.list.Mapped;
 import org.jetbrains.annotations.NotNull;
@@ -54,26 +58,18 @@ public final class BasicMenu implements Menu {
         this.icons = icons;
     }
 
-    @NotNull
     @Override
-    public String getId() {
-        return id;
-    }
-
-    @NotNull
-    @Override
-    public List<String> getCommands() {
-        return commands;
-    }
-
-    @NotNull
-    @Override
-    public List<Icon> getIcons() {
-        return icons;
+    public boolean hasPermission(@NotNull Player player) {
+        return player.hasPermission("tdg.open." + id);
     }
 
     @Override
-    public void open(@NotNull Player player) {
+    public boolean is(@NotNull String command) {
+        return commands.contains(command);
+    }
+
+    @Override
+    public void open(@NotNull Player player, boolean changed) {
         final OpenedMenu openedMenu = new BasicOpenMenu(player, this);
         final MenuOpenEvent menuOpenEvent = new MenuOpenEvent(player, openedMenu);
 
@@ -83,9 +79,29 @@ public final class BasicMenu implements Menu {
             return;
         }
 
+        for (Entity en : player.getWorld().getEntities()) {
+            if (Metadata.hasKey(en, player.getName())) {
+                en.remove();
+                TDG.getAPI().entities.remove(en);
+            }
+        }
+
+        final Location location;
+
+        if (changed) {
+            location = TDG.getAPI().lastLocations.get(player);
+        } else {
+            location = Utils.getBFLoc(player.getLocation(), 3.5);
+            TDG.getAPI().lastLocations.put(player, location);
+        }
+
         openedMenu.addIcons(
             new Mapped<>(
-                icon -> icon.createFor(player),
+                icon -> icon.createFor(
+                    player,
+                    (positionX, positionY) -> Utils.setPosition(location, positionX, positionY, x1, x2, x4, x5),
+                    changed
+                ),
                 icons
             )
         );

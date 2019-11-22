@@ -5,20 +5,13 @@ import io.github.portlek.tdg.events.MenuOpenEvent;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
 public interface Menu {
 
-    @NotNull
-    String getId();
+    boolean hasPermission(@NotNull Player player);
 
-    @NotNull
-    List<String> getCommands();
+    boolean is(@NotNull String command);
 
-    @NotNull
-    List<Icon> getIcons();
-
-    void open(@NotNull Player player);
+    void open(@NotNull Player player, boolean changed);
 
     void accept(@NotNull MenuOpenEvent event);
 

@@ -116,7 +116,7 @@ public final class ActionBase<T extends MenuEvent> {
                             case OPEN_MENU:
                                 return new ActionBase<>(event -> yaml.getString(actionPath + "value")
                                     .ifPresent(s ->
-                                        TDG.getAPI().findMenuById(s).open(event.getPlayer())
+                                        TDG.getAPI().findMenuById(s).open(event.getPlayer(), true)
                                     )
                                 );
                             case PARTICLES:

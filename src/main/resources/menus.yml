@@ -124,8 +124,6 @@ menus:
       player-head:
         name: '&e%player%'
         icon-type: HEAD
-        material: none
-        material-data: 0
         value: '%player%'
         positionX: 3
         positionY: 2
@@ -142,8 +140,6 @@ menus:
       close-test:
         name: '&cClose menu'
         icon-type: HEAD
-        material: none
-        material-data: 0
         value: 'http://textures.minecraft.net/texture/5a6787ba32564e7c2f3a0ce64498ecbb23b89845e5a66b5cec7736f729ed37'
         positionX: 5
         positionY: 2

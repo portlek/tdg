@@ -5,7 +5,9 @@ import io.github.portlek.tdg.Menu;
 import io.github.portlek.tdg.OpenedMenu;
 import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.events.MenuCloseEvent;
+import io.github.portlek.tdg.mock.MckLiveIcon;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -26,6 +28,18 @@ public final class BasicOpenMenu implements OpenedMenu {
     public BasicOpenMenu(@NotNull Player player, @NotNull Menu menu) {
         this.player = player;
         this.menu = menu;
+    }
+
+    @NotNull
+    @Override
+    public LiveIcon findByEntity(@NotNull Entity entity) {
+        for (LiveIcon liveIcon : liveIcons) {
+            if (liveIcon.is(entity)) {
+                return liveIcon;
+            }
+        }
+
+        return new MckLiveIcon();
     }
 
     @Override

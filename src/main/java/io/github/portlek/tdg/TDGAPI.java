@@ -5,6 +5,8 @@ import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.mcyaml.YamlOf;
 import io.github.portlek.mcyaml.mck.MckFileConfiguration;
 import io.github.portlek.tdg.action.ActionBase;
+import io.github.portlek.tdg.events.IconClickEvent;
+import io.github.portlek.tdg.events.IconHoverEvent;
 import io.github.portlek.tdg.file.Config;
 import io.github.portlek.tdg.file.ConfigOptions;
 import io.github.portlek.tdg.file.Language;
@@ -12,6 +14,7 @@ import io.github.portlek.tdg.file.LanguageOptions;
 import io.github.portlek.tdg.icon.BasicIcon;
 import io.github.portlek.tdg.menu.BasicMenu;
 import io.github.portlek.tdg.mock.MckIcon;
+import io.github.portlek.tdg.mock.MckLiveIcon;
 import io.github.portlek.tdg.mock.MckMenu;
 import io.github.portlek.tdg.mock.MckOpenMenu;
 import io.github.portlek.tdg.types.IconType;
@@ -19,6 +22,7 @@ import io.github.portlek.tdg.util.ListenerBasic;
 import io.github.portlek.tdg.util.TargetMenu;
 import io.github.portlek.tdg.util.Targeted;
 import io.github.portlek.tdg.util.UpdateChecker;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
@@ -45,6 +49,11 @@ public class TDGAPI {
      * player uuid and opened menu
      */
     public final Map<UUID, OpenedMenu> opened = new HashMap<>();
+
+    /**
+     * player and last location of the player
+     */
+    public final Map<Player, Location> lastLocations = new HashMap<>();
 
     public final List<Entity> entities = new ArrayList<>();
 
@@ -91,20 +100,9 @@ public class TDGAPI {
     }
 
     @NotNull
-    public Icon findIconByEntity(@NotNull OpenedMenu openedMenu, @NotNull Entity entity) {
-        for (Icon icon : openedMenu.getIcons()) {
-            if (icon.is(entity)) {
-                return icon;
-            }
-        }
-
-        return new MckIcon();
-    }
-
-    @NotNull
     public Menu findMenuByCommand(@NotNull String command) {
         for (Menu menu : menus.values()) {
-            if (menu.getCommands().contains(command)) {
+            if (menu.is(command)) {
                 return menu;
             }
         }
@@ -114,7 +112,7 @@ public class TDGAPI {
 
     @NotNull
     public Menu findMenuById(@NotNull String id) {
-        return menus.getOrDefault(id, new MckOpenMenu());
+        return menus.getOrDefault(id, new MckMenu());
     }
 
     @NotNull
@@ -188,6 +186,7 @@ public class TDGAPI {
                                         ),
                                         menusFile.getString("menus." + menuId + ".icons." + iconId + ".material").orElse(""),
                                         menusFile.getByte("menus." + menuId + ".icons." + iconId + ".material-data"),
+                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".value").orElse(""),
                                         ActionBase.parse(menusFile, menuId, iconId),
                                         menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-x"),
                                         menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-y")
@@ -263,12 +262,12 @@ public class TDGAPI {
                 return;
             }
 
-            if (!player.hasPermission("tdg.open." + menu.getId())) {
+            if (!menu.hasPermission(player)) {
                 player.sendMessage(getLanguage().errorPermission);
                 return;
             }
 
-            menu.open(player);
+            menu.open(player, false);
         }).register(tdg);
 
         new ListenerBasic<>(PlayerInteractEvent.class,
@@ -277,7 +276,15 @@ public class TDGAPI {
             event ->
                 getIconOptional(
                     event.getPlayer()
-                ).ifPresent(icon -> icon.acceptClick(event.getPlayer()))
+                ).ifPresent(entry ->
+                    entry.getValue().accept(
+                        new IconClickEvent(
+                            event.getPlayer(),
+                            entry.getKey(),
+                            entry.getValue()
+                        )
+                    )
+                )
         ).register(tdg);
 
         new ListenerBasic<>(PlayerMoveEvent.class,
@@ -286,55 +293,60 @@ public class TDGAPI {
                 opened.containsKey(event.getPlayer().getUniqueId()),
             event -> getIconOptional(
                 event.getPlayer()
-            ).ifPresent(icon -> icon.acceptHover(event.getPlayer()))
+            ).ifPresent(entry ->
+                entry.getValue().accept(
+                    new IconHoverEvent(
+                        event.getPlayer(),
+                        entry.getKey(),
+                        entry.getValue()
+                    )
+                )
+            )
         ).register(tdg);
     }
 
     @NotNull
-    private Optional<Icon> getIconOptional(@NotNull Player player) {
-        final Map.Entry<Icon, OpenedMenu> entry = findIconAndOpenedMenuByPlayer(player);
-        final Icon icon = entry.getKey();
+    private Optional<Map.Entry<OpenedMenu, LiveIcon>> getIconOptional(@NotNull Player player) {
+        final Map.Entry<LiveIcon, OpenedMenu> entry = findIconAndOpenedMenuByPlayer(player);
+        final LiveIcon liveIcon = entry.getKey();
         final OpenedMenu openedMenu = entry.getValue();
 
-        if (icon instanceof MckIcon || openedMenu instanceof MckOpenMenu) {
+        if (liveIcon instanceof MckLiveIcon || openedMenu instanceof MckOpenMenu) {
             return Optional.empty();
         }
 
-        return Optional.of(icon);
+        return Optional.of(
+            new MapEntry<>(
+                openedMenu,
+                liveIcon
+            )
+        );
     }
 
     @NotNull
-    private Map.Entry<Icon, OpenedMenu> findIconAndOpenedMenuByPlayer(@NotNull Player player) {
+    private Map.Entry<LiveIcon, OpenedMenu> findIconAndOpenedMenuByPlayer(@NotNull Player player) {
         final Entity targeted = new Targeted(player).value();
-
-        if (targeted.equals(player)) {
-            return new MapEntry<>(
-                new MckIcon(),
-                new MckOpenMenu()
-            );
-        }
-
-        final OpenedMenu menu = new TargetMenu(
+        final OpenedMenu openedMenu = new TargetMenu(
             targeted
         ).value();
 
-        if (menu instanceof MckOpenMenu) {
+        if (openedMenu instanceof MckOpenMenu) {
             return new MapEntry<>(
-                new MckIcon(),
+                new MckLiveIcon(),
                 new MckOpenMenu()
             );
         }
 
-        final Icon icon = findIconByEntity(menu, targeted);
+        final LiveIcon liveIcon = openedMenu.findByEntity(targeted);
 
-        if (icon instanceof MckIcon) {
+        if (liveIcon instanceof MckLiveIcon) {
             return new MapEntry<>(
-                new MckIcon(),
+                new MckLiveIcon(),
                 new MckOpenMenu()
             );
         }
 
-        return new MapEntry<>(icon, menu);
+        return new MapEntry<>(liveIcon, openedMenu);
     }
 
 }

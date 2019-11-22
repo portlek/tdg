@@ -11,9 +11,8 @@ public final class IconHoverEvent extends IconEvent implements Cancellable {
 
     private boolean cancelled;
 
-    public IconHoverEvent(@NotNull Player who, @NotNull OpenedMenu menu, @NotNull LiveIcon liveIcon, boolean cancelled) {
+    public IconHoverEvent(@NotNull Player who, @NotNull OpenedMenu menu, @NotNull LiveIcon liveIcon) {
         super(who, menu, liveIcon);
-        this.cancelled = cancelled;
     }
 
     @Override

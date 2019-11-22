@@ -122,7 +122,7 @@ public class TDGCommand implements TabExecutor {
                 return true;
             }
 
-            menu.open(player);
+            menu.open(player, false);
 
             return true;
         }

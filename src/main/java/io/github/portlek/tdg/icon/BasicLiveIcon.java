@@ -9,20 +9,22 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public final class BasicLiveIcon implements LiveIcon {
 
     @NotNull
     private final Icon icon;
 
     @NotNull
-    private final ArmorStand armorStand;
+    private final List<ArmorStand> armorStands;
 
     @NotNull
     private final Player viewer;
 
-    public BasicLiveIcon(@NotNull Icon icon, @NotNull ArmorStand armorStand, @NotNull Player viewer) {
+    public BasicLiveIcon(@NotNull Icon icon, @NotNull List<ArmorStand> armorStands, @NotNull Player viewer) {
         this.icon = icon;
-        this.armorStand = armorStand;
+        this.armorStands = armorStands;
         this.viewer = viewer;
     }
 

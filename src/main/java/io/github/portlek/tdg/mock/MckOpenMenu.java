@@ -1,8 +1,7 @@
 package io.github.portlek.tdg.mock;
 
-import io.github.portlek.tdg.Icon;
+import io.github.portlek.tdg.LiveIcon;
 import io.github.portlek.tdg.OpenedMenu;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -14,27 +13,7 @@ public final class MckOpenMenu implements OpenedMenu {
     }
 
     @Override
-    public boolean isOpen() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public @NotNull List<Icon> getIcons() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public @NotNull String getId() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public @NotNull List<String> getCommands() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public @NotNull OpenedMenu open(@NotNull Player player) {
+    public void addIcons(@NotNull List<LiveIcon> liveIcons) {
         throw new UnsupportedOperationException();
     }
 }

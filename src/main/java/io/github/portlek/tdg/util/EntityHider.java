@@ -18,15 +18,17 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.plugin.Plugin;
+import org.cactoos.list.ListOf;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
 import java.util.Map;
 
 import static com.comphenix.protocol.PacketType.Play.Server.*;
 
-public class EntityHider implements Listener {
-    protected Table<Integer, Integer, Boolean> observerEntityMap = HashBasedTable.create();
+public final class EntityHider implements Listener {
+
+    protected final Table<Integer, Integer, Boolean> observerEntityMap = HashBasedTable.create();
     
     // Packets that update remote player entities
     @SuppressWarnings("deprecation")
@@ -55,14 +57,18 @@ public class EntityHider implements Listener {
          */
         BLACKLIST,
     }
-    
+
     private ProtocolManager manager;
-    
+
     // Listeners
-    private Listener bukkitListener;
-    private PacketAdapter protocolListener;
+    @NotNull
+    private final Listener bukkitListener;
+
+    @NotNull
+    private final PacketAdapter protocolListener;
     
     // Current policy
+    @NotNull
     protected final Policy policy;
     
     /**
@@ -70,7 +76,7 @@ public class EntityHider implements Listener {
      * @param plugin - the plugin that controls this entity hider.
      * @param policy - the default visibility policy.
      */
-    public EntityHider(Plugin plugin, Policy policy) {
+    public EntityHider(@NotNull Plugin plugin, @NotNull Policy policy) {
         Preconditions.checkNotNull(plugin, "plugin cannot be NULL.");
 
         // Save policy
@@ -88,14 +94,14 @@ public class EntityHider implements Listener {
      * Construct a new entity hider.
      * @param plugin - the plugin that controls this entity hider.
      */
-    public EntityHider(Plugin plugin) {
+    public EntityHider(@NotNull Plugin plugin) {
         this(plugin, Policy.BLACKLIST);
     }
     
     /**
      * Set the visibility status of a given entity for a particular observer.
      * @param observer - the observer player.
-     * @param entity - ID of the entity that will be hidden or made visible.
+     * @param entityID - ID of the entity that will be hidden or made visible.
      * @param visible - TRUE if the entity should be made visible, FALSE if not.
      * @return TRUE if the entity was visible before this method call, FALSE otherwise.
      */
@@ -147,7 +153,7 @@ public class EntityHider implements Listener {
         // If we are using a whitelist, presence means visibility - if not, the opposite is the case
         boolean presence = getMembership(observer, entityID);
         
-        return policy == Policy.WHITELIST ? presence : !presence; 
+        return (policy == Policy.WHITELIST) == presence;
     }
     
     /**
@@ -244,7 +250,7 @@ public class EntityHider implements Listener {
         
         // Resend packets
         if (manager != null && hiddenBefore) {
-            manager.updateEntity(entity, Arrays.asList(observer));
+            manager.updateEntity(entity, new ListOf<>(observer));
         }
         return hiddenBefore;
     }
