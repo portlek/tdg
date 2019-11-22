@@ -1,6 +1,5 @@
 package io.github.portlek.tdg.icon;
 
-import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.tdg.Icon;
 import io.github.portlek.tdg.LiveIcon;
 import io.github.portlek.tdg.action.ActionBase;
@@ -88,7 +87,7 @@ public final class BasicIcon<T extends IconEvent> implements Icon {
         final LiveIcon liveIcon = new BasicLiveIcon(this, armorStand, player);
 
         armorStand.setVisible(false);
-        armorStand.setCustomName(new Colored(name).value());
+        armorStand.setCustomName(name);
         armorStand.setCustomNameVisible(true);
 
         // TODO: 21/11/2019
