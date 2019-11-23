@@ -24,9 +24,10 @@ public class ConfigOptions implements Scalar<Config> {
         final String pluginPrefix = new Colored(yaml.getString("Plugin-Prefix").orElse("&6[&a&lTDG&6]")).value();
         final int menuCooldown = yaml.getInt("Menu-Cooldown");
         boolean placeholderAPI = yaml.getBoolean("Hooks.PlaceholderAPI");
+        final PAPIHook papiHook = new PAPIHook();
 
         if (placeholderAPI) {
-            placeholderAPI = new PAPIHook().initiate();
+            placeholderAPI = papiHook.initiate();
         }
 
         return new Config(
@@ -34,7 +35,8 @@ public class ConfigOptions implements Scalar<Config> {
             updateCheck,
             pluginPrefix,
             menuCooldown,
-            placeholderAPI
+            placeholderAPI,
+            papiHook
         );
     }
 

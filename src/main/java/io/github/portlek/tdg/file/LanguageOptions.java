@@ -32,6 +32,7 @@ public final class LanguageOptions implements Scalar<Language> {
         final String menuNotFound = c(yaml.getString("error.menu-not-found").orElse(""));
         final String invalidArgument = c(yaml.getString("error.invalid-argument").orElse(""));
         final String inGameCommand = c(yaml.getString("error.in-game-command").orElse(""));
+        final String playerNotFound = c(yaml.getString("error.player-not-found").orElse(""));
 
         // general
         final String availableMenus = c(yaml.getString("general.available-menus").orElse(""));
@@ -51,6 +52,7 @@ public final class LanguageOptions implements Scalar<Language> {
             menuNotFound,
             invalidArgument,
             inGameCommand,
+            playerNotFound,
             availableMenus,
             reloadComplete,
             pluginVersion,

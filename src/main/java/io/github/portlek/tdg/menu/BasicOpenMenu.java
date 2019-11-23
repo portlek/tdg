@@ -1,10 +1,11 @@
 package io.github.portlek.tdg.menu;
 
 import io.github.portlek.tdg.LiveIcon;
-import io.github.portlek.tdg.Menu;
 import io.github.portlek.tdg.OpenedMenu;
 import io.github.portlek.tdg.TDG;
+import io.github.portlek.tdg.Target;
 import io.github.portlek.tdg.events.MenuCloseEvent;
+import io.github.portlek.tdg.events.MenuOpenEvent;
 import io.github.portlek.tdg.mock.MckLiveIcon;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -17,17 +18,22 @@ import java.util.List;
 public final class BasicOpenMenu implements OpenedMenu {
 
     @NotNull
+    private final List<LiveIcon> liveIcons = new ArrayList<>();
+
+    @NotNull
     private final Player player;
 
     @NotNull
-    private final Menu menu;
+    private final List<Target<MenuCloseEvent>> closeTargets;
 
     @NotNull
-    private final List<LiveIcon> liveIcons = new ArrayList<>();
+    private final List<Target<MenuOpenEvent>> openTargets;
 
-    public BasicOpenMenu(@NotNull Player player, @NotNull Menu menu) {
+    public BasicOpenMenu(@NotNull Player player, @NotNull List<Target<MenuCloseEvent>> closeTargets,
+                         @NotNull List<Target<MenuOpenEvent>> openTargets) {
         this.player = player;
-        this.menu = menu;
+        this.closeTargets = closeTargets;
+        this.openTargets = openTargets;
     }
 
     @NotNull
@@ -53,7 +59,7 @@ public final class BasicOpenMenu implements OpenedMenu {
         }
 
         liveIcons.forEach(LiveIcon::close);
-        menu.accept(menuCloseEvent);
+        accept(menuCloseEvent);
         TDG.getAPI().opened.remove(player.getUniqueId());
     }
 
@@ -62,4 +68,13 @@ public final class BasicOpenMenu implements OpenedMenu {
         this.liveIcons.addAll(liveIcons);
     }
 
+    @Override
+    public void accept(@NotNull MenuOpenEvent event) {
+        openTargets.forEach(target -> target.handle(event));
+    }
+
+    @Override
+    public void accept(@NotNull MenuCloseEvent event) {
+        closeTargets.forEach(target -> target.handle(event));
+    }
 }

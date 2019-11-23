@@ -4,6 +4,9 @@ menus:
       - 'tdgexample'
     open-actions:
       sound-action-1:
+        requirements:
+          perms:
+            - 'tdg.openeffect'
         action: SOUND
         value: 'ENTITY_ENDERMAN_TELEPORT'
         pitch: 0
@@ -35,118 +38,75 @@ menus:
         material-data: 0
         position-x: 1
         position-y: 1
+        hover-actions:
+          hover-action-1:
+            action: MESSAGE
+            value:
+              - '&eHey, &a%player%&e, you hovered the icon!'
+            requirements:
+              permissions:
+                - 'tdg.hovereffect'
         click-actions:
           click-sound:
+            requirements:
+              click-type:
+                - ANY
+              permissions:
+                - 'tdg.clicksound'
             action: SOUND
             value: 'CHICKEN_EGG_POP'
             pitch: 0
           click-message:
+            requirements:
+              click-type: LEFT
             action: MESSAGE
             value:
-              - '&eHey, &a%player%&e, this is a test message!'
+              - '&eHey, &a%player%&e, you clicked left!'
       free-diamonds:
         name: '&bFree diamonds!'
         icon-type: ITEM
         material: DIAMOND
         material-data: 0
-        positionX: 2
-        positionY: 1
-        click-sound:
-          enabled: true
-          sound: 'CHICKEN_EGG_POP'
-          pitch: 0
-        click-action:
-          action: COMMAND
-          value: 'give %player% diamond 1'
-          executefrom: console
+        position-x: 2
+        position-y: 1
       run-command-as-op:
         name: '&9Command as op'
         icon-type: TOOL
         material: IRON_AXE
         material-data: 0
-        positionX: 3
-        positionY: 1
-        click-sound:
-          enabled: true
-          sound: 'CHICKEN_EGG_POP'
-          pitch: 0
-        click-action:
-          action: COMMAND
-          value: 'op: say Hello World!'
-          executefrom: player
+        position-x: 3
+        position-y: 1
       command-test:
         name: '&fCommand test'
         icon-type: BLOCK
         material: BOOKSHELF
         material-data: 0
-        positionX: 4
-        positionY: 1
-        click-sound:
-          enabled: true
-          sound: 'CHICKEN_EGG_POP'
-          pitch: 0
-        click-action:
-          action: COMMAND
-          value: 'commandtoexecutehere'
-          executefrom: player
+        position-x: 4
+        position-y: 1
       open-menu-test:
         name: '&aSocials'
         icon-type: HEAD
         material: none
         material-data: 0
         value: 'http://textures.minecraft.net/texture/b1dd4fe4a429abd665dfdb3e21321d6efa6a6b5e7b956db9c5d59c9efab25'
-        positionX: 5
-        positionY: 1
-        click-sound:
-          enabled: true
-          sound: 'CHICKEN_EGG_POP'
-          pitch: 0
-        click-action:
-          action: OPEN_MENU
-          value: 'socials'
+        position-x: 5
+        position-y: 1
       cooldown-test:
         name: '&5Cooldown test'
         icon-type: TOOL
         material: BLAZE_ROD
         material-data: 0
-        positionX: 1
-        positionY: 2
-        click-cooldown:
-          enabled: true
-          time: 3
-        click-sound:
-          enabled: true
-          sound: 'CHICKEN_EGG_POP'
-          pitch: 0
-        click-action:
-          action: MESSAGE
-          value: '&aClick this icon fast and you will see a cooldown! :)'
+        position-x: 1
+        position-y: 2
       player-head:
         name: '&e%player%'
         icon-type: HEAD
         value: '%player%'
-        positionX: 3
-        positionY: 2
-        select-action:
-          action: ADD_TEXT
-          value: '&eThis is your head!'
-        click-sound:
-          enabled: true
-          sound: 'CHICKEN_EGG_POP'
-          pitch: 0
-        click-action:
-          action: MESSAGE
-          value: '&aYou just clicked your head!'
+        position-x: 3
+        position-y: 2
       close-test:
         name: '&cClose menu'
         icon-type: HEAD
         value: 'http://textures.minecraft.net/texture/5a6787ba32564e7c2f3a0ce64498ecbb23b89845e5a66b5cec7736f729ed37'
-        positionX: 5
-        positionY: 2
-        click-sound:
-          enabled: true
-          sound: 'CHICKEN_EGG_POP'
-          pitch: 0
-        click-action:
-          action: CLOSE
-          value: ''
+        position-x: 5
+        position-y: 2

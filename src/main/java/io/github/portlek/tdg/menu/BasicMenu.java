@@ -1,10 +1,6 @@
 package io.github.portlek.tdg.menu;
 
-import io.github.portlek.tdg.Icon;
-import io.github.portlek.tdg.Menu;
-import io.github.portlek.tdg.OpenedMenu;
-import io.github.portlek.tdg.TDG;
-import io.github.portlek.tdg.action.ActionBase;
+import io.github.portlek.tdg.*;
 import io.github.portlek.tdg.events.MenuCloseEvent;
 import io.github.portlek.tdg.events.MenuOpenEvent;
 import io.github.portlek.tdg.util.Metadata;
@@ -27,10 +23,10 @@ public final class BasicMenu implements Menu {
     private final List<String> commands;
 
     @NotNull
-    private final List<ActionBase<MenuCloseEvent>> closeAction;
+    private final List<Target<MenuCloseEvent>> closeTargets;
 
     @NotNull
-    private final List<ActionBase<MenuOpenEvent>> openAction;
+    private final List<Target<MenuOpenEvent>> openTargets;
 
     private final int x1;
 
@@ -44,13 +40,13 @@ public final class BasicMenu implements Menu {
     private final List<Icon> icons;
 
     public BasicMenu(@NotNull String id, @NotNull List<String> commands,
-                     @NotNull List<ActionBase<MenuCloseEvent>> closeAction,
-                     @NotNull List<ActionBase<MenuOpenEvent>> openAction, int x1, int x2, int x4, int x5,
+                     @NotNull List<Target<MenuCloseEvent>> closeTargets,
+                     @NotNull List<Target<MenuOpenEvent>> openTargets, int x1, int x2, int x4, int x5,
                      @NotNull List<Icon> icons) {
         this.id = id;
         this.commands = commands;
-        this.closeAction = closeAction;
-        this.openAction = openAction;
+        this.closeTargets = closeTargets;
+        this.openTargets = openTargets;
         this.x1 = x1;
         this.x2 = x2;
         this.x4 = x4;
@@ -70,7 +66,11 @@ public final class BasicMenu implements Menu {
 
     @Override
     public void open(@NotNull Player player, boolean changed) {
-        final OpenedMenu openedMenu = new BasicOpenMenu(player, this);
+        final OpenedMenu openedMenu = new BasicOpenMenu(
+            player,
+            closeTargets,
+            openTargets
+        );
         final MenuOpenEvent menuOpenEvent = new MenuOpenEvent(player, openedMenu);
 
         Bukkit.getServer().getPluginManager().callEvent(menuOpenEvent);
@@ -80,7 +80,7 @@ public final class BasicMenu implements Menu {
         }
 
         for (Entity en : player.getWorld().getEntities()) {
-            if (Metadata.hasKey(en, player.getName())) {
+            if (Metadata.hasKey(en, "tdg")) {
                 en.remove();
                 TDG.getAPI().entities.remove(en);
             }
@@ -99,23 +99,14 @@ public final class BasicMenu implements Menu {
             new Mapped<>(
                 icon -> icon.createFor(
                     player,
-                    (positionX, positionY) -> Utils.setPosition(location, positionX, positionY, x1, x2, x4, x5),
+                    positionX -> Utils.setPosition(location, positionX, x1, x2, x4, x5),
                     changed
                 ),
                 icons
             )
         );
-        accept(menuOpenEvent);
+        openedMenu.accept(menuOpenEvent);
         TDG.getAPI().opened.put(player.getUniqueId(), openedMenu);
     }
 
-    @Override
-    public void accept(@NotNull MenuOpenEvent event) {
-        openAction.forEach(action -> action.apply(event));
-    }
-
-    @Override
-    public void accept(@NotNull MenuCloseEvent event) {
-        closeAction.forEach(action -> action.apply(event));
-    }
 }

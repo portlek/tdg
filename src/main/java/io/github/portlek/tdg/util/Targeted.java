@@ -1,18 +1,27 @@
 package io.github.portlek.tdg.util;
 
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.cactoos.Scalar;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public final class Targeted implements Scalar<Entity> {
 
     @NotNull
-    private final Player player;
+    private final Entity viewer;
 
-    public Targeted(@NotNull Player player) {
-        this.player = player;
+    @NotNull
+    private final List<Entity> entities;
+
+    public Targeted(@NotNull Entity viewer, @NotNull List<Entity> entities) {
+        this.viewer = viewer;
+        this.entities = entities;
+    }
+
+    public Targeted(@NotNull Entity viewer) {
+        this(viewer, viewer.getWorld().getEntities());
     }
 
     /**
@@ -25,20 +34,21 @@ public final class Targeted implements Scalar<Entity> {
         Entity target = null;
         final double threshold = 1;
 
-        for (Entity entity : player.getLocation().getChunk().getEntities()) {
-            final Vector n = entity.getLocation().toVector().subtract(entity.getLocation().toVector());
-
-            if (entity.getLocation().getDirection().normalize().crossProduct(n).lengthSquared() >= threshold ||
-                n.normalize().dot(entity.getLocation().getDirection().normalize()) < 0 ||
-                (target != null &&
-                target.getLocation().distanceSquared(entity.getLocation()) <= entity.getLocation().distanceSquared(entity.getLocation()))) {
-                continue;
+        for (final Entity other : entities) {
+            final Vector n = other.getLocation().toVector()
+                .subtract(viewer.getLocation().toVector());
+            if (viewer.getLocation().getDirection().normalize().crossProduct(n)
+                .lengthSquared() < threshold
+                && n.normalize().dot(
+                viewer.getLocation().getDirection().normalize()) >= 0) {
+                if (target == null
+                    || target.getLocation().distanceSquared(
+                    viewer.getLocation()) > other.getLocation()
+                    .distanceSquared(viewer.getLocation()))
+                    target = other;
             }
-
-            target = entity;
         }
-
-        return target == null ? player : target;
+        return target == null ? viewer : target;
     }
 
 }

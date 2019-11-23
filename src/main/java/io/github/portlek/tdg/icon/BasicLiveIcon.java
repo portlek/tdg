@@ -1,7 +1,7 @@
 package io.github.portlek.tdg.icon;
 
-import io.github.portlek.tdg.Icon;
 import io.github.portlek.tdg.LiveIcon;
+import io.github.portlek.tdg.Target;
 import io.github.portlek.tdg.events.IconClickEvent;
 import io.github.portlek.tdg.events.IconHoverEvent;
 import org.bukkit.entity.ArmorStand;
@@ -14,18 +14,24 @@ import java.util.List;
 public final class BasicLiveIcon implements LiveIcon {
 
     @NotNull
-    private final Icon icon;
-
-    @NotNull
     private final List<ArmorStand> armorStands;
 
     @NotNull
     private final Player viewer;
 
-    public BasicLiveIcon(@NotNull Icon icon, @NotNull List<ArmorStand> armorStands, @NotNull Player viewer) {
-        this.icon = icon;
+    @NotNull
+    private final List<Target<IconClickEvent>> clickTargets;
+
+    @NotNull
+    private final List<Target<IconHoverEvent>> hoverTargets;
+
+    public BasicLiveIcon(@NotNull List<ArmorStand> armorStands, @NotNull Player viewer,
+                         @NotNull List<Target<IconClickEvent>> clickTargets,
+                         @NotNull List<Target<IconHoverEvent>> hoverTargets) {
         this.armorStands = armorStands;
         this.viewer = viewer;
+        this.clickTargets = clickTargets;
+        this.hoverTargets = hoverTargets;
     }
 
     @Override
@@ -39,17 +45,18 @@ public final class BasicLiveIcon implements LiveIcon {
     }
 
     @Override
-    public void accept(@NotNull IconClickEvent event) {
+    public void close() {
 
+    }
+
+    @Override
+    public void accept(@NotNull IconClickEvent event) {
+        clickTargets.forEach(target -> target.handle(event));
     }
 
     @Override
     public void accept(@NotNull IconHoverEvent event) {
-
+        hoverTargets.forEach(target -> target.handle(event));
     }
 
-    @Override
-    public void close() {
-
-    }
 }

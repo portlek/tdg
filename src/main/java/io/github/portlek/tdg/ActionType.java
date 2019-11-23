@@ -1,8 +1,6 @@
-package io.github.portlek.tdg.types;
+package io.github.portlek.tdg;
 
-import org.cactoos.iterable.IterableOf;
 import org.cactoos.list.ListOf;
-import org.cactoos.scalar.FirstOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -26,18 +24,15 @@ public enum ActionType {
 		);
 	}
 
+	@NotNull
 	public static ActionType fromString(@NotNull String name) {
-		try {
-			return new FirstOf<>(
-				s -> s.types.contains(name),
-				new IterableOf<>(
-					values()
-				),
-				() -> NONE
-			).value();
-		} catch (Exception exception) {
-			return NONE;
+		for (ActionType actionType : values()) {
+			if (actionType.types.stream().anyMatch(s -> s.equalsIgnoreCase(name))) {
+				return actionType;
+			}
 		}
+
+		return NONE;
 	}
 
 }

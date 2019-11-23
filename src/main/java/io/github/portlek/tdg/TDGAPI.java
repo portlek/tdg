@@ -4,24 +4,23 @@ import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.mcyaml.YamlOf;
 import io.github.portlek.mcyaml.mck.MckFileConfiguration;
-import io.github.portlek.tdg.action.ActionBase;
 import io.github.portlek.tdg.events.IconClickEvent;
 import io.github.portlek.tdg.events.IconHoverEvent;
+import io.github.portlek.tdg.events.MenuCloseEvent;
+import io.github.portlek.tdg.events.MenuOpenEvent;
 import io.github.portlek.tdg.file.Config;
 import io.github.portlek.tdg.file.ConfigOptions;
 import io.github.portlek.tdg.file.Language;
 import io.github.portlek.tdg.file.LanguageOptions;
 import io.github.portlek.tdg.icon.BasicIcon;
 import io.github.portlek.tdg.menu.BasicMenu;
-import io.github.portlek.tdg.mock.MckIcon;
 import io.github.portlek.tdg.mock.MckLiveIcon;
 import io.github.portlek.tdg.mock.MckMenu;
 import io.github.portlek.tdg.mock.MckOpenMenu;
-import io.github.portlek.tdg.types.IconType;
 import io.github.portlek.tdg.util.ListenerBasic;
 import io.github.portlek.tdg.util.TargetMenu;
+import io.github.portlek.tdg.util.TargetParsed;
 import io.github.portlek.tdg.util.Targeted;
-import io.github.portlek.tdg.util.UpdateChecker;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -125,7 +124,7 @@ public class TDGAPI {
     }
 
     @NotNull
-    public Config getConfigs() {
+    public Config getConfig() {
         if (configInstance == null) {
             configInstance = configOptions.value();
         }
@@ -137,7 +136,7 @@ public class TDGAPI {
     public Language getLanguage() {
         if (languageInstance == null) {
             languageInstance = new LanguageOptions(
-                getConfigs().pluginPrefix,
+                getConfig().pluginPrefix,
                 getLanguageFile()
             ).value();
         }
@@ -151,7 +150,7 @@ public class TDGAPI {
             languageFileInstance = new YamlOf(
                 tdg,
                 "languages",
-                getConfigs().language
+                getConfig().language
             );
             languageFileInstance.create();
         }
@@ -160,6 +159,8 @@ public class TDGAPI {
     }
 
     private void init() {
+        getLanguage();
+
         menus.putAll(
             new MapOf<String, Menu>(
                 new Mapped<>(
@@ -168,26 +169,30 @@ public class TDGAPI {
                         new BasicMenu(
                             menuId,
                             menusFile.getStringList("menus." + menuId + ".commands"),
-                            ActionBase.parse(menusFile, menuId),
-                            ActionBase.parse(menusFile, menuId),
+                            new TargetParsed<>(MenuCloseEvent.class, menusFile, menuId).parse(),
+                            new TargetParsed<>(MenuOpenEvent.class, menusFile, menuId).parse(),
                             menusFile.getInt("menus." + menuId + "distances.x1"),
                             menusFile.getInt("menus." + menuId + "distances.x2"),
                             menusFile.getInt("menus." + menuId + "distances.x4"),
                             menusFile.getInt("menus." + menuId + "distances.x5"),
                             new ListOf<>(
                                 new Mapped<>(
-                                    iconId -> new BasicIcon<>(
-                                        iconId,
+                                    iconId -> new BasicIcon(
                                         new Colored(
-                                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".name").orElse("")
+                                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".name")
+                                                .orElse("")
                                         ).value(),
                                         IconType.fromString(
-                                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".icon-type").orElse("")
+                                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".icon-type")
+                                                .orElse("")
                                         ),
-                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".material").orElse(""),
+                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".material")
+                                            .orElse(""),
                                         menusFile.getByte("menus." + menuId + ".icons." + iconId + ".material-data"),
-                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".value").orElse(""),
-                                        ActionBase.parse(menusFile, menuId, iconId),
+                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".value")
+                                            .orElse(""),
+                                        new TargetParsed<>(IconClickEvent.class, menusFile, menuId, iconId).parse(),
+                                        new TargetParsed<>(IconHoverEvent.class, menusFile, menuId, iconId).parse(),
                                         menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-x"),
                                         menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-y")
                                     ),
@@ -201,7 +206,8 @@ public class TDGAPI {
             )
         );
 
-        new ListenerBasic<>(PlayerJoinEvent.class, event -> {
+        // TODO: 23/11/2019 edit when plugin added to the spigot page
+        /*new ListenerBasic<>(PlayerJoinEvent.class, event -> {
             final Player player = event.getPlayer();
 
             if (getConfigs().updateCheck && player.hasPermission("tdg.version")) {
@@ -224,7 +230,7 @@ public class TDGAPI {
             }
 
             opened.put(player.getUniqueId(), new MckOpenMenu());
-        }).register(tdg);
+        }).register(tdg);*/
 
         new ListenerBasic<>(
             PlayerArmorStandManipulateEvent.class,
@@ -276,15 +282,22 @@ public class TDGAPI {
             event ->
                 getIconOptional(
                     event.getPlayer()
-                ).ifPresent(entry ->
-                    entry.getValue().accept(
-                        new IconClickEvent(
-                            event.getPlayer(),
-                            entry.getKey(),
-                            entry.getValue()
-                        )
-                    )
-                )
+                ).ifPresent(entry -> {
+                    final IconClickEvent iconClickEvent = new IconClickEvent(
+                        event.getPlayer(),
+                        entry.getKey(),
+                        entry.getValue(),
+                        ClickType.fromInteractEvent(event)
+                    );
+
+                    tdg.getServer().getPluginManager().callEvent(iconClickEvent);
+
+                    if (iconClickEvent.isCancelled()) {
+                        return;
+                    }
+
+                    entry.getValue().accept(iconClickEvent);
+                })
         ).register(tdg);
 
         new ListenerBasic<>(PlayerMoveEvent.class,
@@ -293,15 +306,21 @@ public class TDGAPI {
                 opened.containsKey(event.getPlayer().getUniqueId()),
             event -> getIconOptional(
                 event.getPlayer()
-            ).ifPresent(entry ->
-                entry.getValue().accept(
-                    new IconHoverEvent(
-                        event.getPlayer(),
-                        entry.getKey(),
-                        entry.getValue()
-                    )
-                )
-            )
+            ).ifPresent(entry -> {
+                final IconHoverEvent iconHoverEvent = new IconHoverEvent(
+                    event.getPlayer(),
+                    entry.getKey(),
+                    entry.getValue()
+                );
+
+                tdg.getServer().getPluginManager().callEvent(iconHoverEvent);
+
+                if (iconHoverEvent.isCancelled()) {
+                    return;
+                }
+
+                entry.getValue().accept(iconHoverEvent);
+            })
         ).register(tdg);
     }
 

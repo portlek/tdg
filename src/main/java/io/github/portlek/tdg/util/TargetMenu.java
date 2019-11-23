@@ -1,6 +1,5 @@
 package io.github.portlek.tdg.util;
 
-import io.github.portlek.nbt.base.EntityNBTOf;
 import io.github.portlek.tdg.OpenedMenu;
 import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.mock.MckOpenMenu;
@@ -30,16 +29,16 @@ public final class TargetMenu implements Scalar<OpenedMenu> {
     @Override
     public OpenedMenu value() {
         try {
-            return TDG.getAPI().findOpenMenuByUUID(
-                UUID.fromString(
-                    new EntityNBTOf(
-                        targeted.value()
-                    ).nbt().getNBTCompound("Tags").getString("threedig")
-                )
-            );
-        } catch (Exception e) {
-            return new MckOpenMenu();
+            final Object object = Metadata.get(targeted.value(), "tdg");
+
+            if (object instanceof UUID) {
+                return TDG.getAPI().findOpenMenuByUUID((UUID) object);
+            }
+        } catch (Exception ignored) {
+            // ignored
         }
+
+        return new MckOpenMenu();
     }
 
 }

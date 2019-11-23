@@ -15,7 +15,7 @@ public final class TDG extends JavaPlugin {
             throw new RuntimeException("TDG cannot start twice!");
         }
 
-        final PluginCommand pluginCommand = getCommand("tdg");
+        final PluginCommand pluginCommand = getCommand("threedimentiongui");
 
         if (pluginCommand == null) {
             return;
@@ -26,13 +26,13 @@ public final class TDG extends JavaPlugin {
 
         pluginCommand.setTabCompleter(tdgCommand);
         pluginCommand.setExecutor(tdgCommand);
-
         api.reloadPlugin();
     }
 
     @Override
     public void onDisable() {
         api.entities.forEach(Entity::remove);
+        api = null;
     }
 
     public static TDGAPI getAPI() {

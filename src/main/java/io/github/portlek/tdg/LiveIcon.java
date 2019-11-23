@@ -11,10 +11,10 @@ public interface LiveIcon {
 
     void playSound();
 
+    void close();
+
     void accept(@NotNull IconClickEvent event);
 
     void accept(@NotNull IconHoverEvent event);
-
-    void close();
 
 }

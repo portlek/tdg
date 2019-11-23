@@ -23,6 +23,9 @@ public final class Language {
     public final String errorInGameCommand;
 
     @NotNull
+    public final String errorPlayerNotFound;
+
+    @NotNull
     public final String generalAvailableMenus;
 
     @NotNull
@@ -42,16 +45,17 @@ public final class Language {
 
     public Language(@NotNull String errorCooldown, @NotNull String errorAlreadyOpen, @NotNull String errorPermission,
                     @NotNull String errorMenuNotFound, @NotNull String errorInvalidArgument,
-                    @NotNull String errorInGameCommand, @NotNull String generalAvailableMenus,
-                    @NotNull String generalReloadComplete, @NotNull String generalPluginVersion,
-                    @NotNull String generalNewVersionFound, @NotNull String generalLatestVersion,
-                    @NotNull String commands) {
+                    @NotNull String errorInGameCommand, @NotNull String errorPlayerNotFound,
+                    @NotNull String generalAvailableMenus, @NotNull String generalReloadComplete,
+                    @NotNull String generalPluginVersion, @NotNull String generalNewVersionFound,
+                    @NotNull String generalLatestVersion, @NotNull String commands) {
         this.errorCooldown = errorCooldown;
         this.errorAlreadyOpen = errorAlreadyOpen;
         this.errorPermission = errorPermission;
         this.errorMenuNotFound = errorMenuNotFound;
         this.errorInvalidArgument = errorInvalidArgument;
         this.errorInGameCommand = errorInGameCommand;
+        this.errorPlayerNotFound = errorPlayerNotFound;
         this.generalAvailableMenus = generalAvailableMenus;
         this.generalReloadComplete = generalReloadComplete;
         this.generalPluginVersion = generalPluginVersion;
@@ -77,12 +81,12 @@ public final class Language {
 
     @NotNull
     private String menu(@NotNull String menu, @NotNull String text) {
-        return text.replaceAll("%menu%", String.valueOf(true));
+        return text.replaceAll("%menu%", menu);
     }
 
     @NotNull
     private String time(int time, @NotNull String text) {
-        return text.replaceAll("%time%", String.valueOf(true));
+        return text.replaceAll("%time%", String.valueOf(time));
     }
 
     @NotNull

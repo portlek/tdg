@@ -4,11 +4,11 @@ error:
   permission: '%prefix% &cBunu yapmak için yetkin yok!'
   menu-not-found: '%prefix% &cBöyle bir menü bulunamadı! (%menu%)'
   invalid-argument: '%prefix% &cGeçersiz arguman!'
-  in-game-command: '%prefix% Bu komut yalnıca oyun içinden kullanılabilir!'
+  in-game-command: '%prefix% &cBu komut yalnıca oyun içinden kullanılabilir!'
 
 general:
   available-menus: '%prefix% &7Kullanılabilir menuler:'
-  reload-complete: '%prefix% &7Yeniden yüklendi'
+  reload-complete: '%prefix% &aYeniden yüklendi'
   plugin-version: '%prefix% &aTDG &ev%version% &asürümünde çalışmaktadır'
   new-version-found: '%prefix% &aYeni sürüm bulundu: &e %version%'
   latest-version: '%prefix% &aElenti son sürüm!'
@@ -18,4 +18,3 @@ commands:
   - '&7/tdg open &e<menu-id> &8-> &7Eğer varsa menüyü açar'
   - '&7/tdg list &8-> &7Tüm menüleri listeler'
   - '&7/tdg reload &8-> &7Eklentiyi yeniden yükler'
-  - '&7/tdg version &8-> &7Eklentinin sürümü kontrol eder'
