@@ -345,6 +345,14 @@ public class TDGAPI {
     @NotNull
     private Map.Entry<LiveIcon, OpenedMenu> findIconAndOpenedMenuByPlayer(@NotNull Player player) {
         final Entity targeted = new Targeted(player).value();
+
+        if (targeted == null) {
+            return new MapEntry<>(
+                new MckLiveIcon(),
+                new MckOpenMenu()
+            );
+        }
+
         final OpenedMenu openedMenu = new TargetMenu(
             targeted
         ).value();

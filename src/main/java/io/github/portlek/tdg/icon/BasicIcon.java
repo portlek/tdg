@@ -35,8 +35,6 @@ public final class BasicIcon implements Icon {
 
     private static final List<Player> toHide = new ArrayList<>();
 
-    private static final List<ArmorStand> icons = new ArrayList<>();
-
     @NotNull
     private final String name;
 
@@ -172,7 +170,7 @@ public final class BasicIcon implements Icon {
     private List<ArmorStand> addIconItem(@NotNull Player player, @NotNull Location location,
                                          @NotNull ItemStack itemStack) {
         final ArmorStand armorStand = player.getWorld().spawn(init(player, location), ArmorStand.class);
-        final Location armorStandLocation = armorStand.getLocation();
+        Location armorStandLocation = armorStand.getLocation();
         final Vector direction = armorStandLocation.getDirection();
         final Vector direction2 = direction.clone().setX(direction.getZ()).setZ(-direction.getX());
 
@@ -208,11 +206,22 @@ public final class BasicIcon implements Icon {
     @NotNull
     private ArmorStand initArmorStand(@NotNull Player player, @NotNull ArmorStand armorStand) {
         armorStand.setArms(true);
-        icons.add(armorStand);
+        armorStand.setGravity(false);
         view.add(player);
         TDG.getAPI().entities.add(armorStand);
         Metadata.set(armorStand, "tdg", player.getUniqueId());
         Location locb = armorStand.getLocation();
+
+        toHide.clear();
+
+        for (Player all : Bukkit.getOnlinePlayers()) {
+            toHide.add(all);
+            toHide.remove(player);
+        }
+
+        for (Player hide : toHide) {
+            entityHider.hideEntity(hide, armorStand);
+        }
 
         new BukkitRunnable() {
             @Override
@@ -221,20 +230,12 @@ public final class BasicIcon implements Icon {
                     return;
                 }
 
-                armorStand.teleport(locb);
+                armorStand.teleport(armorStand.getLocation());
                 armorStand.setFireTicks(0);
-                toHide.clear();
 
-                for (Player all : Bukkit.getOnlinePlayers()) {
-                    toHide.add(all);
-                    toHide.remove(player);
-                }
+                final Entity entity = new Targeted(player).value();
 
-                for (Player hide : toHide) {
-                    entityHider.hideEntity(hide, armorStand);
-                }
-
-                if (new Targeted(player).value() == armorStand) {
+                if (entity == armorStand) {
                     armorStand.setGravity(true);
                     armorStand.setVelocity(
                         player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
@@ -288,8 +289,8 @@ public final class BasicIcon implements Icon {
         armorStand2.setItemInHand(itemStack);
         armorStand.setArms(true);
         armorStand2.setArms(true);
-        icons.add(armorStand);
-        icons.add(armorStand2);
+        armorStand.setGravity(false);
+        armorStand2.setGravity(false);
         view.add(player);
         TDG.getAPI().entities.add(armorStand);
         TDG.getAPI().entities.add(armorStand2);
@@ -305,8 +306,8 @@ public final class BasicIcon implements Icon {
                     return;
                 }
 
-                armorStand.teleport(locationB);
-                armorStand2.teleport(location);
+                armorStand.teleport(location);
+                armorStand2.teleport(locationB);
                 armorStand.setFireTicks(0);
                 armorStand2.setFireTicks(0);
                 toHide.clear();

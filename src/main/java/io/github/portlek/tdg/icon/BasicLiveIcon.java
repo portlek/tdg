@@ -4,6 +4,7 @@ import io.github.portlek.tdg.LiveIcon;
 import io.github.portlek.tdg.Target;
 import io.github.portlek.tdg.events.IconClickEvent;
 import io.github.portlek.tdg.events.IconHoverEvent;
+import io.github.portlek.tdg.util.Targeted;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -36,17 +37,16 @@ public final class BasicLiveIcon implements LiveIcon {
 
     @Override
     public boolean is(@NotNull Entity entity) {
-        return armorStands.contains(entity);
-    }
+        if (entity instanceof ArmorStand) {
+            return armorStands.contains(entity);
+        }
 
-    @Override
-    public void playSound() {
-
+        return false;
     }
 
     @Override
     public void close() {
-
+        // TODO: 24/11/2019
     }
 
     @Override

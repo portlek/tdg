@@ -11,22 +11,14 @@ public final class MckLiveIcon implements LiveIcon {
     public boolean is(@NotNull Entity entity) {
         throw new UnsupportedOperationException();
     }
-
-    @Override
-    public void playSound() {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public void accept(@NotNull IconClickEvent event) {
         throw new UnsupportedOperationException();
     }
-
     @Override
     public void accept(@NotNull IconHoverEvent event) {
         throw new UnsupportedOperationException();
     }
-
     @Override
     public void close() {
         throw new UnsupportedOperationException();

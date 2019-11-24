@@ -4,6 +4,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 import org.cactoos.Scalar;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ public final class Targeted implements Scalar<Entity> {
      * gives target of player
      * @return if target is null, returns player itself or returns target entity
      */
-    @NotNull
+    @Nullable
     @Override
     public Entity value() {
         Entity target = null;
@@ -37,16 +38,15 @@ public final class Targeted implements Scalar<Entity> {
         for (final Entity other : entities) {
             final Vector n = other.getLocation().toVector().subtract(viewer.getLocation().toVector());
 
-            if (viewer.getLocation().getDirection().normalize().crossProduct(n).lengthSquared() >= threshold ||
-                n.normalize().dot(viewer.getLocation().getDirection().normalize()) < 0 ||
-                (target != null
-                    && target.getLocation().distanceSquared(viewer.getLocation()) <= other.getLocation().distanceSquared(viewer.getLocation()))) {
-                continue;
+            if (viewer.getLocation().getDirection().normalize().crossProduct(n).lengthSquared() < threshold &&
+                n.normalize().dot(viewer.getLocation().getDirection().normalize()) >= 0) {
+                if (target == null ||
+                    target.getLocation().distanceSquared(viewer.getLocation()) > other.getLocation().distanceSquared(viewer.getLocation()))
+                    target = other;
             }
-
-            target = other;
         }
-        return target == null ? viewer : target;
+
+        return target;
     }
 
 }

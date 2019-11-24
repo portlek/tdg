@@ -8,6 +8,7 @@ import io.github.portlek.tdg.events.MenuCloseEvent;
 import io.github.portlek.tdg.events.MenuOpenEvent;
 import io.github.portlek.tdg.mock.MckLiveIcon;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

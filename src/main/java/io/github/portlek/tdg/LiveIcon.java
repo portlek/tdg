@@ -9,8 +9,6 @@ public interface LiveIcon {
 
     boolean is(@NotNull Entity entity);
 
-    void playSound();
-
     void close();
 
     void accept(@NotNull IconClickEvent event);
