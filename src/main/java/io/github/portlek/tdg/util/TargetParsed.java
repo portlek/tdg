@@ -133,7 +133,7 @@ public final class TargetParsed<T extends MenuEvent> {
                             return event -> true;
                     }
                 },
-                yaml.getSection(path + ".requirements").getKeys(false)
+                yaml.getSection(path + "requirements").getKeys(false)
             )
         );
     }
