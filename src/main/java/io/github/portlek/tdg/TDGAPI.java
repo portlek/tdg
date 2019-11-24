@@ -171,10 +171,10 @@ public class TDGAPI {
                             menusFile.getStringList("menus." + menuId + ".commands"),
                             new TargetParsed<>(MenuCloseEvent.class, menusFile, menuId).parse(),
                             new TargetParsed<>(MenuOpenEvent.class, menusFile, menuId).parse(),
-                            menusFile.getInt("menus." + menuId + "distances.x1"),
-                            menusFile.getInt("menus." + menuId + "distances.x2"),
-                            menusFile.getInt("menus." + menuId + "distances.x4"),
-                            menusFile.getInt("menus." + menuId + "distances.x5"),
+                            menusFile.getInt("menus." + menuId + ".distances.x1"),
+                            menusFile.getInt("menus." + menuId + ".distances.x2"),
+                            menusFile.getInt("menus." + menuId + ".distances.x4"),
+                            menusFile.getInt("menus." + menuId + ".distances.x5"),
                             new ListOf<>(
                                 new Mapped<>(
                                     iconId -> new BasicIcon(
