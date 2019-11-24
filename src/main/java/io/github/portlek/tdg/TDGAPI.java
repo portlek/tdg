@@ -279,8 +279,7 @@ public class TDGAPI {
         }).register(tdg);
 
         new ListenerBasic<>(PlayerInteractEvent.class,
-            event -> event.getAction() == Action.LEFT_CLICK_AIR &&
-                opened.containsKey(event.getPlayer().getUniqueId()),
+            event -> opened.containsKey(event.getPlayer().getUniqueId()),
             event ->
                 getIconOptional(
                     event.getPlayer()

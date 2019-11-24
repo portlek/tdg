@@ -110,7 +110,7 @@ public final class TargetParsed<T extends MenuEvent> {
                                             return PlaceholderAPI.setPlaceholders(event.getPlayer(), perm);
                                         }
 
-                                        return perm;
+                                        return perm.replaceAll("%player_name%", event.getPlayer().getName());
                                     },
                                     yaml.getStringList(reqPath)
                                 );
@@ -122,7 +122,9 @@ public final class TargetParsed<T extends MenuEvent> {
                                 final String permission = yaml.getString(reqPath).orElse("");
 
                                 if (!permission.isEmpty()) {
-                                    return event.getPlayer().hasPermission(permission);
+                                    return event.getPlayer().hasPermission(
+                                        permission.replaceAll("%player_name%", event.getPlayer().getName())
+                                    );
                                 }
 
                                 return true;
@@ -158,7 +160,7 @@ public final class TargetParsed<T extends MenuEvent> {
                                 return PlaceholderAPI.setPlaceholders(event.getPlayer(), colored);
                             }
 
-                            return colored;
+                            return colored.replaceAll("%player_name%", event.getPlayer().getName());
                         },
                         yaml.getStringList(path + "value")
                     );
@@ -177,10 +179,14 @@ public final class TargetParsed<T extends MenuEvent> {
                                     PlaceholderAPI.setPlaceholders(event.getPlayer(), message)
                                 ).value()
                             );
+
+                            return;
                         }
 
                         event.getPlayer().sendMessage(
-                            new Colored(message).value()
+                            new Colored(
+                                message.replaceAll("%player_name%", event.getPlayer().getName())
+                            ).value()
                         );
                     }
                 };
@@ -193,7 +199,7 @@ public final class TargetParsed<T extends MenuEvent> {
                                 return PlaceholderAPI.setPlaceholders(event.getPlayer(), list);
                             }
 
-                            return list;
+                            return list.replaceAll("%player_name%", event.getPlayer().getName());
                         },
                         yaml.getStringList(path + "value")
                     );
@@ -210,7 +216,7 @@ public final class TargetParsed<T extends MenuEvent> {
                                 PlaceholderAPI.setPlaceholders(event.getPlayer(), command)
                             );
                         } else {
-                            commands.add(command);
+                            commands.add(command.replaceAll("%player_name%", event.getPlayer().getName()));
                         }
                     }
 

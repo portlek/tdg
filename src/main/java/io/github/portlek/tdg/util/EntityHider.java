@@ -159,9 +159,8 @@ public final class EntityHider implements Listener {
     /**
      * Remove the given entity from the underlying map.
      * @param entity - the entity to remove.
-     * @param destroyed - TRUE if the entity was killed, FALSE if it is merely unloading.
      */
-    protected void removeEntity(Entity entity, boolean destroyed) {
+    protected void removeEntity(Entity entity) {
         int entityID = entity.getEntityId();
         
         for (Map<Integer, Boolean> maps : observerEntityMap.rowMap().values()) {
@@ -186,13 +185,13 @@ public final class EntityHider implements Listener {
         return new Listener() {
             @EventHandler
             public void onEntityDeath(EntityDeathEvent e) {
-                removeEntity(e.getEntity(), true);
+                removeEntity(e.getEntity());
             }
             
             @EventHandler
             public void onChunkUnload(ChunkUnloadEvent e) {
                 for (Entity entity : e.getChunk().getEntities()) {
-                    removeEntity(entity, false);
+                    removeEntity(entity);
                 }
             }
             

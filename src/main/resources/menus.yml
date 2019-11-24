@@ -19,7 +19,7 @@ menus:
         action: COMMANDS
         as-player: false
         value:
-          - 'give minecraft:apple %player% 1'
+          - 'give minecraft:apple %player_name% 1'
       particle-action-1:
         action: PARTICLES
         value: 'cloud'
@@ -42,7 +42,7 @@ menus:
           hover-action-1:
             action: MESSAGE
             value:
-              - '&eHey, &a%player%&e, you hovered the icon!'
+              - '&eHey, &a%player_name%&e, you hovered the icon!'
             requirements:
               permissions:
                 - 'tdg.hovereffect'
@@ -61,7 +61,7 @@ menus:
               click-type: LEFT
             action: MESSAGE
             value:
-              - '&eHey, &a%player%&e, you clicked left!'
+              - '&eHey, &a%player_name%&e, you clicked left!'
       free-diamonds:
         name: '&bFree diamonds!'
         icon-type: ITEM
@@ -99,9 +99,9 @@ menus:
         position-x: 1
         position-y: 2
       player-head:
-        name: '&e%player%'
+        name: '&e%player_name%'
         icon-type: HEAD
-        value: '%player%'
+        value: '%player_name%'
         position-x: 3
         position-y: 2
       close-test:

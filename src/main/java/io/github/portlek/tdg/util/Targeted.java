@@ -35,18 +35,16 @@ public final class Targeted implements Scalar<Entity> {
         final double threshold = 1;
 
         for (final Entity other : entities) {
-            final Vector n = other.getLocation().toVector()
-                .subtract(viewer.getLocation().toVector());
-            if (viewer.getLocation().getDirection().normalize().crossProduct(n)
-                .lengthSquared() < threshold
-                && n.normalize().dot(
-                viewer.getLocation().getDirection().normalize()) >= 0) {
-                if (target == null
-                    || target.getLocation().distanceSquared(
-                    viewer.getLocation()) > other.getLocation()
-                    .distanceSquared(viewer.getLocation()))
-                    target = other;
+            final Vector n = other.getLocation().toVector().subtract(viewer.getLocation().toVector());
+
+            if (viewer.getLocation().getDirection().normalize().crossProduct(n).lengthSquared() >= threshold ||
+                n.normalize().dot(viewer.getLocation().getDirection().normalize()) < 0 ||
+                (target != null
+                    && target.getLocation().distanceSquared(viewer.getLocation()) <= other.getLocation().distanceSquared(viewer.getLocation()))) {
+                continue;
             }
+
+            target = other;
         }
         return target == null ? viewer : target;
     }

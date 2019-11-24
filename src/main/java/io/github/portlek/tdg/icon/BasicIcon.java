@@ -9,6 +9,7 @@ import io.github.portlek.tdg.events.IconClickEvent;
 import io.github.portlek.tdg.events.IconHoverEvent;
 import io.github.portlek.tdg.type.IconType;
 import io.github.portlek.tdg.util.*;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
@@ -129,7 +130,11 @@ public final class BasicIcon implements Icon {
         final ArmorStand armorStand = player.getWorld().spawn(init(player, location), ArmorStand.class);
 
         armorStand.setVisible(false);
-        armorStand.setCustomName(name.replace("&", "§"));
+        armorStand.setCustomName(
+            TDG.getAPI().getConfig().hooksPlaceholderAPI
+                ? PlaceholderAPI.setPlaceholders(player, name)
+                : name.replaceAll("%player_name%", player.getName())
+        );
         armorStand.setCustomNameVisible(true);
         armorStand.setHelmet(itemStack);
 
@@ -141,7 +146,11 @@ public final class BasicIcon implements Icon {
         final ArmorStand armorStand = player.getWorld().spawn(init(player, location), ArmorStand.class);
 
         armorStand.setVisible(false);
-        armorStand.setCustomName(name);
+        armorStand.setCustomName(
+            TDG.getAPI().getConfig().hooksPlaceholderAPI
+                ? PlaceholderAPI.setPlaceholders(player, name)
+                : name.replaceAll("%player_name%", player.getName())
+        );
         armorStand.setCustomNameVisible(true);
 
         if (texture.contains("textures.minecraft.net")) {
@@ -227,7 +236,9 @@ public final class BasicIcon implements Icon {
 
                 if (new Targeted(player).value() == armorStand) {
                     armorStand.setGravity(true);
-                    armorStand.setVelocity(player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1));
+                    armorStand.setVelocity(
+                        player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
+                    );
                     armorStand.teleport(locb);
                 } else {
                     armorStand.setGravity(false);
@@ -261,10 +272,18 @@ public final class BasicIcon implements Icon {
         final ArmorStand armorStand2 = player.getWorld().spawn(location, ArmorStand.class);
 
         armorStand.setVisible(false);
-        armorStand.setCustomName(name);
+        armorStand.setCustomName(
+            TDG.getAPI().getConfig().hooksPlaceholderAPI
+                ? PlaceholderAPI.setPlaceholders(player, name)
+                : name.replaceAll("%player_name%", player.getName())
+        );
         armorStand.setCustomNameVisible(true);
         armorStand2.setVisible(false);
-        armorStand2.setCustomName(name);
+        armorStand2.setCustomName(
+            TDG.getAPI().getConfig().hooksPlaceholderAPI
+                ? PlaceholderAPI.setPlaceholders(player, name)
+                : name.replaceAll("%player_name%", player.getName())
+        );
         armorStand2.setRightArmPose(new EulerAngle(v3, v4, v5));
         armorStand2.setItemInHand(itemStack);
         armorStand.setArms(true);
@@ -307,12 +326,12 @@ public final class BasicIcon implements Icon {
                 if (entity == armorStand || entity == armorStand2) {
                     armorStand.setGravity(true);
                     armorStand.setVelocity(
-                        player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.5)
+                        player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
                     );
                     armorStand.teleport(locationB);
                     armorStand2.setGravity(true);
                     armorStand2.setVelocity(
-                        player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.5)
+                        player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
                     );
                     armorStand2.teleport(location);
                 } else {

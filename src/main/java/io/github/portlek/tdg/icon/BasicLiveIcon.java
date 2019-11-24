@@ -36,7 +36,7 @@ public final class BasicLiveIcon implements LiveIcon {
 
     @Override
     public boolean is(@NotNull Entity entity) {
-        return false;
+        return armorStands.contains(entity);
     }
 
     @Override
