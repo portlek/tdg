@@ -22,7 +22,7 @@ public class PAPIHook implements Hook<PlaceholderAPIPlugin> {
     @Override
     public PlaceholderAPIPlugin get() {
         if (papi == null) {
-            throw new RuntimeException("PlaceholderAPI not initiated! Use ASkyBlockHook#initiate() method.");
+            throw new RuntimeException("PlaceholderAPI not initiated! Use PAPIHook#initiate() method.");
         }
 
         return papi;
