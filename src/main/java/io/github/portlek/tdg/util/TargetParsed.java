@@ -78,7 +78,7 @@ public final class TargetParsed<T extends MenuEvent> {
             new Mapped<>(
                 requirement -> {
                     final RequirementType requirementType = RequirementType.fromString(requirement);
-                    final String reqPath = path + ".requirements." + requirement;
+                    final String reqPath = path + "requirements." + requirement;
 
                     switch (requirementType) {
                         case CLICK_TYPE:
@@ -127,6 +127,7 @@ public final class TargetParsed<T extends MenuEvent> {
 
                                 return true;
                             };
+                        // TODO: 24/11/2019 More requirement support
                         case NONE:
                         default:
                             return event -> true;
