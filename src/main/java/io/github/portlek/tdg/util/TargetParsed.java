@@ -2,25 +2,28 @@ package io.github.portlek.tdg.util;
 
 import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
-import io.github.portlek.tdg.*;
+import io.github.portlek.tdg.Requirement;
+import io.github.portlek.tdg.TDG;
+import io.github.portlek.tdg.Target;
 import io.github.portlek.tdg.events.IconClickEvent;
 import io.github.portlek.tdg.events.IconHoverEvent;
 import io.github.portlek.tdg.events.MenuCloseEvent;
 import io.github.portlek.tdg.events.MenuOpenEvent;
 import io.github.portlek.tdg.events.abs.MenuEvent;
 import io.github.portlek.tdg.particle.Particles;
-import io.github.portlek.tdg.requirements.ClickTypeReq;
-import io.github.portlek.tdg.requirements.PermissionReq;
 import io.github.portlek.tdg.target.BasicTarget;
+import io.github.portlek.tdg.type.ActionType;
+import io.github.portlek.tdg.type.ClickType;
+import io.github.portlek.tdg.type.RequirementType;
+import io.github.portlek.tdg.type.TargetType;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
-import org.cactoos.collection.Filtered;
-import org.cactoos.list.Joined;
 import org.cactoos.list.ListOf;
 import org.cactoos.list.Mapped;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
 public final class TargetParsed<T extends MenuEvent> {
@@ -79,30 +82,51 @@ public final class TargetParsed<T extends MenuEvent> {
 
                     switch (requirementType) {
                         case CLICK_TYPE:
-                            final List<String> clickTypesString = yaml.getStringList(reqPath);
-
-                            if (!clickTypesString.isEmpty()) {
-                                return new ClickTypeReq(
-                                    new Mapped<>(
-                                        ClickType::fromString,
-                                        clickTypesString
-                                    )
+                            return event -> {
+                                final List<ClickType> clickTypes = new Mapped<>(
+                                    ClickType::fromString,
+                                    yaml.getStringList(reqPath)
                                 );
-                            }
 
-                            return yaml.getString(reqPath)
-                                .flatMap(s -> Optional.of(new ClickTypeReq(ClickType.fromString(s))))
-                                .orElse(new ClickTypeReq(ClickType.ANY));
+                                if (!clickTypes.isEmpty()) {
+                                    return event instanceof IconClickEvent &&
+                                        (clickTypes.contains(ClickType.ANY) ||
+                                            clickTypes.contains(((IconClickEvent) event).getClickType()));
+                                }
+
+                                final ClickType clickType = ClickType.fromString(
+                                    yaml.getString(reqPath).orElse("")
+                                );
+
+                                return event instanceof IconClickEvent &&
+                                    (clickType == ClickType.ANY ||
+                                        clickType == (((IconClickEvent) event).getClickType()));
+                            };
                         case PERMISSIONS:
-                            final List<String> permissionsString = yaml.getStringList(reqPath);
+                            return event -> {
+                                final List<String> permissions = new Mapped<>(
+                                    perm -> {
+                                        if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                                            return PlaceholderAPI.setPlaceholders(event.getPlayer(), perm);
+                                        }
 
-                            if (!permissionsString.isEmpty()) {
-                                return new PermissionReq(permissionsString);
-                            }
+                                        return perm;
+                                    },
+                                    yaml.getStringList(reqPath)
+                                );
 
-                            return yaml.getString(reqPath)
-                                .flatMap(s -> Optional.of(new PermissionReq(s)))
-                                .orElse(new PermissionReq());
+                                if (!permissions.isEmpty()) {
+                                    return permissions.stream().allMatch(s -> event.getPlayer().hasPermission(s));
+                                }
+
+                                final String permission = yaml.getString(reqPath).orElse("");
+
+                                if (!permission.isEmpty()) {
+                                    return event.getPlayer().hasPermission(permission);
+                                }
+
+                                return true;
+                            };
                         case NONE:
                         default:
                             return event -> true;
@@ -122,45 +146,84 @@ public final class TargetParsed<T extends MenuEvent> {
 
         switch (actionType) {
             case MESSAGE:
-                return event -> new Joined<>(
-                    new ListOf<>(
-                        new Filtered<>(
-                            filtered -> !filtered.isEmpty(),
-                            new ListOf<>(
-                                yaml.getString(path + "value").orElse("")
-                            )
-                        )
-                    ),
-                    yaml.getStringList(path + "value")
-                ).forEach(s -> event.getPlayer().sendMessage(
-                    new Colored(s).value()
-                ));
-            case COMMAND:
-                return event -> new Mapped<>(
-                    command -> new Colored(
-                        command.replaceAll("%player%", event.getPlayer().getName())
-                    ).value(),
-                    new Joined<>(
-                        new ListOf<>(
-                            new Filtered<>(
-                                filtered -> !filtered.isEmpty(),
-                                new ListOf<>(
-                                    yaml.getString(path + "value").orElse("")
-                                )
-                            )
-                        ),
+                return event -> {
+                    final List<String> value = new Mapped<>(
+                        list -> {
+                            final String colored = new Colored(
+                                list
+                            ).value();
+
+                            if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                                return PlaceholderAPI.setPlaceholders(event.getPlayer(), colored);
+                            }
+
+                            return colored;
+                        },
                         yaml.getStringList(path + "value")
-                    )
-                ).forEach(s -> Bukkit.getScheduler().callSyncMethod(
-                    TDG.getAPI().tdg,
-                    () -> {
-                        if (yaml.getBoolean(path + "as-player")) {
-                            return event.getPlayer().performCommand(s);
+                    );
+
+                    if (!value.isEmpty()) {
+                        value.forEach(s -> event.getPlayer().sendMessage(s));
+                        return;
+                    }
+
+                    final String message = yaml.getString(path + "value").orElse("");
+
+                    if (!message.isEmpty()) {
+                        if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                            event.getPlayer().sendMessage(
+                                new Colored(
+                                    PlaceholderAPI.setPlaceholders(event.getPlayer(), message)
+                                ).value()
+                            );
                         }
 
-                        return Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s);
+                        event.getPlayer().sendMessage(
+                            new Colored(message).value()
+                        );
                     }
-                ));
+                };
+            case COMMAND:
+                return event -> {
+                    final List<String> commands = new ArrayList<>();
+                    final List<String> value = new Mapped<>(
+                        list -> {
+                            if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                                return PlaceholderAPI.setPlaceholders(event.getPlayer(), list);
+                            }
+
+                            return list;
+                        },
+                        yaml.getStringList(path + "value")
+                    );
+
+                    if (!value.isEmpty()) {
+                        commands.addAll(value);
+                    }
+
+                    final String command = yaml.getString(path + "value").orElse("");
+
+                    if (!command.isEmpty()) {
+                        if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                            commands.add(
+                                PlaceholderAPI.setPlaceholders(event.getPlayer(), command)
+                            );
+                        } else {
+                            commands.add(command);
+                        }
+                    }
+
+                    commands.forEach(s -> Bukkit.getScheduler().callSyncMethod(
+                        TDG.getAPI().tdg,
+                        () -> {
+                            if (yaml.getBoolean(path + "as-player")) {
+                                return event.getPlayer().performCommand(s);
+                            }
+
+                            return Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s);
+                        }
+                    ));
+                };
             case SOUND:
                 return event -> XSound
                     .matchXSound(

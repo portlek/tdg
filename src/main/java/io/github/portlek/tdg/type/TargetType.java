@@ -1,4 +1,4 @@
-package io.github.portlek.tdg;
+package io.github.portlek.tdg.type;
 
 import org.jetbrains.annotations.NotNull;
 

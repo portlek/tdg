@@ -1,9 +1,9 @@
 package io.github.portlek.tdg.events;
 
-import io.github.portlek.tdg.ClickType;
 import io.github.portlek.tdg.LiveIcon;
 import io.github.portlek.tdg.OpenedMenu;
 import io.github.portlek.tdg.events.abs.IconEvent;
+import io.github.portlek.tdg.type.ClickType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.jetbrains.annotations.NotNull;

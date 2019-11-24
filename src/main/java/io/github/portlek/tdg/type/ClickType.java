@@ -1,10 +1,8 @@
-package io.github.portlek.tdg;
+package io.github.portlek.tdg.type;
 
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.cactoos.iterable.IterableOf;
 import org.cactoos.list.ListOf;
-import org.cactoos.scalar.FirstOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -12,7 +10,7 @@ import java.util.List;
 public enum ClickType {
 
     LEFT("left", "left-click"),
-    RIGHT("right", "right-clikc"),
+    RIGHT("right", "right-click"),
     SHIFT_LEFT("shift-left", "shift-left-click"),
     SHIFT_RIGHT("shift-right", "shift-right-click"),
     ANY("any");

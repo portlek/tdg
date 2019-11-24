@@ -17,6 +17,8 @@ import io.github.portlek.tdg.menu.BasicMenu;
 import io.github.portlek.tdg.mock.MckLiveIcon;
 import io.github.portlek.tdg.mock.MckMenu;
 import io.github.portlek.tdg.mock.MckOpenMenu;
+import io.github.portlek.tdg.type.ClickType;
+import io.github.portlek.tdg.type.IconType;
 import io.github.portlek.tdg.util.ListenerBasic;
 import io.github.portlek.tdg.util.TargetMenu;
 import io.github.portlek.tdg.util.TargetParsed;

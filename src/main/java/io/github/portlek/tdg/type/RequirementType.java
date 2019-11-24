@@ -1,15 +1,13 @@
-package io.github.portlek.tdg;
+package io.github.portlek.tdg.type;
 
-import org.cactoos.iterable.IterableOf;
 import org.cactoos.list.ListOf;
-import org.cactoos.scalar.FirstOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 public enum RequirementType {
 
-    CLICK_TYPE("click", "click-type"),
+    CLICK_TYPE("click-type", "click-types", "click", "clicks"),
     PERMISSIONS("permission", "permissions", "perm", "perms"),
     NONE("none");
 

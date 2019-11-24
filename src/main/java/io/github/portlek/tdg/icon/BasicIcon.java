@@ -1,9 +1,13 @@
 package io.github.portlek.tdg.icon;
 
 import io.github.portlek.itemstack.util.XMaterial;
-import io.github.portlek.tdg.*;
+import io.github.portlek.tdg.Icon;
+import io.github.portlek.tdg.LiveIcon;
+import io.github.portlek.tdg.TDG;
+import io.github.portlek.tdg.Target;
 import io.github.portlek.tdg.events.IconClickEvent;
 import io.github.portlek.tdg.events.IconHoverEvent;
+import io.github.portlek.tdg.type.IconType;
 import io.github.portlek.tdg.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -303,12 +307,12 @@ public final class BasicIcon implements Icon {
                 if (entity == armorStand || entity == armorStand2) {
                     armorStand.setGravity(true);
                     armorStand.setVelocity(
-                        player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
+                        player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.5)
                     );
                     armorStand.teleport(locationB);
                     armorStand2.setGravity(true);
                     armorStand2.setVelocity(
-                        player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
+                        player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.5)
                     );
                     armorStand2.teleport(location);
                 } else {
