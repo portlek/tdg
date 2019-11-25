@@ -35,18 +35,19 @@ public final class Utils {
 	}
 
 	public static Location getRightSide(Location location, double distance) {
-		float angle = location.getYaw() / 60;
+		final float angle = location.getYaw() / 60;
+
 		return location.clone().subtract(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
 	}
 
 	public static Location getLeftSide(Location location, double distance) {
-		float angle = location.getYaw() / 60;
+		final float angle = location.getYaw() / 60;
+
 		return location.clone().add(new Vector(Math.cos(angle), 0, Math.sin(angle)).normalize().multiply(distance));
 	}
 
 	public static Location getBFLoc(Location loc, double distance) {
-		Vector inverseDirectionVec = loc.getDirection().normalize().multiply(distance);
-		return loc.add(inverseDirectionVec);
+		return loc.add(loc.getDirection().normalize().multiply(distance));
 	}
 
 }
