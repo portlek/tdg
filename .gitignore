@@ -1,4 +1,4 @@
 .idea/
 target/
 *.iml
-!src/main/java/io/github/portlek/tdg/target
+!tdg/src/main/java/io/github/portlek/tdg/target

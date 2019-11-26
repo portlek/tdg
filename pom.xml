@@ -4,10 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.portlek</groupId>
-    <artifactId>TDG</artifactId>
+    <groupId>io.github.portlek.tdg</groupId>
+    <artifactId>parent</artifactId>
     <version>1.0</version>
-    <packaging>jar</packaging>
+    <modules>
+        <module>api</module>
+        <module>nms</module>
+        <module>tdg</module>
+    </modules>
+    <packaging>pom</packaging>
 
     <name>TDG</name>
 
@@ -28,24 +33,6 @@
                     <target>${java.version}</target>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <outputFile>D:\sv\plugins\${project.name}.jar</outputFile>
-                            <minimizeJar>true</minimizeJar>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
         <resources>
             <resource>
@@ -64,34 +51,9 @@
             <id>jcenter</id>
             <url>https://jcenter.bintray.com</url>
         </repository>
-        <repository>
-            <id>nms-repo</id>
-            <url>https://repo.codemc.org/repository/nms/</url>
-        </repository>
-        <repository>
-            <id>dmulloy2-repo</id>
-            <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
-        </repository>
     </repositories>
 
     <dependencies>
-        <dependency>
-            <groupId>io.github.portlek</groupId>
-            <artifactId>reflection</artifactId>
-            <version>2.9</version>
-        </dependency>
-        <dependency>
-            <groupId>com.comphenix.protocol</groupId>
-            <artifactId>ProtocolLib</artifactId>
-            <version>4.4.0</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>me.clip</groupId>
-            <artifactId>placeholderapi</artifactId>
-            <version>2.10.4</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.cactoos</groupId>
             <artifactId>cactoos</artifactId>
@@ -103,16 +65,6 @@
             <version>17.0.0</version>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>io.github.portlek</groupId>
-            <artifactId>mc-yaml</artifactId>
-            <version>1.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot</artifactId>
-            <version>1.14.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
+
 </project>
