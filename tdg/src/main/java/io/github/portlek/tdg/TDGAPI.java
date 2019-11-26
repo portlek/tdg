@@ -303,27 +303,27 @@ public class TDGAPI {
                 })
         ).register(tdg);
 
-        new ListenerBasic<>(PlayerMoveEvent.class,
-            event -> event.getTo() != null &&
-                event.getFrom().distance(event.getTo()) != 0 &&
-                opened.containsKey(event.getPlayer().getUniqueId()),
-            event -> getIconOptional(
-                event.getPlayer()
-            ).ifPresent(entry -> {
-                final IconHoverEvent iconHoverEvent = new IconHoverEvent(
-                    event.getPlayer(),
-                    entry.getKey(),
-                    entry.getValue()
-                );
+        new ListenerBasic<>(PlayerInteractAtEntityEvent.class,
+            event -> opened.containsKey(event.getPlayer().getUniqueId()),
+            event ->
+                getIconOptional(
+                    event.getPlayer()
+                ).ifPresent(entry -> {
+                    final IconClickEvent iconClickEvent = new IconClickEvent(
+                        event.getPlayer(),
+                        entry.getKey(),
+                        entry.getValue(),
+                        ClickType.fromInteractEvent(event)
+                    );
 
-                tdg.getServer().getPluginManager().callEvent(iconHoverEvent);
+                    tdg.getServer().getPluginManager().callEvent(iconClickEvent);
 
-                if (iconHoverEvent.isCancelled()) {
-                    return;
-                }
+                    if (iconClickEvent.isCancelled()) {
+                        return;
+                    }
 
-                entry.getValue().accept(iconHoverEvent);
-            })
+                    entry.getValue().accept(iconClickEvent);
+                })
         ).register(tdg);
     }
 

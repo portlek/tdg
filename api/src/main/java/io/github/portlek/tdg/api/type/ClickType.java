@@ -1,18 +1,21 @@
 package io.github.portlek.tdg.api.type;
 
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 
 public enum ClickType {
 
-    LEFT("left", "left-click"),
-    RIGHT("right", "right-click"),
-    SHIFT_LEFT("shift-left", "shift-left-click"),
-    SHIFT_RIGHT("shift-right", "shift-right-click"),
+    LEFT("left", "left-click", "left_click"),
+    RIGHT("right", "right-click", "right_click"),
+    SHIFT_LEFT("shift-left", "shift-left-click", "shift_left", "shift_left_click"),
+    SHIFT_RIGHT("shift-right", "shift-right-click", "shift_left", "shift_right_click"),
     ANY("any");
 
     @NotNull
@@ -25,7 +28,7 @@ public enum ClickType {
     @NotNull
     public static ClickType fromString(@NotNull String name) {
         for (ClickType clickType : values()) {
-            if (clickType.types.stream().anyMatch(s -> s.equalsIgnoreCase(name))) {
+            if (clickType.types.stream().anyMatch(s -> s.equalsIgnoreCase(name.toLowerCase(Locale.ENGLISH)))) {
                 return clickType;
             }
         }
@@ -45,6 +48,11 @@ public enum ClickType {
         }
 
         return ANY;
+    }
+
+    @NotNull
+    public static ClickType fromInteractEvent(@NotNull PlayerInteractAtEntityEvent event) {
+        return event.getPlayer().isSneaking() ? SHIFT_RIGHT : RIGHT;
     }
 
 }

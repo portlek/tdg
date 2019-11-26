@@ -1,6 +1,11 @@
 package io.github.portlek.tdg.created.util;
 
 import io.github.portlek.tdg.TDG;
+import io.github.portlek.tdg.api.LiveIcon;
+import io.github.portlek.tdg.api.OpenedMenu;
+import io.github.portlek.tdg.api.events.IconHoverEvent;
+import io.github.portlek.tdg.api.mock.MckLiveIcon;
+import io.github.portlek.tdg.util.TargetMenu;
 import io.github.portlek.tdg.util.Targeted;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -65,6 +70,25 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
                                 player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
                             );
                             looking.set(true);
+
+                            final OpenedMenu openedMenu = new TargetMenu(entity).value();
+                            final LiveIcon liveIcon = openedMenu.findByEntity(entity);
+
+                            if (!(liveIcon instanceof MckLiveIcon)) {
+                                final IconHoverEvent iconHoverEvent = new IconHoverEvent(
+                                    player,
+                                    openedMenu,
+                                    liveIcon
+                                );
+
+                                Bukkit.getServer().getPluginManager().callEvent(iconHoverEvent);
+
+                                if (iconHoverEvent.isCancelled()) {
+                                    return;
+                                }
+
+                                liveIcon.accept(iconHoverEvent);
+                            }
                         } else {
                             armorStand.setGravity(false);
                         }

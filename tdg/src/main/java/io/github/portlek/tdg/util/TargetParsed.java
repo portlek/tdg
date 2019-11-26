@@ -235,15 +235,18 @@ public final class TargetParsed<T extends MenuEvent> {
                     ));
                 };
             case SOUND:
-                return event -> XSound
-                    .matchXSound(
-                        yaml.getString(path + "value").orElse("BLOCK_GLASS_BREAK"),
-                        XSound.BLOCK_GLASS_BREAK
-                    ).playSound(
+                return event -> {
+                    final float volume = (float) yaml.getDouble(path + "volume");
+                    XSound
+                        .matchXSound(
+                            yaml.getString(path + "value").orElse("BLOCK_GLASS_BREAK"),
+                            XSound.BLOCK_GLASS_BREAK
+                        ).playSound(
                         event.getPlayer(),
-                        (float) yaml.getDouble(path + "volume"),
+                        volume == 0 ? 1 : volume,
                         (float) yaml.getDouble(path + "pitch")
                     );
+                };
             case OPEN_MENU:
                 return event -> yaml.getString(path + "value")
                     .ifPresent(s ->
