@@ -72,7 +72,7 @@ public final class HeadIconCreated implements Scalar<ArmorStand> {
             armorStand.setHelmet(skull);
         }
 
-        new FinishInitiating(armorStand, player).exec(view, toHide);
+        new FinishInitiating(player, armorStand).exec(view, toHide);
 
         return armorStand;
     }

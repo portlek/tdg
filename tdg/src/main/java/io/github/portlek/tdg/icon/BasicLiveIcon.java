@@ -1,5 +1,6 @@
 package io.github.portlek.tdg.icon;
 
+import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.api.LiveIcon;
 import io.github.portlek.tdg.api.Target;
 import io.github.portlek.tdg.api.events.IconClickEvent;
@@ -45,7 +46,11 @@ public final class BasicLiveIcon implements LiveIcon {
 
     @Override
     public void close() {
-        // TODO: 24/11/2019
+        for (ArmorStand armorStand : armorStands) {
+            TDG.getAPI().entities.remove(armorStand);
+            armorStand.remove();
+            TDG.getAPI().opened.remove(viewer.getUniqueId());
+        }
     }
 
     @Override

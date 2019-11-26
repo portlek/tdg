@@ -1,7 +1,6 @@
 package io.github.portlek.tdg.hooks;
 
 import io.github.portlek.tdg.api.Hook;
-import me.clip.placeholderapi.PlaceholderAPIPlugin;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;

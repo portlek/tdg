@@ -3,7 +3,9 @@ package io.github.portlek.tdg.command;
 import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.tdg.TDGAPI;
 import io.github.portlek.tdg.api.Menu;
+import io.github.portlek.tdg.api.OpenedMenu;
 import io.github.portlek.tdg.api.mock.MckMenu;
+import io.github.portlek.tdg.api.mock.MckOpenMenu;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -46,6 +48,22 @@ public class TDGCommand implements TabExecutor {
             switch (arg1) {
                 case "open":
                     sender.sendMessage(api.getLanguage().commands);
+
+                    return true;
+                case "close":
+                    if (!(sender instanceof Player)) {
+                        sender.sendMessage(api.getLanguage().errorInGameCommand);
+                        return true;
+                    }
+
+                    final Player player = (Player) sender;
+                    final OpenedMenu openedMenu = api.opened.getOrDefault(player.getUniqueId(), new MckOpenMenu());
+
+                    if (openedMenu instanceof MckOpenMenu) {
+                        return true;
+                    }
+
+                    openedMenu.close();
 
                     return true;
                 case "list":
@@ -178,6 +196,7 @@ public class TDGCommand implements TabExecutor {
         if (args.length == 1) {
             return new ListOf<>(
                 // TODO: 23/11/2019 when version argument activated "version",
+                "close",
                 "reload",
                 "list",
                 "open"

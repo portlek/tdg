@@ -3,7 +3,6 @@ package io.github.portlek.tdg.created;
 import io.github.portlek.tdg.created.util.FinishInitiating;
 import io.github.portlek.tdg.created.util.InitiatedIcon;
 import io.github.portlek.tdg.created.util.SetupArmorStand;
-import io.github.portlek.tdg.util.Utils;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -60,8 +59,7 @@ public class ItemIconCreated implements Scalar<List<ArmorStand>> {
         new SetupArmorStand(armorStand2, player, name).run();
         armorStand2.setRightArmPose(new EulerAngle(4.7, 4.8, 6.3));
         armorStand2.setItemInHand(itemStack);
-        new FinishInitiating(armorStand, player).exec(view, toHide);
-        new FinishInitiating(armorStand2, player).exec(view, toHide);
+        new FinishInitiating(player, armorStand, armorStand2).exec(view, toHide);
 
         return new ListOf<>(
             armorStand,

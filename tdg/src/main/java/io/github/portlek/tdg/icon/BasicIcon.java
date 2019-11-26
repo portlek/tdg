@@ -15,7 +15,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

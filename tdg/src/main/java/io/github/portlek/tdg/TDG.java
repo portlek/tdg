@@ -29,7 +29,7 @@ public final class TDG extends JavaPlugin {
 
     private static final Version version = new Version();
     public static final Function<String, ItemStack> SKULL;
-    public static final boolean PARTICLES = version.minor() > 8;
+    public static final boolean NEW_PARTICLES = version.minor() > 8;
     public static final EntityHided ENTITY_HIDED = new VersionMatched<>(
         new MckEntityHided(),
         EntityHider1_8_R1.class,

@@ -17,6 +17,7 @@ import org.cactoos.BiProc;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class RunCreated implements BiProc<List<Player>, List<Player>> {
@@ -40,81 +41,114 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
 
     @Override
     public void exec(@NotNull List<Player> view, @NotNull List<Player> toHide) {
-        for (ArmorStand armorStand : armorStands) {
-            new BukkitRunnable() {
-                @Override
-                public void run() {
-                    if (!armorStand.isValid()) {
-                        cancel();
-                        return;
-                    }
+        if (armorStands.isEmpty()) {
+            return;
+        }
 
-                    armorStand.setFireTicks(0);
-                    toHide.clear();
+        final ArmorStand armorStand = armorStands.get(0);
+        ArmorStand temp = null;
 
-                    for (Player all : Bukkit.getOnlinePlayers()) {
-                        toHide.add(all);
-                        toHide.remove(player);
-                    }
+        try {
+            temp = armorStands.get(1);
+        } catch (Exception ignored) {
+            // ignored
+        }
 
-                    for (Player hide : toHide) {
-                        TDG.ENTITY_HIDED.hide(hide, armorStand);
-                    }
+        final Optional<ArmorStand> armorStand2 = Optional.ofNullable(temp);
 
-                    final Entity entity = new Targeted(player).value();
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!armorStand.isValid () || (armorStand2.isPresent() && !armorStand2.get().isValid())) {
+                    cancel();
+                    return;
+                }
 
-                    if (entity == armorStand) {
-                        if (!looking.get()) {
-                            armorStand.setGravity(true);
-                            armorStand.setVelocity(
+                armorStand2.ifPresent(armorStand1 -> armorStand1.setFireTicks(0));
+                armorStand.setFireTicks(0);
+                toHide.clear();
+
+                for (Player all : Bukkit.getOnlinePlayers()) {
+                    toHide.add(all);
+                    toHide.remove(player);
+                }
+
+                for (Player hide : toHide) {
+                    TDG.ENTITY_HIDED.hide(hide, armorStand);
+                    armorStand2.ifPresent(armorStand1 -> TDG.ENTITY_HIDED.hide(hide, armorStand1));
+                }
+
+                final Entity entity = new Targeted(player).value();
+
+                if (entity == armorStand) {
+                    if (!looking.get()) {
+                        armorStand.setGravity(true);
+                        armorStand.setVelocity(
+                            player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
+                        );
+                        armorStand2.ifPresent(armorStand1 -> {
+                            armorStand1.setGravity(true);
+                            armorStand1.setVelocity(
                                 player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
                             );
-                            looking.set(true);
+                        });
+                        looking.set(true);
 
-                            final OpenedMenu openedMenu = new TargetMenu(entity).value();
-                            final LiveIcon liveIcon = openedMenu.findByEntity(entity);
+                        final OpenedMenu openedMenu = new TargetMenu(entity).value();
+                        final LiveIcon liveIcon = openedMenu.findByEntity(entity);
 
-                            if (!(liveIcon instanceof MckLiveIcon)) {
-                                final IconHoverEvent iconHoverEvent = new IconHoverEvent(
-                                    player,
-                                    openedMenu,
-                                    liveIcon
-                                );
+                        if (!(liveIcon instanceof MckLiveIcon)) {
+                            final IconHoverEvent iconHoverEvent = new IconHoverEvent(
+                                player,
+                                openedMenu,
+                                liveIcon
+                            );
 
-                                Bukkit.getServer().getPluginManager().callEvent(iconHoverEvent);
+                            Bukkit.getServer().getPluginManager().callEvent(iconHoverEvent);
 
-                                if (iconHoverEvent.isCancelled()) {
-                                    return;
-                                }
-
-                                liveIcon.accept(iconHoverEvent);
+                            if (iconHoverEvent.isCancelled()) {
+                                return;
                             }
-                        } else {
-                            armorStand.setGravity(false);
+
+                            liveIcon.accept(iconHoverEvent);
                         }
                     } else {
-                        armorStand.setGravity(true);
-                        armorStand.teleport(oldLocation);
                         armorStand.setGravity(false);
-                        looking.set(false);
+                        armorStand2.ifPresent(armorStand1 -> armorStand1.setGravity(false));
                     }
-
-                    if (player.getLocation().distanceSquared(armorStand.getLocation()) >= 120) {
-                        view.remove(player);
-                    }
-
-                    if (!player.isOnline()) {
-                        view.remove(player);
-                    }
-
-                    if (!view.contains(player)) {
-                        TDG.getAPI().entities.remove(armorStand);
-                        armorStand.remove();
-                        TDG.getAPI().opened.remove(player.getUniqueId());
-                    }
+                } else {
+                    armorStand.setGravity(true);
+                    armorStand.teleport(oldLocation);
+                    armorStand.setGravity(false);
+                    armorStand2.ifPresent(armorStand1 -> {
+                        armorStand1.setGravity(true);
+                        armorStand1.teleport(oldLocation);
+                        armorStand1.setGravity(false);
+                    });
+                    looking.set(false);
                 }
-            }.runTaskTimer(TDG.getAPI().tdg, 0, 0);
-        }
+
+                if (player.getLocation().distanceSquared(armorStand.getLocation()) >= 120 ||
+                    (armorStand2.isPresent() &&
+                        player.getLocation().distanceSquared(armorStand2.get().getLocation()) >= 120)) {
+                    view.remove(player);
+                }
+
+                if (!player.isOnline()) {
+                    view.remove(player);
+                }
+
+                if (!view.contains(player)) {
+                    TDG.getAPI().entities.remove(armorStand);
+                    armorStand.remove();
+                    armorStand2.ifPresent(armorStand1 -> {
+                        TDG.getAPI().entities.remove(armorStand1);
+                        armorStand1.remove();
+                    });
+                    TDG.getAPI().opened.remove(player.getUniqueId());
+                }
+            }
+        }.runTaskTimer(TDG.getAPI().tdg, 0, 0);
     }
 
 }

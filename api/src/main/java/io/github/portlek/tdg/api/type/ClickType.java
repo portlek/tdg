@@ -2,7 +2,6 @@ package io.github.portlek.tdg.api.type;
 
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
-import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;

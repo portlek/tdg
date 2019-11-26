@@ -9,9 +9,6 @@ error:
 general:
   available-menus: '%prefix% &7Available menus:'
   reload-complete: '%prefix% &aReload completed'
-  plugin-version: '%prefix% &aActually running TDG &ev%version%'
-  new-version-found: '%prefix% &aA new version has been found: &e %version%'
-  latest-version: '%prefix% &aRunning the latest version!'
 
 commands:
   - '&8------[ &e&lTDG &8]------'

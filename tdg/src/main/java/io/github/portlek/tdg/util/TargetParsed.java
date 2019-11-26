@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Consumer;
 
 public final class TargetParsed<T extends MenuEvent> {
@@ -262,11 +263,11 @@ public final class TargetParsed<T extends MenuEvent> {
                     final int amount = yaml.getInt(path + "amount");
                     final Location location = Utils.getBFLoc(event.getPlayer().getLocation(), 3.5).add(0, 2.5, 0);
 
-                    if (TDG.PARTICLES) {
+                    if (TDG.NEW_PARTICLES) {
                         final Particle particle;
 
                         try {
-                            particle = Particle.valueOf(value);
+                            particle = Particle.valueOf(value.toUpperCase(Locale.ENGLISH));
                         } catch (Exception exception) {
                             TDG.getAPI().tdg.getLogger().severe("Unknown particle name: " + value);
                             return;

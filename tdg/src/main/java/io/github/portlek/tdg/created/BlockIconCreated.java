@@ -1,19 +1,13 @@
 package io.github.portlek.tdg.created;
 
-import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.created.util.FinishInitiating;
 import io.github.portlek.tdg.created.util.InitiatedIcon;
-import io.github.portlek.tdg.created.util.RunCreated;
 import io.github.portlek.tdg.created.util.SetupArmorStand;
-import io.github.portlek.tdg.util.Metadata;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.Vector;
 import org.cactoos.Scalar;
-import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -58,7 +52,7 @@ public final class BlockIconCreated implements Scalar<ArmorStand> {
         new SetupArmorStand(armorStand, player, name).run();
         armorStand.setCustomNameVisible(true);
         armorStand.setHelmet(itemStack);
-        new FinishInitiating(armorStand, player).exec(view, toHide);
+        new FinishInitiating(player, armorStand).exec(view, toHide);
 
         return armorStand;
     }

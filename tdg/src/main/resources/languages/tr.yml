@@ -9,9 +9,6 @@ error:
 general:
   available-menus: '%prefix% &7Kullanılabilir menuler:'
   reload-complete: '%prefix% &aYeniden yüklendi'
-  plugin-version: '%prefix% &aTDG &ev%version% &asürümünde çalışmaktadır'
-  new-version-found: '%prefix% &aYeni sürüm bulundu: &e %version%'
-  latest-version: '%prefix% &aElenti son sürüm!'
 
 commands:
   - '&8------[ &e&lTDG &8]------'
