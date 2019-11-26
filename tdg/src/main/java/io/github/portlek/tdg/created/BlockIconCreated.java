@@ -55,7 +55,7 @@ public final class BlockIconCreated implements Scalar<ArmorStand> {
             ArmorStand.class
         );
 
-        new SetupArmorStand(armorStand, player, name);
+        new SetupArmorStand(armorStand, player, name).run();
         armorStand.setHelmet(itemStack);
         new FinishInitiating(armorStand, player).exec(view, toHide);
 
