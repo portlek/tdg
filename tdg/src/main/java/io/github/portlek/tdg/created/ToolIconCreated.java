@@ -59,6 +59,7 @@ public class ToolIconCreated implements Scalar<List<ArmorStand>> {
         );
 
         new SetupArmorStand(armorStand, player, name).run();
+        armorStand.setCustomNameVisible(true);
         new SetupArmorStand(armorStand2, player, name).run();
         armorStand2.setRightArmPose(new EulerAngle(-1.1, 1.7, 1.4));
         armorStand2.setItemInHand(itemStack);

@@ -55,6 +55,7 @@ public final class HeadIconCreated implements Scalar<ArmorStand> {
         );
 
         new SetupArmorStand(armorStand, player, name).run();
+        armorStand.setCustomNameVisible(true);
 
         if (texture.contains("textures.minecraft.net")) {
             armorStand.setHelmet(TDG.SKULL.apply(texture));

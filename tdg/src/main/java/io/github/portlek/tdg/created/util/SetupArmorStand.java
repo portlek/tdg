@@ -32,7 +32,6 @@ public final class SetupArmorStand implements Runnable {
                 ? PlaceholderAPI.setPlaceholders(player, name)
                 : name.replaceAll("%player_name%", player.getName())
         );
-        armorStand.setCustomNameVisible(true);
     }
 
 }

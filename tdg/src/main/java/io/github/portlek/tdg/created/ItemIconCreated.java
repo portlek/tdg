@@ -56,6 +56,7 @@ public class ItemIconCreated implements Scalar<List<ArmorStand>> {
         );
 
         new SetupArmorStand(armorStand, player, name).run();
+        armorStand.setCustomNameVisible(true);
         new SetupArmorStand(armorStand2, player, name).run();
         armorStand2.setRightArmPose(new EulerAngle(4.7, 4.8, 6.3));
         armorStand2.setItemInHand(itemStack);
