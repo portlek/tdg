@@ -132,6 +132,9 @@ public final class TargetParsed<T extends MenuEvent> {
 
                                 return true;
                             };
+                        case MONEY:
+                            return event -> TDG.getAPI().getConfig().hooksVault &&
+                                TDG.getAPI().getConfig().vault.get().getBalance(event.getPlayer()) >= yaml.getInt(reqPath);
                         // TODO: 24/11/2019 More requirement support
                         case NONE:
                         default:

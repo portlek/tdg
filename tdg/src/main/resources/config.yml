@@ -10,3 +10,4 @@ Menu-Cooldown: 10
 
 Hooks:
   PlaceholderAPI: false
+  Vault: false
