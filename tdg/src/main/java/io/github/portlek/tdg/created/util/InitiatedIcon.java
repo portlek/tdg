@@ -37,7 +37,7 @@ public final class InitiatedIcon implements Scalar<Location> {
         location.setPitch(pitch);
 
         if (positionY == 2) {
-            location.add(0.0, 1.5, 0.0);
+            location.add(0.0, 1.7, 0.0);
         }
 
         return location;
