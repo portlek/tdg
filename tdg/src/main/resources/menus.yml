@@ -56,12 +56,18 @@ menus:
             action: SOUND
             value: 'CHICKEN_EGG_POP'
             pitch: 0
-          click-message:
+          right-click-message:
+            requirements:
+              click-type: RIGHT
+            action: MESSAGE
+            value:
+              - '&eHey, &a%player_name%&e, you right clicked!'
+          left-click-message:
             requirements:
               click-type: LEFT
             action: MESSAGE
             value:
-              - '&eHey, &a%player_name%&e, you clicked left!'
+              - '&eHey, &a%player_name%&e, you left clicked!'
       free-diamonds:
         name: '&bFree diamonds!'
         icon-type: ITEM

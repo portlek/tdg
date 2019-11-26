@@ -5,6 +5,7 @@ import io.github.portlek.tdg.api.LiveIcon;
 import io.github.portlek.tdg.api.OpenedMenu;
 import io.github.portlek.tdg.api.events.IconHoverEvent;
 import io.github.portlek.tdg.api.mock.MckLiveIcon;
+import io.github.portlek.tdg.api.mock.MckOpenMenu;
 import io.github.portlek.tdg.util.TargetMenu;
 import io.github.portlek.tdg.util.Targeted;
 import org.bukkit.Bukkit;
@@ -139,13 +140,19 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
                 }
 
                 if (!view.contains(player)) {
-                    TDG.getAPI().entities.remove(armorStand);
-                    armorStand.remove();
-                    armorStand2.ifPresent(armorStand1 -> {
-                        TDG.getAPI().entities.remove(armorStand1);
-                        armorStand1.remove();
-                    });
-                    TDG.getAPI().opened.remove(player.getUniqueId());
+                    final OpenedMenu openedMenu = TDG.getAPI().opened.getOrDefault(player.getUniqueId(), new MckOpenMenu());
+
+                    if (openedMenu instanceof MckOpenMenu) {
+                        TDG.getAPI().entities.remove(armorStand);
+                        armorStand.remove();
+                        armorStand2.ifPresent(armorStand1 -> {
+                            TDG.getAPI().entities.remove(armorStand1);
+                            armorStand1.remove();
+                        });
+                        TDG.getAPI().opened.remove(player.getUniqueId());
+                    } else {
+                        openedMenu.close();
+                    }
                 }
             }
         }.runTaskTimer(TDG.getAPI().tdg, 0, 0);

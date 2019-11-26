@@ -49,21 +49,15 @@ public class ItemIconCreated implements Scalar<List<ArmorStand>> {
             new InitiatedIcon(player, location, positionY).value(),
             ArmorStand.class
         );
-        final ArmorStand armorStand2 = player.getWorld().spawn(
-            armorStand.getLocation(),
-            ArmorStand.class
-        );
 
         new SetupArmorStand(armorStand, player, name).run();
         armorStand.setCustomNameVisible(true);
-        new SetupArmorStand(armorStand2, player, name).run();
-        armorStand2.setRightArmPose(new EulerAngle(4.7, 4.8, 6.3));
-        armorStand2.setItemInHand(itemStack);
-        new FinishInitiating(player, armorStand, armorStand2).exec(view, toHide);
+        armorStand.setRightArmPose(new EulerAngle(4.7, 0, 6.3));
+        armorStand.setItemInHand(itemStack);
+        new FinishInitiating(player, armorStand).exec(view, toHide);
 
         return new ListOf<>(
-            armorStand,
-            armorStand2
+            armorStand
         );
     }
 
