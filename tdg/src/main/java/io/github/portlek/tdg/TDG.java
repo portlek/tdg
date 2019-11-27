@@ -1,6 +1,7 @@
 package io.github.portlek.tdg;
 
 import io.github.portlek.tdg.api.EntityHided;
+import io.github.portlek.tdg.api.OpenedMenu;
 import io.github.portlek.tdg.api.mock.MckEntityHided;
 import io.github.portlek.tdg.command.TDGCommand;
 import io.github.portlek.tdg.nms.v1_10_R1.EntityHider1_10_R1;
@@ -19,7 +20,6 @@ import io.github.portlek.tdg.nms.v1_9_R2.EntityHider1_9_R2;
 import io.github.portlek.versionmatched.Version;
 import io.github.portlek.versionmatched.VersionMatched;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.Entity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -81,7 +81,7 @@ public final class TDG extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getAPI().entities.forEach(Entity::remove);
+        getAPI().opened.values().forEach(OpenedMenu::close);
         api = null;
     }
 
@@ -89,6 +89,7 @@ public final class TDG extends JavaPlugin {
         if (api == null) {
             throw new RuntimeException("TDG cannot use before start!");
         }
+
         return api;
     }
 

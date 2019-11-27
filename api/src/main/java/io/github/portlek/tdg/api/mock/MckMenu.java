@@ -19,4 +19,9 @@ public final class MckMenu implements Menu {
     public void open(@NotNull Player player, boolean changed) {
         throw new UnsupportedOperationException();
     }
+    @NotNull
+    @Override
+    public String getId() {
+        throw new UnsupportedOperationException();
+    }
 }

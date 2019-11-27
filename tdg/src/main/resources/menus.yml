@@ -1,60 +1,99 @@
 menus:
-  example:
+  # Menu id
+  paidmenu:
+    # The menu can open with /tdg open <menu-id> also,
+    # you can add custom commands to open the menu.
     commands:
       - 'tdgexample'
+    # Fires when the menu opens
     open-actions:
+      # The requirements for open the menu
+      requirements:
+        # Controls if player has these permissions
+        permissions:
+          - 'tdg.open.example'
+        # Require Vault + Economy Plugin
+        money: 1000
+        # This menu cannot be opened more than once in 10 seconds!
+        cooldown: 10
+      # Require Vault + Economy Plugin
+      # Takes money from the player
+      take-money-action:
+        action: TAKE_MONEY
+        value: 1000
+      # Plays a sound
       sound-action-1:
         requirements:
           perms:
             - 'tdg.openeffect'
         action: SOUND
         value: 'ENTITY_ENDERMAN_TELEPORT'
+        volume: 1.0
         pitch: 0
+      # Sends messages to player
       message-action-1:
         action: MESSAGE
         value:
           - '&6Menu opened'
+    # Fires when the menu closes
     close-actions:
+      # Executes commands as a console
       command-action-1:
         action: COMMANDS
         as-player: false
         value:
-          - 'give minecraft:apple %player_name% 1'
+          - 'give %player_name% apple 1'
+      # Spawns particle
       particle-action-1:
         action: PARTICLES
         value: 'cloud'
         amount: 10
         speed: 1
+    # Distances between icons as horizontal
     distances:
       x1: 4
       x2: 2
       x4: 2
       x5: 4
+    # All icons
     icons:
+      # The icon id
       message-test:
+        # Name that will show on the icon
         name: '&6Test message'
+        # Icon-type can be ITEM/BLOCK/TOOL/HEAD
         icon-type: ITEM
+        # Material of the icon
         material: SIGN
         material-data: 0
+        # Horizontal position of the icon
         position-x: 1
+        # Vertical position of the icon
         position-y: 1
+        # Fires when mouse hover the icon
         hover-actions:
+          # The hover action id for separate actions
           hover-action-1:
-            action: MESSAGE
-            value:
-              - '&eHey, &a%player_name%&e, you hovered the icon!'
             requirements:
               permissions:
                 - 'tdg.hovereffect'
+            # Sends messages to player
+            action: MESSAGE
+            value:
+              - '&eHey, &a%player_name%&e, you hovered the icon!'
+        # Fires when you click to the icon
         click-actions:
+          # Plays sound
           click-sound:
             requirements:
+              # Click type can be ANY/RIGHT/LEFT/SHIFT_LEFT/SHIFT_RIGHT
               click-type:
                 - ANY
               permissions:
                 - 'tdg.clicksound'
             action: SOUND
             value: 'CHICKEN_EGG_POP'
+            volume: 1.0
             pitch: 0
           right-click-message:
             requirements:
@@ -68,6 +107,18 @@ menus:
             action: MESSAGE
             value:
               - '&eHey, &a%player_name%&e, you left clicked!'
+          shift-right-click-message:
+            requirements:
+              click-type: RIGHT
+            action: MESSAGE
+            value:
+              - '&eHey, &a%player_name%&e, you shift-right clicked!'
+          shift-left-click-message:
+            requirements:
+              click-type: SHIFT_LEFT
+            action: MESSAGE
+            value:
+              - '&eHey, &a%player_name%&e, you shift-left clicked!'
       free-diamonds:
         name: '&bFree diamonds!'
         icon-type: ITEM
@@ -75,6 +126,12 @@ menus:
         material-data: 0
         position-x: 2
         position-y: 1
+        click-actions:
+          give-diamond-command:
+            action: COMMAND
+            as-player: false
+            value:
+              - 'give %player_name% diamond 2'
       run-command-as-op:
         name: '&9Command as op'
         icon-type: TOOL
@@ -82,13 +139,12 @@ menus:
         material-data: 0
         position-x: 3
         position-y: 1
-      command-test:
-        name: '&fCommand test'
-        icon-type: BLOCK
-        material: BOOKSHELF
-        material-data: 0
-        position-x: 4
-        position-y: 1
+        click-actions:
+          give-diamond-command:
+            action: COMMAND
+            as-player: false
+            value:
+              - 'say This command used from the console!'
       open-menu-test:
         name: '&aSocials'
         icon-type: HEAD
@@ -97,6 +153,10 @@ menus:
         value: 'http://textures.minecraft.net/texture/b1dd4fe4a429abd665dfdb3e21321d6efa6a6b5e7b956db9c5d59c9efab25'
         position-x: 5
         position-y: 1
+        click-actions:
+          open-menu-action:
+            action: OPEN_MENU
+            value: "other-unique-menu"
       cooldown-test:
         name: '&5Cooldown test'
         icon-type: TOOL
@@ -104,15 +164,36 @@ menus:
         material-data: 0
         position-x: 1
         position-y: 2
+        click-acitons:
+          requirements:
+            # The type is second
+            cooldown: 10
+          cooldown-command:
+            action: COMMAND
+            as-player: false
+            # Also, you can add cooldown to specific action not just the whole action
+            #requirements:
+            #  cooldown: 10
+            value:
+              - 'say This icon cannot be used more than once in 10 seconds!'
       player-head:
         name: '&e%player_name%'
         icon-type: HEAD
         value: '%player_name%'
         position-x: 3
         position-y: 2
+        click-actions:
+          open-profile-menu:
+            action: COMMAND
+            as-player: true
+            value:
+              - 'profile'
       close-test:
         name: '&cClose menu'
         icon-type: HEAD
         value: 'http://textures.minecraft.net/texture/5a6787ba32564e7c2f3a0ce64498ecbb23b89845e5a66b5cec7736f729ed37'
         position-x: 5
         position-y: 2
+        click-actions:
+          close-action-1:
+            action: CLOSE_MENU

@@ -5,7 +5,7 @@ import io.github.portlek.tdg.api.events.IconHoverEvent;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
-public interface LiveIcon {
+public interface LiveIcon extends Parent<Icon> {
 
     boolean is(@NotNull Entity entity);
 

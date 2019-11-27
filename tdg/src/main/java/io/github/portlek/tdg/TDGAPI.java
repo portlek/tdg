@@ -182,6 +182,7 @@ public class TDGAPI {
                             new ListOf<>(
                                 new Mapped<>(
                                     iconId -> new BasicIcon(
+                                        iconId,
                                         new Colored(
                                             menusFile.getString("menus." + menuId + ".icons." + iconId + ".name")
                                                 .orElse("")
@@ -258,7 +259,7 @@ public class TDGAPI {
 
         new ListenerBasic<>(PlayerCommandPreprocessEvent.class, event -> {
             final Player player = event.getPlayer();
-            final String command = event.getMessage();
+            final String command = event.getMessage().replaceAll("/", "");
             final Menu menu = findMenuByCommand(command);
 
             if (menu instanceof MckMenu) {

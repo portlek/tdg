@@ -13,7 +13,7 @@ public final class Config {
     @NotNull
     public final String pluginPrefix;
 
-    public final int menuCooldown;
+    public final boolean hoverEffect;
 
     public final boolean hooksPlaceholderAPI;
 
@@ -21,14 +21,14 @@ public final class Config {
 
     public final VaultHook vault;
 
-    public Config(@NotNull String language, boolean updateCheck, @NotNull String pluginPrefix, int menuCooldown,
-                  boolean hooksPlaceholderAPI, boolean hooksVault, VaultHook vaultHook) {
+    public Config(@NotNull String language, boolean updateCheck, @NotNull String pluginPrefix, boolean hoverEffect,
+                  boolean hooksPlaceholderAPI, boolean hooksVault, VaultHook vault) {
         this.language = language;
         this.updateCheck = updateCheck;
         this.pluginPrefix = pluginPrefix;
-        this.menuCooldown = menuCooldown;
+        this.hoverEffect = hoverEffect;
         this.hooksPlaceholderAPI = hooksPlaceholderAPI;
         this.hooksVault = hooksVault;
-        this.vault = vaultHook;
+        this.vault = vault;
     }
 }

@@ -2,6 +2,7 @@ package io.github.portlek.tdg.menu;
 
 import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.api.LiveIcon;
+import io.github.portlek.tdg.api.Menu;
 import io.github.portlek.tdg.api.OpenedMenu;
 import io.github.portlek.tdg.api.Target;
 import io.github.portlek.tdg.api.events.MenuCloseEvent;
@@ -18,6 +19,9 @@ import java.util.List;
 public final class BasicOpenMenu implements OpenedMenu {
 
     @NotNull
+    private final Menu parent;
+
+    @NotNull
     private final List<LiveIcon> liveIcons = new ArrayList<>();
 
     @NotNull
@@ -29,8 +33,10 @@ public final class BasicOpenMenu implements OpenedMenu {
     @NotNull
     private final List<Target<MenuOpenEvent>> openTargets;
 
-    public BasicOpenMenu(@NotNull Player player, @NotNull List<Target<MenuCloseEvent>> closeTargets,
+    public BasicOpenMenu(@NotNull Menu parent, @NotNull Player player,
+                         @NotNull List<Target<MenuCloseEvent>> closeTargets,
                          @NotNull List<Target<MenuOpenEvent>> openTargets) {
+        this.parent = parent;
         this.player = player;
         this.closeTargets = closeTargets;
         this.openTargets = openTargets;
@@ -77,4 +83,11 @@ public final class BasicOpenMenu implements OpenedMenu {
     public void accept(@NotNull MenuCloseEvent event) {
         closeTargets.forEach(target -> target.handle(event));
     }
+
+    @NotNull
+    @Override
+    public Menu getParent() {
+        return parent;
+    }
+
 }

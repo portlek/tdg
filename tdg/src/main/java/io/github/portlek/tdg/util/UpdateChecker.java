@@ -9,14 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
-/*
- * @author iShadey
- *
- * Class created to check updates using SpigotMC's legacy API.
- *
- */
-
-public class UpdateChecker {
+public final class UpdateChecker {
 
     @NotNull
     private final Plugin plugin;

@@ -1,12 +1,10 @@
 package io.github.portlek.tdg.menu;
 
 import io.github.portlek.tdg.TDG;
-import io.github.portlek.tdg.api.Icon;
-import io.github.portlek.tdg.api.Menu;
-import io.github.portlek.tdg.api.OpenedMenu;
-import io.github.portlek.tdg.api.Target;
+import io.github.portlek.tdg.api.*;
 import io.github.portlek.tdg.api.events.MenuCloseEvent;
 import io.github.portlek.tdg.api.events.MenuOpenEvent;
+import io.github.portlek.tdg.api.mock.MckOpenMenu;
 import io.github.portlek.tdg.util.Metadata;
 import io.github.portlek.tdg.util.Utils;
 import org.bukkit.Bukkit;
@@ -70,7 +68,14 @@ public final class BasicMenu implements Menu {
 
     @Override
     public void open(@NotNull Player player, boolean changed) {
+        final OpenedMenu oldMenu = TDG.getAPI().opened.getOrDefault(player.getUniqueId(), new MckOpenMenu());
+
+        if (!(oldMenu instanceof MckOpenMenu)) {
+            oldMenu.close();
+        }
+
         final OpenedMenu openedMenu = new BasicOpenMenu(
+            this,
             player,
             closeTargets,
             openTargets
@@ -111,6 +116,12 @@ public final class BasicMenu implements Menu {
         );
         openedMenu.accept(menuOpenEvent);
         TDG.getAPI().opened.put(player.getUniqueId(), openedMenu);
+    }
+
+    @NotNull
+    @Override
+    public String getId() {
+        return id;
     }
 
 }

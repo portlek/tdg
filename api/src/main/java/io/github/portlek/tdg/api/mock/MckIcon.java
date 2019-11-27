@@ -15,4 +15,9 @@ public final class MckIcon implements Icon {
                               boolean changed) {
         throw new UnsupportedOperationException();
     }
+    @NotNull
+    @Override
+    public String getId() {
+        throw new UnsupportedOperationException();
+    }
 }

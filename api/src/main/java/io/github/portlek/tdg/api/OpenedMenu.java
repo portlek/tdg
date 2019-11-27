@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface OpenedMenu {
+public interface OpenedMenu extends Parent<Menu> {
 
     @NotNull
     LiveIcon findByEntity(@NotNull Entity entity);

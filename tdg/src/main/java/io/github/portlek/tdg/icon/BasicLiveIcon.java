@@ -1,6 +1,7 @@
 package io.github.portlek.tdg.icon;
 
 import io.github.portlek.tdg.TDG;
+import io.github.portlek.tdg.api.Icon;
 import io.github.portlek.tdg.api.LiveIcon;
 import io.github.portlek.tdg.api.Target;
 import io.github.portlek.tdg.api.events.IconClickEvent;
@@ -15,10 +16,10 @@ import java.util.List;
 public final class BasicLiveIcon implements LiveIcon {
 
     @NotNull
-    private final List<ArmorStand> armorStands;
+    private final Icon parent;
 
     @NotNull
-    private final Player viewer;
+    private final List<ArmorStand> armorStands;
 
     @NotNull
     private final List<Target<IconClickEvent>> clickTargets;
@@ -26,11 +27,11 @@ public final class BasicLiveIcon implements LiveIcon {
     @NotNull
     private final List<Target<IconHoverEvent>> hoverTargets;
 
-    public BasicLiveIcon(@NotNull List<ArmorStand> armorStands, @NotNull Player viewer,
+    public BasicLiveIcon(@NotNull Icon parent, @NotNull List<ArmorStand> armorStands,
                          @NotNull List<Target<IconClickEvent>> clickTargets,
                          @NotNull List<Target<IconHoverEvent>> hoverTargets) {
+        this.parent = parent;
         this.armorStands = armorStands;
-        this.viewer = viewer;
         this.clickTargets = clickTargets;
         this.hoverTargets = hoverTargets;
     }
@@ -49,7 +50,6 @@ public final class BasicLiveIcon implements LiveIcon {
         for (ArmorStand armorStand : armorStands) {
             TDG.getAPI().entities.remove(armorStand);
             armorStand.remove();
-            TDG.getAPI().opened.remove(viewer.getUniqueId());
         }
     }
 
@@ -61,6 +61,12 @@ public final class BasicLiveIcon implements LiveIcon {
     @Override
     public void accept(@NotNull IconHoverEvent event) {
         hoverTargets.forEach(target -> target.handle(event));
+    }
+
+    @NotNull
+    @Override
+    public Icon getParent() {
+        return parent;
     }
 
 }

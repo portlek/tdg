@@ -24,6 +24,9 @@ import java.util.function.IntFunction;
 public final class BasicIcon implements Icon {
 
     @NotNull
+    private final String id;
+
+    @NotNull
     private final String name;
 
     @NotNull
@@ -47,9 +50,10 @@ public final class BasicIcon implements Icon {
 
     private final int positionY;
 
-    public BasicIcon(@NotNull String name, @NotNull IconType iconType, @NotNull String material,
+    public BasicIcon(@NotNull String id, @NotNull String name, @NotNull IconType iconType, @NotNull String material,
                      byte materialData, @NotNull String texture, @NotNull List<Target<IconClickEvent>> clickTargets,
                      @NotNull List<Target<IconHoverEvent>> hoverTargets, int positionX, int positionY) {
+        this.id = id;
         this.name = name;
         this.iconType = iconType;
         this.material = material;
@@ -65,8 +69,8 @@ public final class BasicIcon implements Icon {
     @Override
     public LiveIcon createFor(@NotNull Player player, IntFunction<Location> function,
                               boolean changed) {
-        Location location = function.apply(positionX);
-        List<ArmorStand> armorStands = new ArrayList<>();
+        final Location location = function.apply(positionX);
+        final List<ArmorStand> armorStands = new ArrayList<>();
 
         switch (iconType) {
             case BLOCK:
@@ -130,11 +134,16 @@ public final class BasicIcon implements Icon {
         }
 
         return new BasicLiveIcon(
+            this,
             armorStands,
-            player,
             clickTargets,
             hoverTargets
         );
     }
 
+    @NotNull
+    @Override
+    public String getId() {
+        return id;
+    }
 }

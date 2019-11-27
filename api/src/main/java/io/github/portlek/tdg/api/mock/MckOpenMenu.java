@@ -1,6 +1,7 @@
 package io.github.portlek.tdg.api.mock;
 
 import io.github.portlek.tdg.api.LiveIcon;
+import io.github.portlek.tdg.api.Menu;
 import io.github.portlek.tdg.api.OpenedMenu;
 import io.github.portlek.tdg.api.events.MenuCloseEvent;
 import io.github.portlek.tdg.api.events.MenuOpenEvent;
@@ -28,6 +29,11 @@ public final class MckOpenMenu implements OpenedMenu {
     }
     @Override
     public void accept(@NotNull MenuCloseEvent event) {
+        throw new UnsupportedOperationException();
+    }
+    @NotNull
+    @Override
+    public Menu getParent() {
         throw new UnsupportedOperationException();
     }
 }

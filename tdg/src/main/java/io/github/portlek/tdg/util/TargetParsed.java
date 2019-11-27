@@ -9,6 +9,7 @@ import io.github.portlek.tdg.api.events.IconClickEvent;
 import io.github.portlek.tdg.api.events.IconHoverEvent;
 import io.github.portlek.tdg.api.events.MenuCloseEvent;
 import io.github.portlek.tdg.api.events.MenuOpenEvent;
+import io.github.portlek.tdg.api.events.abs.IconEvent;
 import io.github.portlek.tdg.api.events.abs.MenuEvent;
 import io.github.portlek.tdg.api.type.ActionType;
 import io.github.portlek.tdg.api.type.ClickType;
@@ -16,6 +17,7 @@ import io.github.portlek.tdg.api.type.RequirementType;
 import io.github.portlek.tdg.api.type.TargetType;
 import io.github.portlek.tdg.nms.v1_9_R1.Particles1_9;
 import io.github.portlek.tdg.oldparticle.ParticleEffect;
+import io.github.portlek.tdg.target.BasicAction;
 import io.github.portlek.tdg.target.BasicTarget;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
@@ -68,8 +70,11 @@ public final class TargetParsed<T extends MenuEvent> {
         return new ListOf<>(
             new Mapped<>(
                 key -> new BasicTarget<>(
-                    parseConsumer(finalPath + "." + key + "."),
-                    parseRequirements(finalPath + "." + key + ".")
+                    new BasicAction<>(
+                        parseConsumer(finalPath + "." + key + "."),
+                        parseRequirements(finalPath + "." + key + ".")
+                    ),
+                    parseRequirements(finalPath + ".")
                 ),
                 yaml.getSection(finalPath).getKeys(false)
             )
@@ -132,6 +137,22 @@ public final class TargetParsed<T extends MenuEvent> {
                                 }
 
                                 return true;
+                            };
+                        case COOLDOWN:
+                            return event -> {
+                                final String menuIconId;
+
+                                if (event instanceof MenuOpenEvent || event instanceof MenuCloseEvent) {
+                                    menuIconId = event.getOpenedMenu().getParent().getId();
+                                } else if (event instanceof IconEvent) {
+                                    menuIconId = event.getOpenedMenu().getParent().getId() + ">"
+                                        + ((IconEvent) event).getLiveIcon().getParent().getId();
+                                } else {
+                                    menuIconId = "";
+                                }
+
+                                return menuIconId.isEmpty() ||
+                                    Cooldown.isInCooldown(event.getPlayer().getUniqueId(), menuIconId);
                             };
                         case MONEY:
                             return event -> TDG.getAPI().getConfig().hooksVault &&
@@ -227,6 +248,7 @@ public final class TargetParsed<T extends MenuEvent> {
                         }
                     }
 
+                    System.out.println(commands);
                     commands.forEach(s -> Bukkit.getScheduler().callSyncMethod(
                         TDG.getAPI().tdg,
                         () -> {
@@ -253,9 +275,7 @@ public final class TargetParsed<T extends MenuEvent> {
                 };
             case OPEN_MENU:
                 return event -> yaml.getString(path + "value")
-                    .ifPresent(s ->
-                        TDG.getAPI().findMenuById(s).open(event.getPlayer(), true)
-                    );
+                    .ifPresent(s -> TDG.getAPI().findMenuById(s).open(event.getPlayer(), true));
             case PARTICLES:
                 return event -> {
                     final String value = yaml.getString(path + "value").orElse("smoke");

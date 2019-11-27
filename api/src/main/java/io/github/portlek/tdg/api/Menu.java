@@ -3,7 +3,7 @@ package io.github.portlek.tdg.api;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public interface Menu {
+public interface Menu extends Id {
 
     boolean hasPermission(@NotNull Player player);
 

@@ -19,9 +19,6 @@ permissions:
   tdg.open:
     description: Allows you to force open menu to another player
     default: op
-  tdg.version:
-    description: Allows you to check updates
-    default: op
   tdg.reload:
     description: Allows you to reload the plugin
     default: op
@@ -30,7 +27,4 @@ permissions:
     default: op
   tdg.use:
     description: Allows you to show help message
-    default: op
-  tdg.chestupdates:
-    description: Allows you to show new updates if exist on join.
     default: op

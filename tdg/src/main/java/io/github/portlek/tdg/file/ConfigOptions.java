@@ -24,7 +24,7 @@ public class ConfigOptions implements Scalar<Config> {
         final String language = yaml.getOrSetIfDoesNotExist("Language", "en");
         //final boolean updateCheck = yaml.getOrSetIfDoesNotExist("Update-Check", false);
         final String pluginPrefix = new Colored(yaml.getOrSetIfDoesNotExist("Plugin-Prefix", "&6[&a&lTDG&6]")).value();
-        final int menuCooldown = yaml.getOrSetIfDoesNotExist("Menu-Cooldown", 1);
+        final boolean hoverEffect = yaml.getOrSetIfDoesNotExist("Hover-Effect", true);
         boolean hooksPlaceholderAPI = yaml.getOrSetIfDoesNotExist("Hooks.PlaceholderAPI", false);
         boolean hooksVault = yaml.getOrSetIfDoesNotExist("Hooks.Vault", false);
         final VaultHook vaultHook = new VaultHook();
@@ -49,7 +49,7 @@ public class ConfigOptions implements Scalar<Config> {
             language,
             false,
             pluginPrefix,
-            menuCooldown,
+            hoverEffect,
             hooksPlaceholderAPI,
             hooksVault,
             vaultHook

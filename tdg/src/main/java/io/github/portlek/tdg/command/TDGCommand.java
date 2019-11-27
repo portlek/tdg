@@ -135,11 +135,6 @@ public class TDGCommand implements TabExecutor {
                 return true;
             }
 
-            if (!sender.hasPermission("tdg.open." + arg2)) {
-                sender.sendMessage(api.getLanguage().errorPermission);
-                return true;
-            }
-
             final Player player = (Player) sender;
 
             if (api.opened.containsKey(player.getUniqueId())) {

@@ -10,6 +10,7 @@ public enum RequirementType {
     CLICK_TYPE("click-type", "click-types", "click", "clicks"),
     PERMISSIONS("permission", "permissions", "perm", "perms"),
     MONEY("money", "vault", "balance"),
+    COOLDOWN("cooldown", "cd"),
     NONE("none");
 
     private final List<String> types;
