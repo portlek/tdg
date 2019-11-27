@@ -29,8 +29,6 @@ public final class FinishInitiating implements BiProc<List<Player>, List<Player>
             return;
         }
 
-        final ArmorStand armorStand = armorStands.get(0);
-
         for (ArmorStand as : armorStands) {
             as.setArms(true);
             view.add(player);
@@ -41,7 +39,7 @@ public final class FinishInitiating implements BiProc<List<Player>, List<Player>
         new RunCreated(
             armorStands,
             player,
-            armorStand.getLocation()
+            armorStands.get(0).getLocation()
         ).exec(view, toHide);
     }
 

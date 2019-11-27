@@ -56,6 +56,7 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
         }
 
         final Optional<ArmorStand> armorStand2 = Optional.ofNullable(temp);
+        final Optional<Location> oldLocation1 = armorStand2.map(Entity::getLocation);
 
         new BukkitRunnable() {
             @Override
@@ -123,7 +124,7 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
                     armorStand.setGravity(false);
                     armorStand2.ifPresent(armorStand1 -> {
                         armorStand1.setGravity(true);
-                        armorStand1.teleport(oldLocation);
+                        oldLocation1.ifPresent(armorStand1::teleport);
                         armorStand1.setGravity(false);
                     });
                     looking.set(false);
