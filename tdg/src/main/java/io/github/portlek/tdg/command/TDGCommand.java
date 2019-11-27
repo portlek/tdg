@@ -193,18 +193,22 @@ public class TDGCommand implements TabExecutor {
             return new ListOf<>();
         }
 
+        final String lastWord = args[args.length - 1];
+
         if (args.length == 1) {
-            return new ListOf<>(
-                // TODO: 23/11/2019 when version argument activated "version",
-                "close",
-                "reload",
-                "list",
-                "open"
+            return sort(
+                new ListOf<>(
+                    // TODO: 23/11/2019 when version argument activated "version",
+                    "close",
+                    "reload",
+                    "list",
+                    "open"
+                ),
+                lastWord
             );
         }
 
         final String arg1 = args[0];
-        final String lastWord = args[args.length - 1];
 
         if (args.length == 2) {
             if (!arg1.equalsIgnoreCase("open")) {
