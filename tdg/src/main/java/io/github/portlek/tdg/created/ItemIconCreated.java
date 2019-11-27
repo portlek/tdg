@@ -51,7 +51,7 @@ public class ItemIconCreated implements Scalar<List<ArmorStand>> {
             ArmorStand.class
         );
         final ArmorStand armorStand2 = player.getWorld().spawn(
-            Utils.getLeftSide(armorStand.getLocation(), -0.6),
+            Utils.getLeftSide(armorStand.getLocation(), -0.5),
             ArmorStand.class
         );
 
