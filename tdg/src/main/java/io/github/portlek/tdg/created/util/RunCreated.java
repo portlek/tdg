@@ -63,7 +63,7 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
         new BukkitRunnable() {
             @Override
             public void run() {
-                if (!armorStand.isValid () || (armorStand2.isPresent() && !armorStand2.get().isValid())) {
+                if (!armorStand.isValid() || (armorStand2.isPresent() && !armorStand2.get().isValid())) {
                     cancel();
                     return;
                 }
@@ -84,54 +84,52 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
 
                 final Entity entity = new Targeted(player).value();
 
-                if (hoverEffect) {
-                    if (entity == armorStand) {
-                        if (!looking.get()) {
-                            armorStand.setGravity(true);
-                            armorStand.setVelocity(
-                                player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
-                            );
-                            armorStand2.ifPresent(armorStand1 -> {
-                                armorStand1.setGravity(true);
-                                armorStand1.setVelocity(
-                                    player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
-                                );
-                            });
-                            looking.set(true);
-
-                            final OpenedMenu openedMenu = new TargetMenu(entity).value();
-                            final LiveIcon liveIcon = openedMenu.findByEntity(entity);
-
-                            if (!(liveIcon instanceof MckLiveIcon)) {
-                                final IconHoverEvent iconHoverEvent = new IconHoverEvent(
-                                    player,
-                                    openedMenu,
-                                    liveIcon
-                                );
-
-                                Bukkit.getServer().getPluginManager().callEvent(iconHoverEvent);
-
-                                if (iconHoverEvent.isCancelled()) {
-                                    return;
-                                }
-
-                                liveIcon.accept(iconHoverEvent);
-                            }
-                        } else {
-                            armorStand.setGravity(false);
-                            armorStand2.ifPresent(armorStand1 -> armorStand1.setGravity(false));
-                        }
-                    } else {
+                if (entity == armorStand) {
+                    if (!looking.get()) {
                         armorStand.setGravity(true);
-                        armorStand.teleport(oldLocation);
-                        armorStand.setGravity(false);
+                        armorStand.setVelocity(
+                            player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
+                        );
                         armorStand2.ifPresent(armorStand1 -> {
                             armorStand1.setGravity(true);
-                            oldLocation1.ifPresent(armorStand1::teleport);
-                            armorStand1.setGravity(false);
+                            armorStand1.setVelocity(
+                                player.getLocation().toVector().subtract(armorStand.getLocation().toVector()).multiply(0.1)
+                            );
                         });
-                        looking.set(false);
+                        looking.set(true);
+
+                        final OpenedMenu openedMenu = new TargetMenu(entity).value();
+                        final LiveIcon liveIcon = openedMenu.findByEntity(entity);
+
+                        if (!(liveIcon instanceof MckLiveIcon)) {
+                            final IconHoverEvent iconHoverEvent = new IconHoverEvent(
+                                player,
+                                openedMenu,
+                                liveIcon
+                            );
+
+                            Bukkit.getServer().getPluginManager().callEvent(iconHoverEvent);
+
+                            if (iconHoverEvent.isCancelled()) {
+                                return;
+                            }
+
+                            liveIcon.accept(iconHoverEvent);
+                        }
+                    } else {
+                        armorStand.setGravity(false);
+                        armorStand2.ifPresent(armorStand1 -> armorStand1.setGravity(false));
                     }
+                } else {
+                    armorStand.setGravity(true);
+                    armorStand.teleport(oldLocation);
+                    armorStand.setGravity(false);
+                    armorStand2.ifPresent(armorStand1 -> {
+                        armorStand1.setGravity(true);
+                        oldLocation1.ifPresent(armorStand1::teleport);
+                        armorStand1.setGravity(false);
+                    });
+                    looking.set(false);
                 }
 
                 if (player.getLocation().distanceSquared(armorStand.getLocation()) >= 120 ||
