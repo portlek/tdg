@@ -66,7 +66,6 @@ public final class BasicOpenMenu implements OpenedMenu {
 
         liveIcons.forEach(LiveIcon::close);
         accept(menuCloseEvent);
-        TDG.getAPI().opened.remove(player.getUniqueId());
     }
 
     @Override

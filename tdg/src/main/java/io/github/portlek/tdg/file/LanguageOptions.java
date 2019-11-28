@@ -4,6 +4,7 @@ import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.tdg.TDG;
 import org.cactoos.Scalar;
+import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -26,24 +27,24 @@ public final class LanguageOptions implements Scalar<Language> {
         yaml.create();
 
         // error
-        final String cooldown = c(yaml.getString("error.cooldown").orElse(""));
-        final String alreadyOpen = c(yaml.getString("error.already-open").orElse(""));
-        final String permission = c(yaml.getString("error.permission").orElse(""));
-        final String menuNotFound = c(yaml.getString("error.menu-not-found").orElse(""));
-        final String invalidArgument = c(yaml.getString("error.invalid-argument").orElse(""));
-        final String inGameCommand = c(yaml.getString("error.in-game-command").orElse(""));
-        final String playerNotFound = c(yaml.getString("error.player-not-found").orElse(""));
+        final String cooldown = c(yaml.getOrSet("error.cooldown", "error.cooldown"));
+        final String alreadyOpen = c(yaml.getOrSet("error.already-open", "error.already-open"));
+        final String permission = c(yaml.getOrSet("error.permission", "error.permission"));
+        final String menuNotFound = c(yaml.getOrSet("error.menu-not-found", "error.menu-not-found"));
+        final String invalidArgument = c(yaml.getOrSet("error.invalid-argument", "error.invalid-argument"));
+        final String inGameCommand = c(yaml.getOrSet("error.in-game-command", "error.in-game-command"));
+        final String playerNotFound = c(yaml.getOrSet("error.player-not-found", "error.player-not-found"));
 
         // general
-        final String availableMenus = c(yaml.getString("general.available-menus").orElse(""));
-        final String reloadComplete = c(yaml.getString("general.reload-complete").orElse(""));
-        final String pluginVersion = c(yaml.getString("general.plugin-version").orElse(""))
+        final String availableMenus = c(yaml.getOrSet("general.available-menus", "general.available-menus"));
+        final String reloadComplete = c(yaml.getOrSet("general.reload-complete","general.reload-complete"));
+        final String pluginVersion = c(yaml.getOrSet("general.plugin-version", "general.plugin-version"))
             .replaceAll("%version%", TDG.getAPI().tdg.getDescription().getVersion());
-        final String newVersionFound = c(yaml.getString("general.new-version-found").orElse(""));
-        final String latestVersion = c(yaml.getString("general.latest-version").orElse(""));
+        final String newVersionFound = c(yaml.getOrSet("general.new-version-found", "general.new-version-found"));
+        final String latestVersion = c(yaml.getOrSet("general.latest-version", "general.latest-version"));
 
         // commands
-        final String commands = cL(yaml.getStringList("commands"));
+        final String commands = cL(yaml.getOrSet("commands", new ListOf<>()));
 
         return new Language(
             cooldown,

@@ -7,7 +7,7 @@ import java.util.List;
 
 public enum RequirementType {
 
-    CLICK_TYPE("click-type", "click-types", "click", "clicks"),
+    CLICK_TYPE("click-type", "click_type", "click-types", "click_types", "click", "clicks"),
     PERMISSIONS("permission", "permissions", "perm", "perms"),
     MONEY("money", "vault", "balance"),
     COOLDOWN("cooldown", "cd"),

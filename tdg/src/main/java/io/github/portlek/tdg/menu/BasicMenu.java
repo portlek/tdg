@@ -72,6 +72,7 @@ public final class BasicMenu implements Menu {
 
         if (!(oldMenu instanceof MckOpenMenu)) {
             oldMenu.close();
+            TDG.getAPI().opened.remove(player.getUniqueId());
         }
 
         final OpenedMenu openedMenu = new BasicOpenMenu(

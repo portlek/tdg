@@ -87,19 +87,24 @@ public class TDGAPI {
     }
 
     public void reloadPlugin() {
+        disablePlugin();
+
+        menusFile.create();
+        if (menusFile.getSection("menus") instanceof MckFileConfiguration) {
+            menusFile.createSection("menus");
+        }
+
+        init();
+    }
+
+    public void disablePlugin() {
+        opened.values().forEach(OpenedMenu::close);
         tdg.getServer().getScheduler().cancelTasks(tdg);
         HandlerList.unregisterAll(tdg);
         entities.forEach(Entity::remove);
         entities.clear();
         menus.clear();
         opened.clear();
-        menusFile.create();
-
-        if (menusFile.getSection("menus") instanceof MckFileConfiguration) {
-            menusFile.createSection("menus");
-        }
-
-        init();
     }
 
     @NotNull
@@ -254,6 +259,7 @@ public class TDGAPI {
 
             if (!(openedMenu instanceof MckOpenMenu)) {
                 openedMenu.close();
+                TDG.getAPI().opened.remove(event.getPlayer().getUniqueId());
             }
         }).register(tdg);
 

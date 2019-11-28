@@ -81,7 +81,11 @@ public final class TDG extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getAPI().opened.values().forEach(OpenedMenu::close);
+        if (api == null) {
+            return;
+        }
+
+        api.disablePlugin();
         api = null;
     }
 

@@ -4,15 +4,16 @@ import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Locale;
 
 public enum ActionType {
-	
+
 	MESSAGE("message", "messages", "msg"),
 	COMMAND("command", "commands", "cmd"),
 	SOUND("sound", "sounds"),
-	OPEN_MENU("open-menu", "open"),
+	OPEN_MENU("open-menu", "open_menu", "open"),
 	PARTICLES("particles", "particle"),
-	CLOSE_MENU("close-menu", "close"),
+	CLOSE_MENU("close-menu", "close_menu", "close"),
 	NONE("none", "null");
 
 	@NotNull

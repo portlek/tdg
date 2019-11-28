@@ -13,8 +13,21 @@ public enum ClickType {
 
     LEFT("left", "left-click", "left_click"),
     RIGHT("right", "right-click", "right_click"),
-    SHIFT_LEFT("shift-left", "shift-left-click", "shift_left", "shift_left_click"),
-    SHIFT_RIGHT("shift-right", "shift-right-click", "shift_left", "shift_right_click"),
+    SHIFT_LEFT(
+        "shift-left",
+        "shift-left-click",
+        "shift_left",
+        "shift_left_click",
+        "shift_left-click",
+        "shift-left_click"
+    ),
+    SHIFT_RIGHT("shift-right",
+        "shift-right-click",
+        "shift_right",
+        "shift_right_click",
+        "shift_right-click",
+        "shift-right_click"
+    ),
     ANY("any");
 
     @NotNull

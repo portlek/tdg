@@ -3,6 +3,8 @@ package io.github.portlek.tdg.util;
 import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.tdg.TDG;
+import io.github.portlek.tdg.api.Menu;
+import io.github.portlek.tdg.api.OpenedMenu;
 import io.github.portlek.tdg.api.Requirement;
 import io.github.portlek.tdg.api.Target;
 import io.github.portlek.tdg.api.events.IconClickEvent;
@@ -11,6 +13,7 @@ import io.github.portlek.tdg.api.events.MenuCloseEvent;
 import io.github.portlek.tdg.api.events.MenuOpenEvent;
 import io.github.portlek.tdg.api.events.abs.IconEvent;
 import io.github.portlek.tdg.api.events.abs.MenuEvent;
+import io.github.portlek.tdg.api.mock.MckMenu;
 import io.github.portlek.tdg.api.type.ActionType;
 import io.github.portlek.tdg.api.type.ClickType;
 import io.github.portlek.tdg.api.type.RequirementType;
@@ -27,6 +30,7 @@ import org.cactoos.list.ListOf;
 import org.cactoos.list.Mapped;
 import org.jetbrains.annotations.NotNull;
 
+import javax.swing.event.MenuDragMouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -248,7 +252,12 @@ public final class TargetParsed<T extends MenuEvent> {
                         }
                     }
 
-                    System.out.println(commands);
+                    if (!TDG.getAPI().tdg.isEnabled()) {
+                        TDG.getAPI().tdg.getLogger().severe("You may use command action on the menu close-actions.");
+                        TDG.getAPI().tdg.getLogger().severe("Commands cannot use after plugin disable!");
+                        return;
+                    }
+
                     commands.forEach(s -> Bukkit.getScheduler().callSyncMethod(
                         TDG.getAPI().tdg,
                         () -> {
@@ -275,7 +284,16 @@ public final class TargetParsed<T extends MenuEvent> {
                 };
             case OPEN_MENU:
                 return event -> yaml.getString(path + "value")
-                    .ifPresent(s -> TDG.getAPI().findMenuById(s).open(event.getPlayer(), true));
+                    .ifPresent(s -> {
+                        final Menu menu = TDG.getAPI().findMenuById(s);
+
+                        if (menu instanceof MckMenu) {
+                            TDG.getAPI().tdg.getLogger().severe(String.format("There is not menu with %s id", s));
+                            return;
+                        }
+
+                        menu.open(event.getPlayer(), true);
+                    });
             case PARTICLES:
                 return event -> {
                     final String value = yaml.getString(path + "value").orElse("smoke");
@@ -308,7 +326,10 @@ public final class TargetParsed<T extends MenuEvent> {
                     particleEffect.display(0.0f, 0.0f, 0.0f, speed, amount, location, 1000.0);
                 };
             case CLOSE_MENU:
-                return event -> event.getOpenedMenu().close();
+                return event -> {
+                    event.getOpenedMenu().close();
+                    TDG.getAPI().opened.remove(event.getPlayer().getUniqueId());
+                };
             case NONE:
             default:
                 return event -> {};

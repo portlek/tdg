@@ -1,6 +1,7 @@
 package io.github.portlek.tdg.command;
 
 import io.github.portlek.itemstack.util.Colored;
+import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.TDGAPI;
 import io.github.portlek.tdg.api.Menu;
 import io.github.portlek.tdg.api.OpenedMenu;
@@ -64,6 +65,7 @@ public class TDGCommand implements TabExecutor {
                     }
 
                     openedMenu.close();
+                    TDG.getAPI().opened.remove(player.getUniqueId());
 
                     return true;
                 case "list":

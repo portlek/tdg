@@ -21,12 +21,12 @@ public class ConfigOptions implements Scalar<Config> {
     public Config value() {
         yaml.create();
 
-        final String language = yaml.getOrSetIfDoesNotExist("Language", "en");
-        //final boolean updateCheck = yaml.getOrSetIfDoesNotExist("Update-Check", false);
-        final String pluginPrefix = new Colored(yaml.getOrSetIfDoesNotExist("Plugin-Prefix", "&6[&a&lTDG&6]")).value();
-        final boolean hoverEffect = yaml.getOrSetIfDoesNotExist("Hover-Effect", true);
-        boolean hooksPlaceholderAPI = yaml.getOrSetIfDoesNotExist("Hooks.PlaceholderAPI", false);
-        boolean hooksVault = yaml.getOrSetIfDoesNotExist("Hooks.Vault", false);
+        final String language = yaml.getOrSet("Language", "en");
+        //final boolean updateCheck = yaml.getOrSet("Update-Check", false);
+        final String pluginPrefix = new Colored(yaml.getOrSet("Plugin-Prefix", "&6[&a&lTDG&6]")).value();
+        final boolean hoverEffect = yaml.getOrSet("Hover-Effect", true);
+        boolean hooksPlaceholderAPI = yaml.getOrSet("Hooks.PlaceholderAPI", false);
+        boolean hooksVault = yaml.getOrSet("Hooks.Vault", false);
         final VaultHook vaultHook = new VaultHook();
 
         if (hooksPlaceholderAPI) {
