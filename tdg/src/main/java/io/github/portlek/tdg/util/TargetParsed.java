@@ -20,6 +20,10 @@ import io.github.portlek.tdg.api.type.RequirementType;
 import io.github.portlek.tdg.api.type.TargetType;
 import io.github.portlek.tdg.nms.v1_9_R1.Particles1_9;
 import io.github.portlek.tdg.oldparticle.ParticleEffect;
+import io.github.portlek.tdg.requirement.ClickTypeReq;
+import io.github.portlek.tdg.requirement.CooldownReq;
+import io.github.portlek.tdg.requirement.MoneyReq;
+import io.github.portlek.tdg.requirement.PermissionReq;
 import io.github.portlek.tdg.target.BasicAction;
 import io.github.portlek.tdg.target.BasicTarget;
 import me.clip.placeholderapi.PlaceholderAPI;
@@ -122,75 +126,57 @@ public final class TargetParsed<T extends MenuEvent> {
 
             switch (requirementType) {
                 case CLICK_TYPE:
-                    requirements.add(event -> {
-                        final List<ClickType> clickTypes = new Mapped<>(
-                            ClickType::fromString,
-                            yaml.getStringList(reqPath)
+                    if (!yaml.getStringList(reqPath).isEmpty()) {
+                        requirements.add(
+                            new ClickTypeReq(
+                                new Mapped<>(
+                                    ClickType::fromString,
+                                    yaml.getStringList(reqPath)
+                                )
+                            )
                         );
-
-                        if (!clickTypes.isEmpty()) {
-                            return event instanceof IconClickEvent &&
-                                (clickTypes.contains(ClickType.ANY) ||
-                                    clickTypes.contains(((IconClickEvent) event).getClickType()));
-                        }
-
-                        final ClickType clickType = ClickType.fromString(
-                            yaml.getString(reqPath).orElse("")
+                    } else {
+                        requirements.add(
+                            new ClickTypeReq(
+                                new ListOf<>(
+                                    ClickType.fromString(
+                                        yaml.getString(reqPath).orElse("")
+                                    )
+                                )
+                            )
                         );
-
-                        return event instanceof IconClickEvent &&
-                            (clickType == ClickType.ANY ||
-                                clickType == (((IconClickEvent) event).getClickType()));
-                    });
+                    }
                     break;
                 case PERMISSIONS:
-                    requirements.add(event -> {
-                        final List<String> permissions = new Mapped<>(
-                            perm -> {
-                                if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
-                                    return PlaceholderAPI.setPlaceholders(event.getPlayer(), perm);
-                                }
-
-                                return perm.replaceAll("%player_name%", event.getPlayer().getName());
-                            },
-                            yaml.getStringList(reqPath)
+                    if (!yaml.getStringList(reqPath).isEmpty()) {
+                        requirements.add(
+                            new PermissionReq(
+                                yaml.getStringList(reqPath)
+                            )
                         );
-
-                        if (!permissions.isEmpty()) {
-                            return permissions.stream().allMatch(s -> event.getPlayer().hasPermission(s));
-                        }
-
-                        final String permission = yaml.getString(reqPath).orElse("");
-
-                        if (!permission.isEmpty()) {
-                            return event.getPlayer().hasPermission(
-                                permission.replaceAll("%player_name%", event.getPlayer().getName())
-                            );
-                        }
-
-                        return true;
-                    });
+                    } else {
+                        requirements.add(
+                            new PermissionReq(
+                                new ListOf<>(
+                                    yaml.getString(reqPath).orElse("")
+                                )
+                            )
+                        );
+                    }
                     break;
                 case COOLDOWN:
-                    requirements.add(event -> {
-                        final String menuIconId;
-
-                        if (event instanceof MenuOpenEvent || event instanceof MenuCloseEvent) {
-                            menuIconId = event.getOpenedMenu().getParent().getId();
-                        } else if (event instanceof IconClickEvent || event instanceof IconHoverEvent) {
-                            menuIconId = event.getOpenedMenu().getParent().getId() + ">"
-                                + ((IconEvent) event).getLiveIcon().getParent().getId();
-                        } else {
-                            menuIconId = "";
-                        }
-
-                        return menuIconId.isEmpty() ||
-                            Cooldown.isInCooldown(event.getPlayer().getUniqueId(), menuIconId);
-                    });
+                    requirements.add(
+                        new CooldownReq(
+                            yaml.getInt(reqPath)
+                        )
+                    );
                     break;
                 case MONEY:
-                    requirements.add(event -> !TDG.getAPI().getConfig().hooksVault ||
-                        TDG.getAPI().getConfig().vault.get().getBalance(event.getPlayer()) >= yaml.getInt(reqPath));
+                    requirements.add(
+                        new MoneyReq(
+                            yaml.getInt(reqPath)
+                        )
+                    );
                     break;
                     // TODO: 24/11/2019 More requirement support
                 case NONE:
