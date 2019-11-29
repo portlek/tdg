@@ -1,12 +1,9 @@
 package io.github.portlek.tdg.menu;
 
-import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.api.LiveIcon;
 import io.github.portlek.tdg.api.Menu;
 import io.github.portlek.tdg.api.OpenedMenu;
-import io.github.portlek.tdg.api.Target;
 import io.github.portlek.tdg.api.events.MenuCloseEvent;
-import io.github.portlek.tdg.api.events.MenuOpenEvent;
 import io.github.portlek.tdg.api.mock.MckLiveIcon;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
@@ -27,19 +24,9 @@ public final class BasicOpenMenu implements OpenedMenu {
     @NotNull
     private final Player player;
 
-    @NotNull
-    private final List<Target<MenuCloseEvent>> closeTargets;
-
-    @NotNull
-    private final List<Target<MenuOpenEvent>> openTargets;
-
-    public BasicOpenMenu(@NotNull Menu parent, @NotNull Player player,
-                         @NotNull List<Target<MenuCloseEvent>> closeTargets,
-                         @NotNull List<Target<MenuOpenEvent>> openTargets) {
+    public BasicOpenMenu(@NotNull Menu parent, @NotNull Player player) {
         this.parent = parent;
         this.player = player;
-        this.closeTargets = closeTargets;
-        this.openTargets = openTargets;
     }
 
     @NotNull
@@ -65,22 +52,12 @@ public final class BasicOpenMenu implements OpenedMenu {
         }
 
         liveIcons.forEach(LiveIcon::close);
-        accept(menuCloseEvent);
+        parent.exec(menuCloseEvent);
     }
 
     @Override
     public void addIcons(@NotNull List<LiveIcon> liveIcons) {
         this.liveIcons.addAll(liveIcons);
-    }
-
-    @Override
-    public void accept(@NotNull MenuOpenEvent event) {
-        openTargets.forEach(target -> target.handle(event));
-    }
-
-    @Override
-    public void accept(@NotNull MenuCloseEvent event) {
-        closeTargets.forEach(target -> target.handle(event));
     }
 
     @NotNull

@@ -164,7 +164,7 @@ menus:
         material-data: 0
         position-x: 1
         position-y: 2
-        click-acitons:
+        click-actions:
           requirements:
             # The type is second
             cooldown: 10

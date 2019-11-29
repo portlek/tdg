@@ -1,7 +1,5 @@
 package io.github.portlek.tdg.api;
 
-import io.github.portlek.tdg.api.events.MenuCloseEvent;
-import io.github.portlek.tdg.api.events.MenuOpenEvent;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
@@ -15,9 +13,5 @@ public interface OpenedMenu extends Parent<Menu> {
     void close();
 
     void addIcons(@NotNull List<LiveIcon> liveIcons);
-
-    void accept(@NotNull MenuOpenEvent event);
-
-    void accept(@NotNull MenuCloseEvent event);
 
 }

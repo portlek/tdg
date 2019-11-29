@@ -4,6 +4,7 @@ import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.mcyaml.YamlOf;
 import io.github.portlek.mcyaml.mck.MckFileConfiguration;
+import io.github.portlek.tdg.api.Icon;
 import io.github.portlek.tdg.api.LiveIcon;
 import io.github.portlek.tdg.api.Menu;
 import io.github.portlek.tdg.api.OpenedMenu;
@@ -32,10 +33,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
-import org.cactoos.iterable.Mapped;
-import org.cactoos.list.ListOf;
 import org.cactoos.map.MapEntry;
-import org.cactoos.map.MapOf;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -170,51 +168,49 @@ public class TDGAPI {
     private void init() {
         getLanguage();
 
-        menus.putAll(
-            new MapOf<String, Menu>(
-                new Mapped<>(
-                    menuId -> new MapEntry<>(
-                        menuId,
-                        new BasicMenu(
-                            menuId,
-                            menusFile.getStringList("menus." + menuId + ".commands"),
-                            new TargetParsed<>(MenuCloseEvent.class, menusFile, menuId).parse(),
-                            new TargetParsed<>(MenuOpenEvent.class, menusFile, menuId).parse(),
-                            menusFile.getInt("menus." + menuId + ".distances.x1"),
-                            menusFile.getInt("menus." + menuId + ".distances.x2"),
-                            menusFile.getInt("menus." + menuId + ".distances.x4"),
-                            menusFile.getInt("menus." + menuId + ".distances.x5"),
-                            new ListOf<>(
-                                new Mapped<>(
-                                    iconId -> new BasicIcon(
-                                        iconId,
-                                        new Colored(
-                                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".name")
-                                                .orElse("")
-                                        ).value(),
-                                        IconType.fromString(
-                                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".icon-type")
-                                                .orElse("")
-                                        ),
-                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".material")
-                                            .orElse(""),
-                                        menusFile.getByte("menus." + menuId + ".icons." + iconId + ".material-data"),
-                                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".value")
-                                            .orElse(""),
-                                        new TargetParsed<>(IconClickEvent.class, menusFile, menuId, iconId).parse(),
-                                        new TargetParsed<>(IconHoverEvent.class, menusFile, menuId, iconId).parse(),
-                                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-x"),
-                                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-y")
-                                    ),
-                                    menusFile.getSection("menus." + menuId + ".icons").getKeys(false)
-                                )
-                            )
-                        )
-                    ),
-                    menusFile.getSection("menus").getKeys(false)
+        for (String menuId : menusFile.getSection("menus").getKeys(false)) {
+            final List<Icon> icons = new ArrayList<>();
+
+            for (String iconId : menusFile.getSection("menus." + menuId + ".icons").getKeys(false)) {
+                icons.add(
+                    new BasicIcon(
+                        iconId,
+                        new Colored(
+                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".name")
+                                .orElse("")
+                        ).value(),
+                        IconType.fromString(
+                            menusFile.getString("menus." + menuId + ".icons." + iconId + ".icon-type")
+                                .orElse("")
+                        ),
+                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".material")
+                            .orElse(""),
+                        menusFile.getByte("menus." + menuId + ".icons." + iconId + ".material-data"),
+                        menusFile.getString("menus." + menuId + ".icons." + iconId + ".value")
+                            .orElse(""),
+                        new TargetParsed<>(IconClickEvent.class, menusFile, menuId, iconId).parse(),
+                        new TargetParsed<>(IconHoverEvent.class, menusFile, menuId, iconId).parse(),
+                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-x"),
+                        menusFile.getInt("menus." + menuId + ".icons." + iconId + ".position-y")
+                    )
+                );
+            }
+
+            menus.put(
+                menuId,
+                new BasicMenu(
+                    menuId,
+                    menusFile.getStringList("menus." + menuId + ".commands"),
+                    new TargetParsed<>(MenuCloseEvent.class, menusFile, menuId).parse(),
+                    new TargetParsed<>(MenuOpenEvent.class, menusFile, menuId).parse(),
+                    menusFile.getInt("menus." + menuId + ".distances.x1"),
+                    menusFile.getInt("menus." + menuId + ".distances.x2"),
+                    menusFile.getInt("menus." + menuId + ".distances.x4"),
+                    menusFile.getInt("menus." + menuId + ".distances.x5"),
+                    icons
                 )
-            )
-        );
+            );
+        }
 
         // TODO: 23/11/2019 edit when plugin added to the spigot page
         /*new ListenerBasic<>(PlayerJoinEvent.class, event -> {
@@ -306,7 +302,7 @@ public class TDGAPI {
                         return;
                     }
 
-                    entry.getValue().accept(iconClickEvent);
+                    entry.getValue().getParent().accept(iconClickEvent);
                 })
         ).register(tdg);
 
@@ -329,7 +325,7 @@ public class TDGAPI {
                         return;
                     }
 
-                    entry.getValue().accept(iconClickEvent);
+                    entry.getValue().getParent().accept(iconClickEvent);
                 })
         ).register(tdg);
     }

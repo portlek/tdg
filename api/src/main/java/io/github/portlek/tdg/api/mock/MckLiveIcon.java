@@ -13,14 +13,6 @@ public final class MckLiveIcon implements LiveIcon {
         throw new UnsupportedOperationException();
     }
     @Override
-    public void accept(@NotNull IconClickEvent event) {
-        throw new UnsupportedOperationException();
-    }
-    @Override
-    public void accept(@NotNull IconHoverEvent event) {
-        throw new UnsupportedOperationException();
-    }
-    @Override
     public void close() {
         throw new UnsupportedOperationException();
     }

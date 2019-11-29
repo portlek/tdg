@@ -27,7 +27,7 @@ public final class Cooldown {
     }
  
     public static boolean isInCooldown(@NotNull UUID id, @NotNull String cooldownName) {
-        if(getTimeLeft(id, cooldownName)>=1) {
+        if(getTimeLeft(id, cooldownName) >= 1) {
             return true;
         }
 
@@ -48,13 +48,10 @@ public final class Cooldown {
         final Cooldown cooldown = getCooldown(id, cooldownName);
 
         if (cooldown == null) {
-            return -1;
+            return 0;
         }
 
-        long now = System.currentTimeMillis();
-        long cooldownTime = cooldown.start;
-        int r = (int) (now - cooldownTime) / 1000;
-        return (r - cooldown.timeInSeconds) * (-1);
+        return ((int) (System.currentTimeMillis() - cooldown.start) / 1000 - cooldown.timeInSeconds) * (-1);
     }
  
     public void start(){

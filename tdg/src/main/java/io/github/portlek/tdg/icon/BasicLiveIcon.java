@@ -8,7 +8,6 @@ import io.github.portlek.tdg.api.events.IconClickEvent;
 import io.github.portlek.tdg.api.events.IconHoverEvent;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -51,16 +50,6 @@ public final class BasicLiveIcon implements LiveIcon {
             TDG.getAPI().entities.remove(armorStand);
             armorStand.remove();
         }
-    }
-
-    @Override
-    public void accept(@NotNull IconClickEvent event) {
-        clickTargets.forEach(target -> target.handle(event));
-    }
-
-    @Override
-    public void accept(@NotNull IconHoverEvent event) {
-        hoverTargets.forEach(target -> target.handle(event));
     }
 
     @NotNull

@@ -4,7 +4,6 @@ import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Locale;
 
 public enum ActionType {
 

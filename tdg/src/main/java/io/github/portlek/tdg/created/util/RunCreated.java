@@ -115,7 +115,7 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
                                     return;
                                 }
 
-                                liveIcon.accept(iconHoverEvent);
+                                liveIcon.getParent().exec(iconHoverEvent);
                             }
                         } else {
                             armorStand.setGravity(false);

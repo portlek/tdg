@@ -2,9 +2,9 @@ package io.github.portlek.tdg.util;
 
 import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
+import io.github.portlek.mcyaml.mck.MckFileConfiguration;
 import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.api.Menu;
-import io.github.portlek.tdg.api.OpenedMenu;
 import io.github.portlek.tdg.api.Requirement;
 import io.github.portlek.tdg.api.Target;
 import io.github.portlek.tdg.api.events.IconClickEvent;
@@ -26,11 +26,12 @@ import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 import org.cactoos.list.ListOf;
 import org.cactoos.list.Mapped;
 import org.jetbrains.annotations.NotNull;
 
-import javax.swing.event.MenuDragMouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -71,105 +72,134 @@ public final class TargetParsed<T extends MenuEvent> {
             finalPath = "menus." + menuId + ".icons." + iconId + "." + targetType.getType();
         }
 
-        return new ListOf<>(
-            new Mapped<>(
-                key -> new BasicTarget<>(
+        final List<Target<T>> targets = new ArrayList<>();
+        final ConfigurationSection section = yaml.getSection(finalPath);
+
+        if (section instanceof MckFileConfiguration) {
+            return targets;
+        }
+
+        for (String key : section.getKeys(false)) {
+            if (key.equalsIgnoreCase("requirements")) {
+                targets.add(
+                    new BasicTarget<>(
+                        new BasicAction<>(
+                            parseConsumer(finalPath + "." + key + "."),
+                            new ListOf<>()
+                        ),
+                        parseRequirements(finalPath + ".requirements")
+                    )
+                );
+                continue;
+            }
+
+            targets.add(
+                new BasicTarget<>(
                     new BasicAction<>(
                         parseConsumer(finalPath + "." + key + "."),
-                        parseRequirements(finalPath + "." + key + ".")
+                        parseRequirements(finalPath + "." + key + ".requirements")
                     ),
-                    parseRequirements(finalPath + ".")
-                ),
-                yaml.getSection(finalPath).getKeys(false)
-            )
-        );
+                    new ListOf<>()
+                )
+            );
+        }
+
+        return targets;
     }
 
     @NotNull
     private List<Requirement> parseRequirements(@NotNull String path) {
-        return new ListOf<>(
-            new Mapped<>(
-                requirement -> {
-                    final RequirementType requirementType = RequirementType.fromString(requirement);
-                    final String reqPath = path + "requirements." + requirement;
+        final List<Requirement> requirements = new ArrayList<>();
+        final ConfigurationSection section = yaml.getSection(path);
 
-                    switch (requirementType) {
-                        case CLICK_TYPE:
-                            return event -> {
-                                final List<ClickType> clickTypes = new Mapped<>(
-                                    ClickType::fromString,
-                                    yaml.getStringList(reqPath)
-                                );
+        if (section instanceof MckFileConfiguration) {
+            return requirements;
+        }
 
-                                if (!clickTypes.isEmpty()) {
-                                    return event instanceof IconClickEvent &&
-                                        (clickTypes.contains(ClickType.ANY) ||
-                                            clickTypes.contains(((IconClickEvent) event).getClickType()));
+        for (String requirement : section.getKeys(false)) {
+            final RequirementType requirementType = RequirementType.fromString(requirement);
+            final String reqPath = path + "." + requirement;
+
+            switch (requirementType) {
+                case CLICK_TYPE:
+                    requirements.add(event -> {
+                        final List<ClickType> clickTypes = new Mapped<>(
+                            ClickType::fromString,
+                            yaml.getStringList(reqPath)
+                        );
+
+                        if (!clickTypes.isEmpty()) {
+                            return event instanceof IconClickEvent &&
+                                (clickTypes.contains(ClickType.ANY) ||
+                                    clickTypes.contains(((IconClickEvent) event).getClickType()));
+                        }
+
+                        final ClickType clickType = ClickType.fromString(
+                            yaml.getString(reqPath).orElse("")
+                        );
+
+                        return event instanceof IconClickEvent &&
+                            (clickType == ClickType.ANY ||
+                                clickType == (((IconClickEvent) event).getClickType()));
+                    });
+                    break;
+                case PERMISSIONS:
+                    requirements.add(event -> {
+                        final List<String> permissions = new Mapped<>(
+                            perm -> {
+                                if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                                    return PlaceholderAPI.setPlaceholders(event.getPlayer(), perm);
                                 }
 
-                                final ClickType clickType = ClickType.fromString(
-                                    yaml.getString(reqPath).orElse("")
-                                );
+                                return perm.replaceAll("%player_name%", event.getPlayer().getName());
+                            },
+                            yaml.getStringList(reqPath)
+                        );
 
-                                return event instanceof IconClickEvent &&
-                                    (clickType == ClickType.ANY ||
-                                        clickType == (((IconClickEvent) event).getClickType()));
-                            };
-                        case PERMISSIONS:
-                            return event -> {
-                                final List<String> permissions = new Mapped<>(
-                                    perm -> {
-                                        if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
-                                            return PlaceholderAPI.setPlaceholders(event.getPlayer(), perm);
-                                        }
+                        if (!permissions.isEmpty()) {
+                            return permissions.stream().allMatch(s -> event.getPlayer().hasPermission(s));
+                        }
 
-                                        return perm.replaceAll("%player_name%", event.getPlayer().getName());
-                                    },
-                                    yaml.getStringList(reqPath)
-                                );
+                        final String permission = yaml.getString(reqPath).orElse("");
 
-                                if (!permissions.isEmpty()) {
-                                    return permissions.stream().allMatch(s -> event.getPlayer().hasPermission(s));
-                                }
+                        if (!permission.isEmpty()) {
+                            return event.getPlayer().hasPermission(
+                                permission.replaceAll("%player_name%", event.getPlayer().getName())
+                            );
+                        }
 
-                                final String permission = yaml.getString(reqPath).orElse("");
+                        return true;
+                    });
+                    break;
+                case COOLDOWN:
+                    requirements.add(event -> {
+                        final String menuIconId;
 
-                                if (!permission.isEmpty()) {
-                                    return event.getPlayer().hasPermission(
-                                        permission.replaceAll("%player_name%", event.getPlayer().getName())
-                                    );
-                                }
+                        if (event instanceof MenuOpenEvent || event instanceof MenuCloseEvent) {
+                            menuIconId = event.getOpenedMenu().getParent().getId();
+                        } else if (event instanceof IconClickEvent || event instanceof IconHoverEvent) {
+                            menuIconId = event.getOpenedMenu().getParent().getId() + ">"
+                                + ((IconEvent) event).getLiveIcon().getParent().getId();
+                        } else {
+                            menuIconId = "";
+                        }
 
-                                return true;
-                            };
-                        case COOLDOWN:
-                            return event -> {
-                                final String menuIconId;
+                        return menuIconId.isEmpty() ||
+                            Cooldown.isInCooldown(event.getPlayer().getUniqueId(), menuIconId);
+                    });
+                    break;
+                case MONEY:
+                    requirements.add(event -> !TDG.getAPI().getConfig().hooksVault ||
+                        TDG.getAPI().getConfig().vault.get().getBalance(event.getPlayer()) >= yaml.getInt(reqPath));
+                    break;
+                    // TODO: 24/11/2019 More requirement support
+                case NONE:
+                default:
+                    break;
+            }
+        }
 
-                                if (event instanceof MenuOpenEvent || event instanceof MenuCloseEvent) {
-                                    menuIconId = event.getOpenedMenu().getParent().getId();
-                                } else if (event instanceof IconEvent) {
-                                    menuIconId = event.getOpenedMenu().getParent().getId() + ">"
-                                        + ((IconEvent) event).getLiveIcon().getParent().getId();
-                                } else {
-                                    menuIconId = "";
-                                }
-
-                                return menuIconId.isEmpty() ||
-                                    Cooldown.isInCooldown(event.getPlayer().getUniqueId(), menuIconId);
-                            };
-                        case MONEY:
-                            return event -> TDG.getAPI().getConfig().hooksVault &&
-                                TDG.getAPI().getConfig().vault.get().getBalance(event.getPlayer()) >= yaml.getInt(reqPath);
-                        // TODO: 24/11/2019 More requirement support
-                        case NONE:
-                        default:
-                            return event -> true;
-                    }
-                },
-                yaml.getSection(path + "requirements").getKeys(false)
-            )
-        );
+        return requirements;
     }
 
     @NotNull
@@ -182,6 +212,7 @@ public final class TargetParsed<T extends MenuEvent> {
         switch (actionType) {
             case MESSAGE:
                 return event -> {
+                    final Player player = event.getPlayer();
                     final List<String> value = new Mapped<>(
                         list -> {
                             final String colored = new Colored(
@@ -189,16 +220,16 @@ public final class TargetParsed<T extends MenuEvent> {
                             ).value();
 
                             if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
-                                return PlaceholderAPI.setPlaceholders(event.getPlayer(), colored);
+                                return PlaceholderAPI.setPlaceholders(player, colored);
                             }
 
-                            return colored.replaceAll("%player_name%", event.getPlayer().getName());
+                            return colored.replaceAll("%player_name%", player.getName());
                         },
                         yaml.getStringList(path + "value")
                     );
 
                     if (!value.isEmpty()) {
-                        value.forEach(s -> event.getPlayer().sendMessage(s));
+                        value.forEach(player::sendMessage);
                         return;
                     }
 
@@ -206,18 +237,18 @@ public final class TargetParsed<T extends MenuEvent> {
 
                     if (!message.isEmpty()) {
                         if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
-                            event.getPlayer().sendMessage(
+                            player.sendMessage(
                                 new Colored(
-                                    PlaceholderAPI.setPlaceholders(event.getPlayer(), message)
+                                    PlaceholderAPI.setPlaceholders(player, message)
                                 ).value()
                             );
 
                             return;
                         }
 
-                        event.getPlayer().sendMessage(
+                        player.sendMessage(
                             new Colored(
-                                message.replaceAll("%player_name%", event.getPlayer().getName())
+                                message.replaceAll("%player_name%", player.getName())
                             ).value()
                         );
                     }
@@ -238,17 +269,17 @@ public final class TargetParsed<T extends MenuEvent> {
 
                     if (!value.isEmpty()) {
                         commands.addAll(value);
-                    }
+                    } else {
+                        final String command = yaml.getString(path + "value").orElse("");
 
-                    final String command = yaml.getString(path + "value").orElse("");
-
-                    if (!command.isEmpty()) {
-                        if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
-                            commands.add(
-                                PlaceholderAPI.setPlaceholders(event.getPlayer(), command)
-                            );
-                        } else {
-                            commands.add(command.replaceAll("%player_name%", event.getPlayer().getName()));
+                        if (!command.isEmpty()) {
+                            if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                                commands.add(
+                                    PlaceholderAPI.setPlaceholders(event.getPlayer(), command)
+                                );
+                            } else {
+                                commands.add(command.replaceAll("%player_name%", event.getPlayer().getName()));
+                            }
                         }
                     }
 

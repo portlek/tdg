@@ -1,7 +1,6 @@
 package io.github.portlek.tdg;
 
 import io.github.portlek.tdg.api.EntityHided;
-import io.github.portlek.tdg.api.OpenedMenu;
 import io.github.portlek.tdg.api.mock.MckEntityHided;
 import io.github.portlek.tdg.command.TDGCommand;
 import io.github.portlek.tdg.nms.v1_10_R1.EntityHider1_10_R1;

@@ -146,4 +146,15 @@ public final class BasicIcon implements Icon {
     public String getId() {
         return id;
     }
+
+    @Override
+    public void exec(IconHoverEvent event) {
+        hoverTargets.forEach(target -> target.handle(event));
+    }
+
+    @Override
+    public void accept(IconClickEvent event) {
+        clickTargets.forEach(target -> target.handle(event));
+    }
+
 }
