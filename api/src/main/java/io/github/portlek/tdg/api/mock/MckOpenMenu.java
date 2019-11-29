@@ -26,4 +26,9 @@ public final class MckOpenMenu implements OpenedMenu {
     public Menu getParent() {
         throw new UnsupportedOperationException();
     }
+    @NotNull
+    @Override
+    public List<LiveIcon> getLiveIcons() {
+        throw new UnsupportedOperationException();
+    }
 }
