@@ -1,23 +1,20 @@
 package io.github.portlek.tdg.menu;
 
 import io.github.portlek.tdg.TDG;
-import io.github.portlek.tdg.api.Icon;
-import io.github.portlek.tdg.api.Menu;
-import io.github.portlek.tdg.api.OpenedMenu;
-import io.github.portlek.tdg.api.Target;
+import io.github.portlek.tdg.action.OpenMenuAct;
+import io.github.portlek.tdg.api.*;
 import io.github.portlek.tdg.api.events.MenuCloseEvent;
 import io.github.portlek.tdg.api.events.MenuOpenEvent;
 import io.github.portlek.tdg.api.mock.MckOpenMenu;
-import io.github.portlek.tdg.util.Metadata;
-import io.github.portlek.tdg.util.Utils;
+import io.github.portlek.tdg.target.BasicTarget;
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.cactoos.list.Mapped;
+import org.cactoos.list.Joined;
+import org.cactoos.map.MapEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Map;
 
 public final class BasicMenu implements Menu {
 
@@ -28,35 +25,38 @@ public final class BasicMenu implements Menu {
     private final List<String> commands;
 
     @NotNull
-    private final List<Target<MenuCloseEvent>> closeTargets;
+    private final Map.Entry<List<Requirement>, List<Target<MenuCloseEvent>>> closeTargets;
 
     @NotNull
-    private final List<Target<MenuOpenEvent>> openTargets;
-
-    private final int x1;
-
-    private final int x2;
-
-    private final int x4;
-
-    private final int x5;
-
-    @NotNull
-    private final List<Icon> icons;
+    private final Map.Entry<List<Requirement>, List<Target<MenuOpenEvent>>> openTargets;
 
     public BasicMenu(@NotNull String id, @NotNull List<String> commands,
-                     @NotNull List<Target<MenuCloseEvent>> closeTargets,
-                     @NotNull List<Target<MenuOpenEvent>> openTargets, int x1, int x2, int x4, int x5,
-                     @NotNull List<Icon> icons) {
+                     @NotNull Map.Entry<List<Requirement>, List<Target<MenuCloseEvent>>> closeTargets,
+                     @NotNull Map.Entry<List<Requirement>, List<Target<MenuOpenEvent>>> openTargets, int x1, int x2, int x4,
+                     int x5, @NotNull List<Icon> icons) {
         this.id = id;
         this.commands = commands;
-        this.closeTargets = closeTargets;
-        this.openTargets = openTargets;
-        this.x1 = x1;
-        this.x2 = x2;
-        this.x4 = x4;
-        this.x5 = x5;
-        this.icons = icons;
+        this.closeTargets = new MapEntry<>(
+            closeTargets.getKey(),
+            new Joined<>(
+                new BasicTarget<>(
+                    t -> t.getOpenedMenu().getLiveIcons().forEach(LiveIcon::close)
+                ),
+                closeTargets.getValue()
+            )
+        );
+        this.openTargets = new MapEntry<>(
+            openTargets.getKey(),
+            new Joined<>(
+                new BasicTarget<>(
+                    new OpenMenuAct(
+                        icons,
+                        x1,x2,x4,x5
+                    )
+                ),
+                openTargets.getValue()
+            )
+        );
     }
 
     @Override
@@ -82,7 +82,7 @@ public final class BasicMenu implements Menu {
             this,
             player
         );
-        final MenuOpenEvent menuOpenEvent = new MenuOpenEvent(player, openedMenu);
+        final MenuOpenEvent menuOpenEvent = new MenuOpenEvent(player, openedMenu, changed);
 
         Bukkit.getServer().getPluginManager().callEvent(menuOpenEvent);
 
@@ -90,34 +90,7 @@ public final class BasicMenu implements Menu {
             return;
         }
 
-        for (Entity en : player.getWorld().getEntities()) {
-            if (Metadata.hasKey(en, "tdg")) {
-                en.remove();
-                TDG.getAPI().entities.remove(en);
-            }
-        }
-
-        final Location location;
-
-        if (changed) {
-            location = TDG.getAPI().lastLocations.get(player);
-        } else {
-            location = Utils.getBFLoc(player.getLocation(), 3.5);
-            TDG.getAPI().lastLocations.put(player, location);
-        }
-
-        openedMenu.addIcons(
-            new Mapped<>(
-                icon -> icon.createFor(
-                    player,
-                    positionX -> Utils.setPosition(location, positionX, x1, x2, x4, x5),
-                    changed
-                ),
-                icons
-            )
-        );
         accept(menuOpenEvent);
-        TDG.getAPI().opened.put(player.getUniqueId(), openedMenu);
     }
 
     @NotNull
@@ -128,12 +101,16 @@ public final class BasicMenu implements Menu {
 
     @Override
     public void accept(@NotNull MenuOpenEvent event) {
-        openTargets.forEach(target -> target.handle(event));
+        if (openTargets.getKey().stream().allMatch(requirement -> requirement.control(event))) {
+            openTargets.getValue().forEach(target -> target.handle(event));
+        }
     }
 
     @Override
     public void exec(@NotNull MenuCloseEvent event) {
-        closeTargets.forEach(target -> target.handle(event));
+        if (closeTargets.getKey().stream().allMatch(requirement -> requirement.control(event))) {
+            closeTargets.getValue().forEach(target -> target.handle(event));
+        }
     }
 
 }

@@ -51,7 +51,6 @@ public final class BasicOpenMenu implements OpenedMenu {
             return;
         }
 
-        liveIcons.forEach(LiveIcon::close);
         parent.exec(menuCloseEvent);
     }
 
@@ -64,6 +63,12 @@ public final class BasicOpenMenu implements OpenedMenu {
     @Override
     public Menu getParent() {
         return parent;
+    }
+
+    @NotNull
+    @Override
+    public List<LiveIcon> getLiveIcons() {
+        return liveIcons;
     }
 
 }

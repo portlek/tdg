@@ -7,28 +7,29 @@ import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 public final class BasicTarget<T extends MenuEvent> implements Target<T> {
 
     @NotNull
-    private final Target<T> target;
+    private final Consumer<T> consumer;
 
     @NotNull
     private final List<Requirement> requirements;
 
-    public BasicTarget(@NotNull Target<T> target, @NotNull List<Requirement> requirements) {
-        this.target = target;
+    public BasicTarget(@NotNull Consumer<T> consumer, @NotNull List<Requirement> requirements) {
+        this.consumer = consumer;
         this.requirements = requirements;
     }
 
-    public BasicTarget(@NotNull Target<T> target, @NotNull Requirement... requirements) {
-        this(target, new ListOf<>(requirements));
+    public BasicTarget(@NotNull Consumer<T> consumer, @NotNull Requirement... requirements) {
+        this(consumer, new ListOf<>(requirements));
     }
 
     @Override
     public void handle(@NotNull T event) {
         if (requirements.stream().allMatch(requirement -> requirement.control(event))) {
-            target.handle(event);
+            consumer.accept(event);
         }
     }
 

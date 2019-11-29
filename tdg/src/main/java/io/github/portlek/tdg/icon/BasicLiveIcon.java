@@ -3,9 +3,6 @@ package io.github.portlek.tdg.icon;
 import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.api.Icon;
 import io.github.portlek.tdg.api.LiveIcon;
-import io.github.portlek.tdg.api.Target;
-import io.github.portlek.tdg.api.events.IconClickEvent;
-import io.github.portlek.tdg.api.events.IconHoverEvent;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
@@ -20,19 +17,9 @@ public final class BasicLiveIcon implements LiveIcon {
     @NotNull
     private final List<ArmorStand> armorStands;
 
-    @NotNull
-    private final List<Target<IconClickEvent>> clickTargets;
-
-    @NotNull
-    private final List<Target<IconHoverEvent>> hoverTargets;
-
-    public BasicLiveIcon(@NotNull Icon parent, @NotNull List<ArmorStand> armorStands,
-                         @NotNull List<Target<IconClickEvent>> clickTargets,
-                         @NotNull List<Target<IconHoverEvent>> hoverTargets) {
+    public BasicLiveIcon(@NotNull Icon parent, @NotNull List<ArmorStand> armorStands) {
         this.parent = parent;
         this.armorStands = armorStands;
-        this.clickTargets = clickTargets;
-        this.hoverTargets = hoverTargets;
     }
 
     @Override

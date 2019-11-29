@@ -14,4 +14,7 @@ public interface OpenedMenu extends Parent<Menu> {
 
     void addIcons(@NotNull List<LiveIcon> liveIcons);
 
+    @NotNull
+    List<LiveIcon> getLiveIcons();
+
 }

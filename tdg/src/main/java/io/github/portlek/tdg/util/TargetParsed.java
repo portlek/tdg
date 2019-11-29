@@ -11,7 +11,6 @@ import io.github.portlek.tdg.api.events.IconClickEvent;
 import io.github.portlek.tdg.api.events.IconHoverEvent;
 import io.github.portlek.tdg.api.events.MenuCloseEvent;
 import io.github.portlek.tdg.api.events.MenuOpenEvent;
-import io.github.portlek.tdg.api.events.abs.IconEvent;
 import io.github.portlek.tdg.api.events.abs.MenuEvent;
 import io.github.portlek.tdg.api.mock.MckMenu;
 import io.github.portlek.tdg.api.type.ActionType;
@@ -24,7 +23,6 @@ import io.github.portlek.tdg.requirement.ClickTypeReq;
 import io.github.portlek.tdg.requirement.CooldownReq;
 import io.github.portlek.tdg.requirement.MoneyReq;
 import io.github.portlek.tdg.requirement.PermissionReq;
-import io.github.portlek.tdg.target.BasicAction;
 import io.github.portlek.tdg.target.BasicTarget;
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
@@ -34,11 +32,13 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.cactoos.list.ListOf;
 import org.cactoos.list.Mapped;
+import org.cactoos.map.MapEntry;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.function.Consumer;
 
 public final class TargetParsed<T extends MenuEvent> {
@@ -67,7 +67,7 @@ public final class TargetParsed<T extends MenuEvent> {
     }
 
     @NotNull
-    public List<Target<T>> parse() {
+    public Map.Entry<List<Requirement>, List<Target<T>>> parse() {
         final String finalPath;
 
         if (iconId.isEmpty()) {
@@ -76,39 +76,37 @@ public final class TargetParsed<T extends MenuEvent> {
             finalPath = "menus." + menuId + ".icons." + iconId + "." + targetType.getType();
         }
 
+        final List<Requirement> requirements = new ArrayList<>();
         final List<Target<T>> targets = new ArrayList<>();
         final ConfigurationSection section = yaml.getSection(finalPath);
 
         if (section instanceof MckFileConfiguration) {
-            return targets;
+            return new MapEntry<>(
+                requirements,
+                targets
+            );
         }
 
         for (String key : section.getKeys(false)) {
             if (key.equalsIgnoreCase("requirements")) {
-                targets.add(
-                    new BasicTarget<>(
-                        new BasicAction<>(
-                            parseConsumer(finalPath + "." + key + "."),
-                            new ListOf<>()
-                        ),
-                        parseRequirements(finalPath + ".requirements")
-                    )
+                requirements.addAll(
+                    parseRequirements(finalPath + ".requirements")
                 );
                 continue;
             }
 
             targets.add(
                 new BasicTarget<>(
-                    new BasicAction<>(
-                        parseConsumer(finalPath + "." + key + "."),
-                        parseRequirements(finalPath + "." + key + ".requirements")
-                    ),
-                    new ListOf<>()
+                    parseConsumer(finalPath + "." + key + "."),
+                    parseRequirements(finalPath + "." + key + ".requirements")
                 )
             );
         }
 
-        return targets;
+        return new MapEntry<>(
+            requirements,
+            targets
+        );
     }
 
     @NotNull

@@ -3,6 +3,7 @@ package io.github.portlek.tdg.icon;
 import io.github.portlek.itemstack.util.XMaterial;
 import io.github.portlek.tdg.api.Icon;
 import io.github.portlek.tdg.api.LiveIcon;
+import io.github.portlek.tdg.api.Requirement;
 import io.github.portlek.tdg.api.Target;
 import io.github.portlek.tdg.api.events.IconClickEvent;
 import io.github.portlek.tdg.api.events.IconHoverEvent;
@@ -19,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.IntFunction;
 
 public final class BasicIcon implements Icon {
@@ -41,18 +43,20 @@ public final class BasicIcon implements Icon {
     private final String texture;
 
     @NotNull
-    private final List<Target<IconClickEvent>> clickTargets;
+    private final Map.Entry<List<Requirement>, List<Target<IconClickEvent>>> clickTargets;
 
     @NotNull
-    private final List<Target<IconHoverEvent>> hoverTargets;
+    private final Map.Entry<List<Requirement>, List<Target<IconHoverEvent>>> hoverTargets;
 
     private final int positionX;
 
     private final int positionY;
 
     public BasicIcon(@NotNull String id, @NotNull String name, @NotNull IconType iconType, @NotNull String material,
-                     byte materialData, @NotNull String texture, @NotNull List<Target<IconClickEvent>> clickTargets,
-                     @NotNull List<Target<IconHoverEvent>> hoverTargets, int positionX, int positionY) {
+                     byte materialData, @NotNull String texture,
+                     @NotNull Map.Entry<List<Requirement>, List<Target<IconClickEvent>>> clickTargets,
+                     @NotNull Map.Entry<List<Requirement>, List<Target<IconHoverEvent>>> hoverTargets, int positionX,
+                     int positionY) {
         this.id = id;
         this.name = name;
         this.iconType = iconType;
@@ -135,9 +139,7 @@ public final class BasicIcon implements Icon {
 
         return new BasicLiveIcon(
             this,
-            armorStands,
-            clickTargets,
-            hoverTargets
+            armorStands
         );
     }
 
@@ -149,12 +151,16 @@ public final class BasicIcon implements Icon {
 
     @Override
     public void exec(IconHoverEvent event) {
-        hoverTargets.forEach(target -> target.handle(event));
+        if (hoverTargets.getKey().stream().allMatch(requirement -> requirement.control(event))) {
+            hoverTargets.getValue().forEach(target -> target.handle(event));
+        }
     }
 
     @Override
     public void accept(IconClickEvent event) {
-        clickTargets.forEach(target -> target.handle(event));
+        if (clickTargets.getKey().stream().allMatch(requirement -> requirement.control(event))) {
+            clickTargets.getValue().forEach(target -> target.handle(event));
+        }
     }
 
 }

@@ -8,10 +8,17 @@ import org.jetbrains.annotations.NotNull;
 
 public final class MenuOpenEvent extends MenuEvent implements Cancellable {
 
+    private final boolean changed;
+
     private boolean cancelled;
 
-    public MenuOpenEvent(@NotNull Player who, @NotNull OpenedMenu openedMenu) {
+    public MenuOpenEvent(@NotNull Player who, @NotNull OpenedMenu openedMenu, boolean changed) {
         super(who, openedMenu);
+        this.changed = changed;
+    }
+
+    public boolean isChanged() {
+        return changed;
     }
 
     @Override
@@ -23,4 +30,5 @@ public final class MenuOpenEvent extends MenuEvent implements Cancellable {
     public void setCancelled(boolean cancelled) {
         this.cancelled = cancelled;
     }
+
 }
