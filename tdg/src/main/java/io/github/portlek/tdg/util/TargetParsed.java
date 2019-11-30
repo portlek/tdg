@@ -29,6 +29,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.MemorySection;
 import org.bukkit.entity.Player;
 import org.cactoos.list.ListOf;
 import org.cactoos.list.Mapped;
@@ -124,7 +125,9 @@ public final class TargetParsed<T extends MenuEvent> {
 
             switch (requirementType) {
                 case CLICK_TYPE:
-                    if (!yaml.getStringList(reqPath).isEmpty()) {
+                    final Object clickType = yaml.get(reqPath, "");
+
+                    if (clickType instanceof List) {
                         requirements.add(
                             new ClickTypeReq(
                                 new Mapped<>(
@@ -133,7 +136,7 @@ public final class TargetParsed<T extends MenuEvent> {
                                 )
                             )
                         );
-                    } else {
+                    } else if (clickType instanceof String) {
                         requirements.add(
                             new ClickTypeReq(
                                 new ListOf<>(
@@ -143,16 +146,31 @@ public final class TargetParsed<T extends MenuEvent> {
                                 )
                             )
                         );
+                    } else if (clickType instanceof ConfigurationSection) {
+                        requirements.add(
+                            new ClickTypeReq(
+                                new Colored(
+                                    yaml.getString(reqPath + ".fallback").orElse("")
+                                ).value(),
+                                new ListOf<>(
+                                    ClickType.fromString(
+                                        yaml.getString(reqPath + ".value").orElse("")
+                                    )
+                                )
+                            )
+                        );
                     }
                     break;
                 case PERMISSIONS:
-                    if (!yaml.getStringList(reqPath).isEmpty()) {
+                    final Object permission = yaml.get(reqPath, "");
+
+                    if (permission instanceof List) {
                         requirements.add(
                             new PermissionReq(
                                 yaml.getStringList(reqPath)
                             )
                         );
-                    } else {
+                    } else if (permission instanceof String) {
                         requirements.add(
                             new PermissionReq(
                                 new ListOf<>(
@@ -160,21 +178,58 @@ public final class TargetParsed<T extends MenuEvent> {
                                 )
                             )
                         );
+                    } else if (permission instanceof ConfigurationSection) {
+                        requirements.add(
+                            new PermissionReq(
+                                new Colored(
+                                    yaml.getString(reqPath + ".fallback").orElse("")
+                                ).value(),
+                                new ListOf<>(
+                                    yaml.getString(reqPath + ".value").orElse("")
+                                )
+                            )
+                        );
                     }
                     break;
                 case COOLDOWN:
-                    requirements.add(
-                        new CooldownReq(
-                            yaml.getInt(reqPath)
-                        )
-                    );
+                    final Object cooldown = yaml.get(reqPath, "");
+
+                    if (cooldown instanceof Integer) {
+                        requirements.add(
+                            new CooldownReq(
+                                yaml.getInt(reqPath)
+                            )
+                        );
+                    } else if (cooldown instanceof ConfigurationSection) {
+                        requirements.add(
+                            new CooldownReq(
+                                new Colored(
+                                    yaml.getString(reqPath + ".fallback").orElse("")
+                                ).value(),
+                                yaml.getInt(reqPath + ".value")
+                            )
+                        );
+                    }
                     break;
                 case MONEY:
-                    requirements.add(
-                        new MoneyReq(
-                            yaml.getInt(reqPath)
-                        )
-                    );
+                    final Object money = yaml.get(reqPath, "");
+
+                    if (money instanceof Integer) {
+                        requirements.add(
+                            new MoneyReq(
+                                yaml.getInt(reqPath)
+                            )
+                        );
+                    } else if (money instanceof ConfigurationSection) {
+                        requirements.add(
+                            new MoneyReq(
+                                new Colored(
+                                    yaml.getString(reqPath + ".fallback").orElse("")
+                                ).value(),
+                                yaml.getInt(reqPath + ".value")
+                            )
+                        );
+                    }
                     break;
                     // TODO: 24/11/2019 More requirement support
                 case NONE:

@@ -12,10 +12,18 @@ import java.util.List;
 public final class PermissionReq implements Requirement {
 
     @NotNull
+    private final String fallback;
+
+    @NotNull
     private final List<String> permissions;
 
-    public PermissionReq(@NotNull List<String> permissions) {
+    public PermissionReq(@NotNull String fallback, @NotNull List<String> permissions) {
+        this.fallback = fallback;
         this.permissions = permissions;
+    }
+
+    public PermissionReq(@NotNull List<String> permissions) {
+        this("", permissions);
     }
 
     @Override
@@ -31,7 +39,16 @@ public final class PermissionReq implements Requirement {
             this.permissions
         );
 
-        return permissions.stream().allMatch(s -> event.getPlayer().hasPermission(s));
+        final boolean check = permissions.stream().allMatch(s -> event.getPlayer().hasPermission(s));
+
+        if (!check && !fallback.isEmpty()) {
+            event.getPlayer().sendMessage(
+                fallback
+                    .replaceAll("%permissions%", permissions.toString())
+            );
+        }
+
+        return check;
     }
 
 }

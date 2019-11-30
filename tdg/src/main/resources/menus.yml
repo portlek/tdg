@@ -5,17 +5,29 @@ menus:
     # you can add custom commands to open the menu.
     commands:
       - 'tdgexample'
+    # Distances between icons as horizontal
+    distances:
+      x1: 4
+      x2: 2
+      x4: 2
+      x5: 4
     # Fires when the menu opens
     open-actions:
       # The requirements for open the menu
       requirements:
         # Controls if player has these permissions
         permissions:
-          - 'tdg.open.example'
+          fallback: '&cYou dont have permissions to open that menu! (%permissions%)'
+          value:
+            - 'tdg.open.example'
         # Require Vault + Economy Plugin
-        money: 1000
+        money:
+          fallback: '&cYou dont have enough money for open that menu! (%money%)'
+          value: 1000
         # This menu cannot be opened more than once in 10 seconds!
-        cooldown: 10
+        cooldown:
+          fallback: '&cYou have to wait %cooldown% before open!'
+          value: 10
       # Require Vault + Economy Plugin
       # Takes money from the player
       take-money-action:
@@ -49,12 +61,6 @@ menus:
         value: 'cloud'
         amount: 10
         speed: 1
-    # Distances between icons as horizontal
-    distances:
-      x1: 4
-      x2: 2
-      x4: 2
-      x5: 4
     # All icons
     icons:
       # The icon id
@@ -103,7 +109,9 @@ menus:
               - '&eHey, &a%player_name%&e, you right clicked!'
           left-click-message:
             requirements:
-              click-type: LEFT
+              click-type:
+                fallback: '&cYou click with %click% but you must click with %require%!'
+                value: LEFT
             action: MESSAGE
             value:
               - '&eHey, &a%player_name%&e, you left clicked!'
@@ -165,10 +173,16 @@ menus:
         position-x: 1
         position-y: 2
         click-actions:
-          requirements:
-            # The type is second
-            cooldown: 10
+          no-cooldown-action:
+            action: MESSAGE
+            value:
+              - 'This message sent without cooldown effect!'
           cooldown-command:
+            requirements:
+              # The type is second
+              cooldown:
+                fallback: '&cYou have to wait %cooldown% seconds before open!'
+                value: 10
             action: COMMAND
             as-player: false
             # Also, you can add cooldown to specific action not just the whole action

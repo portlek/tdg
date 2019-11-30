@@ -13,10 +13,18 @@ import org.jetbrains.annotations.NotNull;
 
 public final class CooldownReq implements Requirement {
 
+    @NotNull
+    private final String fallback;
+
     private final int cooldown;
 
-    public CooldownReq(int cooldown) {
+    public CooldownReq(@NotNull String fallback, int cooldown) {
+        this.fallback = fallback;
         this.cooldown = cooldown;
+    }
+
+    public CooldownReq(int cooldown) {
+        this("", cooldown);
     }
 
     @Override
@@ -41,6 +49,12 @@ public final class CooldownReq implements Requirement {
         if (!Cooldown.isInCooldown(player.getUniqueId(), menuIconId)) {
             new Cooldown(player.getUniqueId(), menuIconId, cooldown).start();
             return true;
+        }
+
+        if (!fallback.isEmpty()) {
+            player.sendMessage(fallback
+                .replaceAll("%cooldown%", String.valueOf(Cooldown.getTimeLeft(player.getUniqueId(), menuIconId)))
+            );
         }
 
         return false;
