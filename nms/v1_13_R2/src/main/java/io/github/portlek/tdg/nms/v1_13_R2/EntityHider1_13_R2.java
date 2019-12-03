@@ -7,7 +7,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class EntityHider1_13 implements EntityHided {
+public class EntityHider1_13_R2 implements EntityHided {
 
     @Override
     public void hide(@NotNull Player player, @NotNull Entity en) {
