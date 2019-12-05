@@ -67,15 +67,12 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
                     cancel();
                     return;
                 }
-
+                
                 armorStand2.ifPresent(armorStand1 -> armorStand1.setFireTicks(0));
                 armorStand.setFireTicks(0);
                 toHide.clear();
-
-                for (Player all : Bukkit.getOnlinePlayers()) {
-                    toHide.add(all);
-                    toHide.remove(player);
-                }
+                toHide.addAll(Bukkit.getOnlinePlayers());
+                toHide.remove(player);
 
                 for (Player hide : toHide) {
                     TDG.ENTITY_HIDED.hide(hide, armorStand);
