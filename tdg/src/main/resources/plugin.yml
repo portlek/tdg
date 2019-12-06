@@ -5,6 +5,7 @@ api-version: 1.13
 authors: [portlek]
 softdepend:
   - PlaceholderAPI
+  - Vault
 
 commands:
   threedimentiongui:

@@ -109,9 +109,7 @@ menus:
               - '&eHey, &a%player_name%&e, you right clicked!'
           left-click-message:
             requirements:
-              click-type:
-                fallback: '&cYou click with %click% but you must click with %require%!'
-                value: LEFT
+              click-type: LEFT
             action: MESSAGE
             value:
               - '&eHey, &a%player_name%&e, you left clicked!'
