@@ -56,7 +56,7 @@
         <dependency>
             <groupId>io.github.portlek</groupId>
             <artifactId>version-matched</artifactId>
-            <version>2.2</version>
+            <version>2.4</version>
         </dependency>
         <dependency>
             <groupId>io.github.portlek.tdg</groupId>
@@ -66,7 +66,7 @@
         <dependency>
             <groupId>io.github.portlek</groupId>
             <artifactId>reflection</artifactId>
-            <version>2.9</version>
+            <version>3.0</version>
         </dependency>
         <dependency>
             <groupId>me.clip</groupId>
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>io.github.portlek</groupId>
             <artifactId>mc-yaml</artifactId>
-            <version>1.6</version>
+            <version>1.7</version>
         </dependency>
         <dependency>
             <groupId>org.spigotmc</groupId>
