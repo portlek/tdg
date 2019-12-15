@@ -13,6 +13,7 @@ import io.github.portlek.tdg.created.HeadIconCreated;
 import io.github.portlek.tdg.created.ItemIconCreated;
 import io.github.portlek.tdg.created.ToolIconCreated;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.IntFunction;
 
 public final class BasicIcon implements Icon {
@@ -83,7 +85,9 @@ public final class BasicIcon implements Icon {
                         player,
                         location,
                         new ItemStack(
-                            XMaterial.matchXMaterial(material).parseMaterial(),
+                            Optional.ofNullable(
+                                XMaterial.matchXMaterial(material).orElse(XMaterial.AIR).parseMaterial()
+                            ).orElse(Material.AIR),
                             1,
                             materialData
                         ),
@@ -99,7 +103,9 @@ public final class BasicIcon implements Icon {
                         location,
                         name,
                         new ItemStack(
-                            XMaterial.matchXMaterial(material).parseMaterial(),
+                            Optional.ofNullable(
+                                XMaterial.matchXMaterial(material).orElse(XMaterial.AIR).parseMaterial()
+                            ).orElse(Material.AIR),
                             1,
                             materialData
                         ),
@@ -114,7 +120,9 @@ public final class BasicIcon implements Icon {
                         location,
                         name,
                         new ItemStack(
-                            XMaterial.matchXMaterial(material).parseMaterial(),
+                            Optional.ofNullable(
+                                XMaterial.matchXMaterial(material).orElse(XMaterial.AIR).parseMaterial()
+                            ).orElse(Material.AIR),
                             1,
                             materialData
                         ),
