@@ -12,6 +12,7 @@ import org.cactoos.list.Mapped;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 public final class OpenMenuAct implements Consumer<MenuOpenEvent> {
@@ -41,8 +42,12 @@ public final class OpenMenuAct implements Consumer<MenuOpenEvent> {
 
         for (Entity en : player.getWorld().getEntities()) {
             if (Metadata.hasKey(en, "tdg")) {
-                en.remove();
-                TDG.getAPI().entities.remove(en);
+                final Object playerUUID = Metadata.get(en, "tdg");
+
+                if (playerUUID instanceof UUID && playerUUID.equals(player.getUniqueId())) {
+                    en.remove();
+                    TDG.getAPI().entities.remove(en);
+                }
             }
         }
 

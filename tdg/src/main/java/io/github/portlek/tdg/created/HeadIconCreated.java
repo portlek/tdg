@@ -14,14 +14,7 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.cactoos.Scalar;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public final class HeadIconCreated implements Scalar<ArmorStand> {
-
-    private final List<Player> view = new ArrayList<>();
-
-    private final List<Player> toHide = new ArrayList<>();
 
     @NotNull
     private final Player player;

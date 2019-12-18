@@ -10,14 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.cactoos.Scalar;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public final class BlockIconCreated implements Scalar<ArmorStand> {
-
-    private final List<Player> view = new ArrayList<>();
-
-    private final List<Player> toHide = new ArrayList<>();
 
     @NotNull
     private final Player player;

@@ -30,7 +30,7 @@ public final class SetupArmorStand implements Runnable {
         armorStand.setCustomName(
             TDG.getAPI().getConfig().hooksPlaceholderAPI
                 ? PlaceholderAPI.setPlaceholders(player, name)
-                : name.replaceAll("%player_name%", player.getName())
+                : name.replace("%player_name%", player.getName())
         );
     }
 
