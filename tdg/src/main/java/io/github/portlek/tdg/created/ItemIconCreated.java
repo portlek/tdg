@@ -13,14 +13,9 @@ import org.cactoos.Scalar;
 import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class ItemIconCreated implements Scalar<List<ArmorStand>> {
-
-    private final List<Player> view = new ArrayList<>();
-
-    private final List<Player> toHide = new ArrayList<>();
+public final class ItemIconCreated implements Scalar<List<ArmorStand>> {
 
     @NotNull
     private final Player player;
@@ -60,7 +55,7 @@ public class ItemIconCreated implements Scalar<List<ArmorStand>> {
         armorStand2.setCustomNameVisible(true);
         armorStand.setRightArmPose(new EulerAngle(4.7, 0, 6.3));
         armorStand.setItemInHand(itemStack);
-        new FinishInitiating(player, armorStand, armorStand2).exec(view, toHide);
+        new FinishInitiating(player, armorStand, armorStand2).run();
 
         return new ListOf<>(
             armorStand,

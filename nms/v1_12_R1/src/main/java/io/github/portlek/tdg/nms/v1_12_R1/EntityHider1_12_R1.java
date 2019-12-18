@@ -11,8 +11,10 @@ public class EntityHider1_12_R1 implements EntityHided {
 
     @Override
     public void hide(@NotNull Player player, @NotNull Entity en) {
-        final PacketPlayOutEntityDestroy packet = new PacketPlayOutEntityDestroy(en.getEntityId());
-        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(packet);
+        System.out.println(en.getEntityId());
+        ((CraftPlayer)player).getHandle().playerConnection.sendPacket(
+            new PacketPlayOutEntityDestroy(en.getEntityId())
+        );
     }
 
 }

@@ -5,11 +5,17 @@ import io.github.portlek.tdg.api.Icon;
 import io.github.portlek.tdg.api.LiveIcon;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public final class BasicLiveIcon implements LiveIcon {
+
+    public static final List<Player> view = new ArrayList<>();
+
+    public static final List<Player> toHide = new ArrayList<>();
 
     @NotNull
     private final Icon parent;

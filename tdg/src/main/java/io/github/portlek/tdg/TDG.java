@@ -11,6 +11,7 @@ import io.github.portlek.tdg.nms.v1_13_R2.EntityHider1_13_R2;
 import io.github.portlek.tdg.nms.v1_13_R2.Skull1_13;
 import io.github.portlek.tdg.nms.v1_14_R1.EntityHider1_14_R1;
 import io.github.portlek.tdg.nms.v1_14_R1.Skull1_14;
+import io.github.portlek.tdg.nms.v1_15_R1.EntityHider1_15_R1;
 import io.github.portlek.tdg.nms.v1_8_R1.EntityHider1_8_R1;
 import io.github.portlek.tdg.nms.v1_8_R2.EntityHider1_8_R2;
 import io.github.portlek.tdg.nms.v1_8_R3.EntityHider1_8_R3;
@@ -41,7 +42,8 @@ public final class TDG extends JavaPlugin {
         EntityHider1_12_R1.class,
         EntityHider1_13_R1.class,
         EntityHider1_13_R2.class,
-        EntityHider1_14_R1.class
+        EntityHider1_14_R1.class,
+        EntityHider1_15_R1.class
     ).of().instance();
 
     static {

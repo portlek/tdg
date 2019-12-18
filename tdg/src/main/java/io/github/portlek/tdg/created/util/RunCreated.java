@@ -6,6 +6,7 @@ import io.github.portlek.tdg.api.OpenedMenu;
 import io.github.portlek.tdg.api.events.IconHoverEvent;
 import io.github.portlek.tdg.api.mock.MckLiveIcon;
 import io.github.portlek.tdg.api.mock.MckOpenMenu;
+import io.github.portlek.tdg.icon.BasicLiveIcon;
 import io.github.portlek.tdg.util.TargetMenu;
 import io.github.portlek.tdg.util.Targeted;
 import org.bukkit.Bukkit;
@@ -14,14 +15,13 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.cactoos.BiProc;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public final class RunCreated implements BiProc<List<Player>, List<Player>> {
+public final class RunCreated implements Runnable {
 
     private final boolean hoverEffect = TDG.getAPI().getConfig().hoverEffect;
 
@@ -43,7 +43,7 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
     }
 
     @Override
-    public void exec(@NotNull List<Player> view, @NotNull List<Player> toHide) {
+    public void run() {
         if (armorStands.isEmpty()) {
             return;
         }
@@ -70,11 +70,11 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
                 
                 armorStand2.ifPresent(armorStand1 -> armorStand1.setFireTicks(0));
                 armorStand.setFireTicks(0);
-                toHide.clear();
-                toHide.addAll(Bukkit.getOnlinePlayers());
-                toHide.remove(player);
+                BasicLiveIcon.toHide.clear();
+                BasicLiveIcon.toHide.addAll(Bukkit.getOnlinePlayers());
+                BasicLiveIcon.toHide.remove(player);
 
-                for (Player hide : toHide) {
+                for (Player hide : BasicLiveIcon.toHide) {
                     TDG.ENTITY_HIDED.hide(hide, armorStand);
                     armorStand2.ifPresent(armorStand1 -> TDG.ENTITY_HIDED.hide(hide, armorStand1));
                 }
@@ -134,14 +134,14 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
                 if (player.getLocation().distanceSquared(armorStand.getLocation()) >= 120 ||
                     (armorStand2.isPresent() &&
                         player.getLocation().distanceSquared(armorStand2.get().getLocation()) >= 120)) {
-                    view.remove(player);
+                    BasicLiveIcon.view.remove(player);
                 }
 
                 if (!player.isOnline()) {
-                    view.remove(player);
+                    BasicLiveIcon.view.remove(player);
                 }
 
-                if (!view.contains(player)) {
+                if (!BasicLiveIcon.view.contains(player)) {
                     final OpenedMenu openedMenu = TDG.getAPI().opened.getOrDefault(player.getUniqueId(), new MckOpenMenu());
 
                     if (openedMenu instanceof MckOpenMenu) {
@@ -157,7 +157,7 @@ public final class RunCreated implements BiProc<List<Player>, List<Player>> {
                     }
                 }
             }
-        }.runTaskTimer(TDG.getAPI().tdg, 0, 0);
+        }.runTaskTimer(TDG.getAPI().tdg, 0, 1L);
     }
 
 }

@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ToolIconCreated implements Scalar<List<ArmorStand>> {
+public final class ToolIconCreated implements Scalar<List<ArmorStand>> {
 
     private final List<Player> view = new ArrayList<>();
 
@@ -60,7 +60,7 @@ public class ToolIconCreated implements Scalar<List<ArmorStand>> {
         armorStand2.setCustomNameVisible(true);
         armorStand.setRightArmPose(new EulerAngle(-1.1, 1.7, 1.4));
         armorStand.setItemInHand(itemStack);
-        new FinishInitiating(player, armorStand, armorStand2).exec(view, toHide);
+        new FinishInitiating(player, armorStand, armorStand2).run();
 
         return new ListOf<>(
             armorStand,

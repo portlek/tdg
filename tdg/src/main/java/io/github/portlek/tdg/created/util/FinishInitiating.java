@@ -1,16 +1,16 @@
 package io.github.portlek.tdg.created.util;
 
 import io.github.portlek.tdg.TDG;
+import io.github.portlek.tdg.icon.BasicLiveIcon;
 import io.github.portlek.tdg.util.Metadata;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
-import org.cactoos.BiProc;
 import org.cactoos.list.ListOf;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public final class FinishInitiating implements BiProc<List<Player>, List<Player>> {
+public final class FinishInitiating implements Runnable {
 
     @NotNull
     private final Player player;
@@ -24,14 +24,14 @@ public final class FinishInitiating implements BiProc<List<Player>, List<Player>
     }
 
     @Override
-    public void exec(@NotNull List<Player> view, @NotNull List<Player> toHide) {
+    public void run() {
         if (armorStands.isEmpty()) {
             return;
         }
 
         for (ArmorStand as : armorStands) {
             as.setArms(true);
-            view.add(player);
+            BasicLiveIcon.view.add(player);
             TDG.getAPI().entities.add(as);
             Metadata.set(as, "tdg", player.getUniqueId());
         }
@@ -40,7 +40,7 @@ public final class FinishInitiating implements BiProc<List<Player>, List<Player>
             armorStands,
             player,
             armorStands.get(0).getLocation()
-        ).exec(view, toHide);
+        ).run();
     }
 
 }

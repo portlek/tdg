@@ -1,13 +1,13 @@
-package io.github.portlek.tdg.nms.v1_13_R2;
+package io.github.portlek.tdg.nms.v1_15_R1;
 
 import io.github.portlek.tdg.api.EntityHided;
-import net.minecraft.server.v1_13_R2.PacketPlayOutEntityDestroy;
-import org.bukkit.craftbukkit.v1_13_R2.entity.CraftPlayer;
+import net.minecraft.server.v1_15_R1.PacketPlayOutEntityDestroy;
+import org.bukkit.craftbukkit.v1_15_R1.entity.CraftPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-public class EntityHider1_13_R2 implements EntityHided {
+public final class EntityHider1_15_R1 implements EntityHided {
 
     @Override
     public void hide(@NotNull Player player, @NotNull Entity en) {
