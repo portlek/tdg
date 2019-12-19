@@ -2,7 +2,7 @@ error:
   cooldown: '%prefix% &cYou must wait %time% seconds to do this again.'
   already-open: '%prefix% &cYou already have this menu open.'
   permission: '%prefix% &cYou don''t have permission to do this.'
-  menu-not-found: '%prefix% &cCouldn''t find the menu %menu%'
+  menu-not-found: '%prefix% &cThe menu called %menu% could not find!'
   invalid-argument: '%prefix% &cInvalid arguments!'
   in-game-command: '%prefix% &cTo use this command you have to be in the game!'
 

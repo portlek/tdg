@@ -32,23 +32,13 @@ public final class Language {
     public final String generalReloadComplete;
 
     @NotNull
-    public final String generalPluginVersion;
-
-    @NotNull
-    private final String generalNewVersionFound;
-
-    @NotNull
-    public final String generalLatestVersion;
-
-    @NotNull
     public final String commands;
 
     public Language(@NotNull String errorCooldown, @NotNull String errorAlreadyOpen, @NotNull String errorPermission,
                     @NotNull String errorMenuNotFound, @NotNull String errorInvalidArgument,
                     @NotNull String errorInGameCommand, @NotNull String errorPlayerNotFound,
                     @NotNull String generalAvailableMenus, @NotNull String generalReloadComplete,
-                    @NotNull String generalPluginVersion, @NotNull String generalNewVersionFound,
-                    @NotNull String generalLatestVersion, @NotNull String commands) {
+                    @NotNull String commands) {
         this.errorCooldown = errorCooldown;
         this.errorAlreadyOpen = errorAlreadyOpen;
         this.errorPermission = errorPermission;
@@ -58,9 +48,6 @@ public final class Language {
         this.errorPlayerNotFound = errorPlayerNotFound;
         this.generalAvailableMenus = generalAvailableMenus;
         this.generalReloadComplete = generalReloadComplete;
-        this.generalPluginVersion = generalPluginVersion;
-        this.generalNewVersionFound = generalNewVersionFound;
-        this.generalLatestVersion = generalLatestVersion;
         this.commands = commands;
     }
 
@@ -70,27 +57,18 @@ public final class Language {
     }
 
     @NotNull
-    public String generalNewVersionFound(@NotNull String version) {
-        return version(version, generalNewVersionFound);
-    }
-
-    @NotNull
     public String errorMenuNotFound(@NotNull String menu) {
         return menu(menu, errorMenuNotFound);
     }
 
     @NotNull
     private String menu(@NotNull String menu, @NotNull String text) {
-        return text.replaceAll("%menu%", menu);
+        return text.replace("%menu%", menu);
     }
 
     @NotNull
     private String time(int time, @NotNull String text) {
-        return text.replaceAll("%time%", String.valueOf(time));
+        return text.replace("%time%", String.valueOf(time));
     }
 
-    @NotNull
-    private String version(@NotNull String version, @NotNull String text) {
-        return text.replaceAll("%version%", version);
-    }
 }

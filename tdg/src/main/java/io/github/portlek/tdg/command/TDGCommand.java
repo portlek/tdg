@@ -1,28 +1,23 @@
 package io.github.portlek.tdg.command;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.CommandIssuer;
+import co.aikar.commands.annotation.*;
 import io.github.portlek.itemstack.util.Colored;
-import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.TDGAPI;
 import io.github.portlek.tdg.api.Menu;
 import io.github.portlek.tdg.api.OpenedMenu;
 import io.github.portlek.tdg.api.mock.MckMenu;
 import io.github.portlek.tdg.api.mock.MckOpenMenu;
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.util.StringUtil;
-import org.cactoos.iterable.Filtered;
-import org.cactoos.list.ListOf;
-import org.cactoos.list.Mapped;
-import org.cactoos.list.Sorted;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Objects;
 
-public class TDGCommand implements TabExecutor {
+@CommandAlias("tdg")
+public final class TDGCommand extends BaseCommand {
 
     @NotNull
     private final TDGAPI api;
@@ -31,239 +26,91 @@ public class TDGCommand implements TabExecutor {
         this.api = api;
     }
 
-    @Override
-    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
-                             @NotNull String[] args) {
-        if (args.length == 0) {
-            if (sender.hasPermission("tdg.use")) {
-                sender.sendMessage(api.getLanguage().commands);
+    @Default
+    @CommandPermission("tdg.command.main")
+    public void noArg(CommandSender sender) {
+        sender.sendMessage(
+            api.language.commands
+        );
+    }
+
+    @HelpCommand()
+    @CommandPermission("tdg.command.help")
+    public void doHelp(CommandIssuer issuer) {
+        issuer.sendMessage(
+            api.language.commands
+        );
+    }
+
+    @Subcommand("reload")
+    @CommandPermission("tdg.command.reload")
+    public void reload(CommandSender sender) {
+        api.reloadPlugin(false);
+        sender.sendMessage(
+            api.language.generalReloadComplete
+        );
+    }
+
+    @Subcommand("close")
+    @CommandPermission("tdg.command.close")
+    public void close(Player player) {
+        final OpenedMenu openedMenu = api.menus.opened.getOrDefault(player.getUniqueId(), new MckOpenMenu());
+
+        if (openedMenu instanceof MckOpenMenu) {
+            return;
+        }
+
+        openedMenu.close();
+        api.menus.opened.remove(player.getUniqueId());
+    }
+
+    @Subcommand("list")
+    @CommandPermission("tdg.command.list")
+    public void list(CommandSender sender) {
+        sender.sendMessage(api.language.generalAvailableMenus);
+
+        for (String key : api.menus.menus.keySet()) {
+            sender.sendMessage(new Colored("> &e" + key).value());
+        }
+    }
+
+    @Subcommand("open")
+    @CommandPermission("tdg.command.open")
+    @CommandCompletion("@menus @players")
+    public void open(CommandSender sender, @Conditions("player:arg=1") String[] args) {
+        final Menu menu;
+        final Player target;
+
+        if (args.length > 0) {
+            if (args.length == 1) {
+                if (sender instanceof Player) {
+                    target = (Player) sender;
+                } else {
+                    sender.sendMessage(
+                        api.language.errorInGameCommand
+                    );
+                    return;
+                }
             } else {
-                sender.sendMessage(api.getLanguage().errorPermission);
+                target = Objects.requireNonNull(Bukkit.getPlayer(args[1]));
             }
-            return true;
+
+            menu = api.menus.findMenuById(args[0]);
+        } else {
+            return;
         }
 
-        final String arg1 = args[0];
-
-        if (args.length == 1) {
-            switch (arg1) {
-                case "open":
-                    sender.sendMessage(api.getLanguage().commands);
-
-                    return true;
-                case "close":
-                    if (!(sender instanceof Player)) {
-                        sender.sendMessage(api.getLanguage().errorInGameCommand);
-                        return true;
-                    }
-
-                    final Player player = (Player) sender;
-                    final OpenedMenu openedMenu = api.opened.getOrDefault(player.getUniqueId(), new MckOpenMenu());
-
-                    if (openedMenu instanceof MckOpenMenu) {
-                        return true;
-                    }
-
-                    openedMenu.close();
-                    TDG.getAPI().opened.remove(player.getUniqueId());
-
-                    return true;
-                case "list":
-                    if (!sender.hasPermission("tdg.list")) {
-                        sender.sendMessage(api.getLanguage().errorPermission);
-                        return true;
-                    }
-
-                    sender.sendMessage(api.getLanguage().generalAvailableMenus);
-
-                    for (String key : api.menus.keySet()) {
-                        sender.sendMessage(new Colored("> &e" + key).value());
-                    }
-
-                    return true;
-                case "reload":
-                    if (!sender.hasPermission("tdg.reload")) {
-                        sender.sendMessage(api.getLanguage().errorPermission);
-                        return true;
-                    }
-
-                    api.reloadPlugin();
-                    sender.sendMessage(api.getLanguage().generalReloadComplete);
-
-                    return true;
-
-                // TODO: 23/11/2019 edit when plugin added to the spigot page
-                /*case "version":
-                    if (!sender.hasPermission("tdg.reload")) {
-                        sender.sendMessage(api.getLanguage().errorPermission);
-                        return true;
-                    }
-
-                    sender.sendMessage(api.getLanguage().generalPluginVersion);
-
-                    final UpdateChecker updater = new UpdateChecker(api.tdg, 61903);
-
-                    try {
-                        if (updater.checkForUpdates()) {
-                            sender.sendMessage(api.getLanguage().generalNewVersionFound(updater.getLatestVersion()));
-                        } else {
-                            sender.sendMessage(api.getLanguage().generalLatestVersion);
-                        }
-                    } catch (Exception exception) {
-                        api.tdg.getLogger().severe("[TDG] Update checker failed, could not connect to the API.");
-                        exception.printStackTrace();
-                    }
-
-                    return true;*/
-                default:
-                    sender.sendMessage(api.getLanguage().errorInvalidArgument);
-
-                    return true;
-            }
+        if (menu instanceof MckMenu) {
+            sender.sendMessage(api.language.errorMenuNotFound(args[0]));
+            return;
         }
 
-        final String arg2 = args[1];
-
-        if (args.length == 2 && arg1.equalsIgnoreCase("open")) {
-            if (!(sender instanceof Player)) {
-                sender.sendMessage(api.getLanguage().errorInGameCommand);
-                return true;
-            }
-
-            final Menu menu = api.findMenuById(arg2);
-
-            if (menu instanceof MckMenu) {
-                sender.sendMessage(api.getLanguage().errorMenuNotFound(arg2));
-                return true;
-            }
-
-            final Player player = (Player) sender;
-
-            if (api.opened.containsKey(player.getUniqueId())) {
-                player.sendMessage(api.getLanguage().errorAlreadyOpen);
-                return true;
-            }
-
-            menu.open(player, false);
-
-            return true;
+        if (api.menus.opened.containsKey(target.getUniqueId())) {
+            sender.sendMessage(api.language.errorAlreadyOpen);
+            return;
         }
 
-        final String arg3 = args[2];
-
-        if (arg1.equalsIgnoreCase("open")) {
-            final Player player = Bukkit.getPlayer(arg3);
-
-            if (player == null) {
-                sender.sendMessage(api.getLanguage().errorPlayerNotFound);
-                return true;
-            }
-
-            final Menu menu = api.findMenuById(arg2);
-
-            if (menu instanceof MckMenu) {
-                sender.sendMessage(api.getLanguage().errorMenuNotFound(arg2));
-                return true;
-            }
-
-            if (api.opened.containsKey(player.getUniqueId())) {
-                player.sendMessage(api.getLanguage().errorAlreadyOpen);
-                return true;
-            }
-
-            menu.open(player, false);
-
-            return true;
-        }
-
-        sender.sendMessage(api.getLanguage().errorInvalidArgument);
-        return true;
-    }
-
-    @NotNull
-    @Override
-    public List<String> onTabComplete(@NotNull CommandSender sender,
-                                      @NotNull Command command,
-                                      @NotNull String alias,
-                                      @NotNull String[] args) {
-        if (args.length == 0 || args.length > 3) {
-            return new ListOf<>();
-        }
-
-        final String lastWord = args[args.length - 1];
-
-        if (args.length == 1) {
-            return sort(
-                new ListOf<>(
-                    // TODO: 23/11/2019 when version argument activated "version",
-                    "close",
-                    "reload",
-                    "list",
-                    "open"
-                ),
-                lastWord
-            );
-        }
-
-        final String arg1 = args[0];
-
-        if (args.length == 2) {
-            if (!arg1.equalsIgnoreCase("open")) {
-                return new ListOf<>();
-            }
-
-            return sort(
-                new ListOf<>(
-                    new Filtered<>(
-                        key -> sender.hasPermission("tdg.open." + key),
-                        api.menus.keySet()
-                    )
-                ),
-                lastWord
-            );
-        }
-
-        if (!args[0].equalsIgnoreCase("open")) {
-            return new ListOf<>();
-        }
-
-        return listPlayer(sender, lastWord);
-    }
-
-    @NotNull
-    public List<String> sort(@NotNull List<String> args, @NotNull String lastWord) {
-        return new Sorted<>(
-            String.CASE_INSENSITIVE_ORDER,
-            new ListOf<>(
-                new Mapped<>(
-                    argument -> argument,
-                    new Filtered<>(
-                        arg -> StringUtil.startsWithIgnoreCase(arg, lastWord),
-                        args
-                    )
-                )
-            )
-        );
-    }
-
-    @NotNull
-    public List<String> listPlayer(@NotNull CommandSender sender,
-                                   @NotNull String lastWord) {
-        final Player senderPlayer = sender instanceof Player ? (Player) sender : null;
-
-        return new Sorted<>(
-            String.CASE_INSENSITIVE_ORDER,
-            new ListOf<>(
-                new Mapped<>(
-                    HumanEntity::getName,
-                    new Filtered<>(
-                        player -> (senderPlayer != null && !senderPlayer.canSee(player)) ||
-                            StringUtil.startsWithIgnoreCase(player.getName(), lastWord),
-                        Bukkit.getOnlinePlayers()
-                    )
-                )
-            )
-        );
+        menu.open(target, false);
     }
 
 }

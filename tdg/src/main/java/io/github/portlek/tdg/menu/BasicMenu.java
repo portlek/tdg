@@ -71,11 +71,11 @@ public final class BasicMenu implements Menu {
 
     @Override
     public void open(@NotNull Player player, boolean changed) {
-        final OpenedMenu oldMenu = TDG.getAPI().opened.getOrDefault(player.getUniqueId(), new MckOpenMenu());
+        final OpenedMenu oldMenu = TDG.getAPI().menus.opened.getOrDefault(player.getUniqueId(), new MckOpenMenu());
 
         if (!(oldMenu instanceof MckOpenMenu)) {
             oldMenu.close();
-            TDG.getAPI().opened.remove(player.getUniqueId());
+            TDG.getAPI().menus.opened.remove(player.getUniqueId());
         }
 
         final OpenedMenu openedMenu = new BasicOpenMenu(

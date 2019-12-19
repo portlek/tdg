@@ -39,8 +39,8 @@ public final class ClickTypeReq implements Requirement {
         if (!check && !fallback.isEmpty()) {
             event.getPlayer().sendMessage(
                 fallback
-                    .replaceAll("%click%", ((IconClickEvent) event).getClickType().name())
-                    .replaceAll("%require%", new ListOf<>(new Mapped<>(Enum::name, clickTypes)).toString())
+                    .replace("%click%", ((IconClickEvent) event).getClickType().name())
+                    .replace("%require%", new ListOf<>(new Mapped<>(Enum::name, clickTypes)).toString())
             );
         }
 

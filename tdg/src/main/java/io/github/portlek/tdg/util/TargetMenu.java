@@ -32,7 +32,7 @@ public final class TargetMenu implements Scalar<OpenedMenu> {
             final Object object = Metadata.get(targeted.value(), "tdg");
 
             if (object instanceof UUID) {
-                return TDG.getAPI().findOpenMenuByUUID((UUID) object);
+                return TDG.getAPI().menus.findOpenMenuByUUID((UUID) object);
             }
         } catch (Exception ignored) {
             // ignored

@@ -57,7 +57,7 @@ public final class HeadIconCreated implements Scalar<ArmorStand> {
             final SkullMeta meta = (SkullMeta)skull.getItemMeta();
 
             meta.setOwner(
-                TDG.getAPI().getConfig().hooksPlaceholderAPI
+                TDG.getAPI().config.hooksPlaceholderAPI
                     ? PlaceholderAPI.setPlaceholders(player, texture)
                     : texture.replaceAll("%player_name%", player.getName())
             );

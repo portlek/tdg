@@ -1,5 +1,9 @@
 package io.github.portlek.tdg;
 
+import co.aikar.commands.BukkitCommandCompletionContext;
+import co.aikar.commands.BukkitCommandManager;
+import co.aikar.commands.CommandCompletions;
+import co.aikar.commands.ConditionFailedException;
 import io.github.portlek.tdg.api.EntityHided;
 import io.github.portlek.tdg.api.mock.MckEntityHided;
 import io.github.portlek.tdg.command.TDGCommand;
@@ -19,10 +23,12 @@ import io.github.portlek.tdg.nms.v1_9_R1.EntityHider1_9_R1;
 import io.github.portlek.tdg.nms.v1_9_R2.EntityHider1_9_R2;
 import io.github.portlek.versionmatched.Version;
 import io.github.portlek.versionmatched.VersionMatched;
-import org.bukkit.command.PluginCommand;
+import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.cactoos.list.Mapped;
 
+import java.util.Map;
 import java.util.function.Function;
 
 public final class TDG extends JavaPlugin {
@@ -63,21 +69,37 @@ public final class TDG extends JavaPlugin {
     @Override
     public void onEnable() {
         if (api != null) {
-            throw new RuntimeException("TDG cannot start twice!");
+            throw new IllegalStateException("TDG cannot start twice!");
         }
 
-        final PluginCommand pluginCommand = getCommand("threedimentiongui");
-
-        if (pluginCommand == null) {
-            return;
-        }
-
+        final BukkitCommandManager manager = new BukkitCommandManager(this);
+        final CommandCompletions<BukkitCommandCompletionContext> commandCompletions = manager.getCommandCompletions();
         api = new TDGAPI(this);
-        final TDGCommand tdgCommand = new TDGCommand(getAPI());
 
-        pluginCommand.setTabCompleter(tdgCommand);
-        pluginCommand.setExecutor(tdgCommand);
-        getAPI().reloadPlugin();
+        api.reloadPlugin(true);
+        commandCompletions.registerAsyncCompletion("menus", context ->
+            new Mapped<>(
+                Map.Entry::getKey,
+                api.menus.menus.entrySet()
+            )
+        );
+        manager.getCommandConditions().addCondition(String[].class, "player", (c, exec, value) -> {
+            if (value == null || value.length == 0) {
+                return;
+            }
+
+            final String playerName = value[c.getConfigValue("arg", 0)];
+
+            if (c.hasConfig("arg") && Bukkit.getPlayer(playerName) == null) {
+                throw new ConditionFailedException(
+                    api.language.errorPlayerNotFound
+                );
+            }
+        });
+
+        manager.registerCommand(
+            new TDGCommand(api)
+        );
     }
 
     @Override
@@ -92,7 +114,7 @@ public final class TDG extends JavaPlugin {
 
     public static TDGAPI getAPI() {
         if (api == null) {
-            throw new RuntimeException("TDG cannot use before start!");
+            throw new IllegalStateException("TDG cannot use before start!");
         }
 
         return api;

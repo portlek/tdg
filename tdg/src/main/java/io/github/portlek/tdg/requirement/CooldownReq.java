@@ -53,7 +53,7 @@ public final class CooldownReq implements Requirement {
 
         if (!fallback.isEmpty()) {
             player.sendMessage(fallback
-                .replaceAll("%cooldown%", String.valueOf(Cooldown.getTimeLeft(player.getUniqueId(), menuIconId)))
+                .replace("%cooldown%", String.valueOf(Cooldown.getTimeLeft(player.getUniqueId(), menuIconId)))
             );
         }
 

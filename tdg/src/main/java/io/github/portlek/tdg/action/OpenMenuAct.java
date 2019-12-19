@@ -46,7 +46,7 @@ public final class OpenMenuAct implements Consumer<MenuOpenEvent> {
 
                 if (playerUUID instanceof UUID && playerUUID.equals(player.getUniqueId())) {
                     en.remove();
-                    TDG.getAPI().entities.remove(en);
+                    TDG.getAPI().menus.entities.remove(en);
                 }
             }
         }
@@ -54,10 +54,10 @@ public final class OpenMenuAct implements Consumer<MenuOpenEvent> {
         final Location location;
 
         if (event.isChanged()) {
-            location = TDG.getAPI().lastLocations.get(player);
+            location = TDG.getAPI().menus.lastLocations.get(player);
         } else {
             location = Utils.getBFLoc(player.getLocation(), 3.5);
-            TDG.getAPI().lastLocations.put(player, location);
+            TDG.getAPI().menus.lastLocations.put(player, location);
         }
 
         event.getOpenedMenu().addIcons(
@@ -70,7 +70,7 @@ public final class OpenMenuAct implements Consumer<MenuOpenEvent> {
                 icons
             )
         );
-        TDG.getAPI().opened.put(player.getUniqueId(), event.getOpenedMenu());
+        TDG.getAPI().menus.opened.put(player.getUniqueId(), event.getOpenedMenu());
     }
 
 }

@@ -30,11 +30,11 @@ public final class PermissionReq implements Requirement {
     public boolean control(@NotNull MenuEvent event) {
         final List<String> permissions = new Mapped<>(
             perm -> {
-                if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                if (TDG.getAPI().config.hooksPlaceholderAPI) {
                     return PlaceholderAPI.setPlaceholders(event.getPlayer(), perm);
                 }
 
-                return perm.replaceAll("%player_name%", event.getPlayer().getName());
+                return perm.replace("%player_name%", event.getPlayer().getName());
             },
             this.permissions
         );
@@ -44,7 +44,7 @@ public final class PermissionReq implements Requirement {
         if (!check && !fallback.isEmpty()) {
             event.getPlayer().sendMessage(
                 fallback
-                    .replaceAll("%permissions%", permissions.toString())
+                    .replace("%permissions%", permissions.toString())
             );
         }
 

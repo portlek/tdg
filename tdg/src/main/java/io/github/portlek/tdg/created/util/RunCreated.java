@@ -23,7 +23,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class RunCreated implements Runnable {
 
-    private final boolean hoverEffect = TDG.getAPI().getConfig().hoverEffect;
+    private final boolean hoverEffect = TDG.getAPI().config.hoverEffect;
 
     private final AtomicBoolean looking = new AtomicBoolean(false);
 
@@ -142,18 +142,18 @@ public final class RunCreated implements Runnable {
                 }
 
                 if (!BasicLiveIcon.view.contains(player)) {
-                    final OpenedMenu openedMenu = TDG.getAPI().opened.getOrDefault(player.getUniqueId(), new MckOpenMenu());
+                    final OpenedMenu openedMenu = TDG.getAPI().menus.opened.getOrDefault(player.getUniqueId(), new MckOpenMenu());
 
                     if (openedMenu instanceof MckOpenMenu) {
-                        TDG.getAPI().entities.remove(armorStand);
+                        TDG.getAPI().menus.entities.remove(armorStand);
                         armorStand.remove();
                         armorStand2.ifPresent(armorStand1 -> {
-                            TDG.getAPI().entities.remove(armorStand1);
+                            TDG.getAPI().menus.entities.remove(armorStand1);
                             armorStand1.remove();
                         });
                     } else {
                         openedMenu.close();
-                        TDG.getAPI().opened.remove(player.getUniqueId());
+                        TDG.getAPI().menus.opened.remove(player.getUniqueId());
                     }
                 }
             }

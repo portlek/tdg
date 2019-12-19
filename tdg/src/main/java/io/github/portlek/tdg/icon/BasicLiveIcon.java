@@ -40,7 +40,7 @@ public final class BasicLiveIcon implements LiveIcon {
     @Override
     public void close() {
         for (ArmorStand armorStand : armorStands) {
-            TDG.getAPI().entities.remove(armorStand);
+            TDG.getAPI().menus.entities.remove(armorStand);
             armorStand.remove();
         }
     }

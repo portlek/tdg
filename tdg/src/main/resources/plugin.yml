@@ -1,31 +1,7 @@
 name: TDG
 version: ${project.version}
 main: io.github.portlek.tdg.TDG
-api-version: 1.13
 authors: [portlek]
 softdepend:
   - PlaceholderAPI
   - Vault
-
-commands:
-  threedimentiongui:
-    description: Main command of TDG plugin
-    permission: tdg.use
-    permission-message: You dont have permissions to do that!
-    usage: /tdg [list | reload | version | open <menu-id> [player-name]]
-    aliases:
-      - tdg
-
-permissions:
-  tdg.open:
-    description: Allows you to force open menu to another player
-    default: op
-  tdg.reload:
-    description: Allows you to reload the plugin
-    default: op
-  tdg.list:
-    description: Allows you to show list of menus
-    default: op
-  tdg.use:
-    description: Allows you to show help message
-    default: op

@@ -28,7 +28,7 @@ public final class SetupArmorStand implements Runnable {
         armorStand.setGravity(false);
         armorStand.setVisible(false);
         armorStand.setCustomName(
-            TDG.getAPI().getConfig().hooksPlaceholderAPI
+            TDG.getAPI().config.hooksPlaceholderAPI
                 ? PlaceholderAPI.setPlaceholders(player, name)
                 : name.replace("%player_name%", player.getName())
         );

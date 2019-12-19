@@ -257,11 +257,11 @@ public final class TargetParsed<T extends MenuEvent> {
                                 list
                             ).value();
 
-                            if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                            if (TDG.getAPI().config.hooksPlaceholderAPI) {
                                 return PlaceholderAPI.setPlaceholders(player, colored);
                             }
 
-                            return colored.replaceAll("%player_name%", player.getName());
+                            return colored.replace("%player_name%", player.getName());
                         },
                         yaml.getStringList(path + "value")
                     );
@@ -274,7 +274,7 @@ public final class TargetParsed<T extends MenuEvent> {
                     final String message = yaml.getString(path + "value").orElse("");
 
                     if (!message.isEmpty()) {
-                        if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                        if (TDG.getAPI().config.hooksPlaceholderAPI) {
                             player.sendMessage(
                                 new Colored(
                                     PlaceholderAPI.setPlaceholders(player, message)
@@ -296,7 +296,7 @@ public final class TargetParsed<T extends MenuEvent> {
                     final List<String> commands = new ArrayList<>();
                     final List<String> value = new Mapped<>(
                         list -> {
-                            if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                            if (TDG.getAPI().config.hooksPlaceholderAPI) {
                                 return PlaceholderAPI.setPlaceholders(event.getPlayer(), list);
                             }
 
@@ -311,7 +311,7 @@ public final class TargetParsed<T extends MenuEvent> {
                         final String command = yaml.getString(path + "value").orElse("");
 
                         if (!command.isEmpty()) {
-                            if (TDG.getAPI().getConfig().hooksPlaceholderAPI) {
+                            if (TDG.getAPI().config.hooksPlaceholderAPI) {
                                 commands.add(
                                     PlaceholderAPI.setPlaceholders(event.getPlayer(), command)
                                 );
@@ -354,7 +354,7 @@ public final class TargetParsed<T extends MenuEvent> {
             case OPEN_MENU:
                 return event -> yaml.getString(path + "value")
                     .ifPresent(s -> {
-                        final Menu menu = TDG.getAPI().findMenuById(s);
+                        final Menu menu = TDG.getAPI().menus.findMenuById(s);
 
                         if (menu instanceof MckMenu) {
                             TDG.getAPI().tdg.getLogger().severe(String.format("There is not menu with %s id", s));
@@ -397,7 +397,7 @@ public final class TargetParsed<T extends MenuEvent> {
             case CLOSE_MENU:
                 return event -> {
                     event.getOpenedMenu().close();
-                    TDG.getAPI().opened.remove(event.getPlayer().getUniqueId());
+                    TDG.getAPI().menus.opened.remove(event.getPlayer().getUniqueId());
                 };
             case NONE:
             default:

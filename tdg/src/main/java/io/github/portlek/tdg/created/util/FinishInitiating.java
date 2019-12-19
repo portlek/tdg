@@ -32,7 +32,7 @@ public final class FinishInitiating implements Runnable {
         for (ArmorStand as : armorStands) {
             as.setArms(true);
             BasicLiveIcon.view.add(player);
-            TDG.getAPI().entities.add(as);
+            TDG.getAPI().menus.entities.add(as);
             Metadata.set(as, "tdg", player.getUniqueId());
         }
 

@@ -23,12 +23,12 @@ public final class MoneyReq implements Requirement {
 
     @Override
     public boolean control(@NotNull MenuEvent event) {
-        final boolean check = !TDG.getAPI().getConfig().hooksVault ||
-            TDG.getAPI().getConfig().vault.get().getBalance(event.getPlayer()) >= money;
+        final boolean check = !TDG.getAPI().config.hooksVault ||
+            TDG.getAPI().config.vault.get().getBalance(event.getPlayer()) >= money;
 
         if (!check && !fallback.isEmpty()) {
             event.getPlayer().sendMessage(fallback
-                .replaceAll("%money%", String.valueOf(money))
+                .replace("%money%", String.valueOf(money))
             );
         }
 
