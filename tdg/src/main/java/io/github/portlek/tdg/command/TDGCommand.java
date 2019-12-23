@@ -51,6 +51,12 @@ public final class TDGCommand extends BaseCommand {
         );
     }
 
+    @Subcommand("version")
+    @CommandPermission("kekorank.command.version")
+    public void versionCommand(CommandSender sender) {
+        api.checkForUpdate(sender);
+    }
+
     @Subcommand("close")
     @CommandPermission("tdg.command.close")
     public void close(Player player) {

@@ -4,8 +4,8 @@ import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -17,7 +17,7 @@ public final class UpdateChecker {
     private final int project;
 
     @NotNull
-    private URL checkURL;
+    private final String checkURL;
 
     @NotNull
     private String newVersion;
@@ -26,11 +26,7 @@ public final class UpdateChecker {
         this.plugin = plugin;
         this.newVersion = plugin.getDescription().getVersion();
         this.project = projectID;
-        try {
-            this.checkURL = new URL("https://api.spigotmc.org/legacy/update.php?resource=" + projectID);
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+        this.checkURL = "https://api.spigotmc.org/legacy/update.php?resource=" + projectID;
     }
 
     @NotNull
@@ -39,12 +35,13 @@ public final class UpdateChecker {
     }
 
     @NotNull
+    @SuppressWarnings("unused")
     public String getResourceURL() {
         return "https://www.spigotmc.org/resources/" + project;
     }
  
-    public boolean checkForUpdates() throws Exception {
-        final URLConnection con = checkURL.openConnection();
+    public boolean checkForUpdates() throws IOException {
+        final URLConnection con = new URL(checkURL).openConnection();
         newVersion = new BufferedReader(
             new InputStreamReader(
                 con.getInputStream()

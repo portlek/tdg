@@ -1,5 +1,4 @@
 error:
-  cooldown: '%prefix% &cYou must wait %time% seconds to do this again.'
   already-open: '%prefix% &cYou already have this menu open.'
   permission: '%prefix% &cYou don''t have permission to do this.'
   menu-not-found: '%prefix% &cThe menu called %menu% could not find!'
@@ -10,9 +9,12 @@ error:
 general:
   available-menus: '%prefix% &7Available menus:'
   reload-complete: '%prefix% &aReload completed'
+  new-version-found: '%prefix% &eNew version found (v%version%)'
+  latest-version: '%prefix% &aYou''re using the latest version (v%version%)'
 
 commands:
   - '&8------ %prefix% &8------'
   - '&7/tdg open &e<menu-id> &8> &7Opens the menu if exist'
   - '&7/tdg list &8> &7Displays the list of menus'
   - '&7/tdg reload &8> &7Reloads the plugin configuration'
+  - '&7/tdg version &8> &7Checks version updates.'

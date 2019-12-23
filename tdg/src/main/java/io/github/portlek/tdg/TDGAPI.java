@@ -9,6 +9,8 @@ import io.github.portlek.tdg.api.mock.MckOpenMenu;
 import io.github.portlek.tdg.api.type.ClickType;
 import io.github.portlek.tdg.file.*;
 import io.github.portlek.tdg.util.ListenerBasic;
+import io.github.portlek.tdg.util.UpdateChecker;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -154,12 +156,36 @@ public class TDGAPI {
                     entry.getValue().getParent().accept(iconClickEvent);
                 })
         ).register(tdg);
+
+        new ListenerBasic<>(
+            PlayerJoinEvent.class,
+            event -> event.getPlayer().hasPermission("kekorank.version"),
+            event -> checkForUpdate(event.getPlayer())
+        ).register(tdg);
     }
 
     public void disablePlugin() {
         menus.clear();
         tdg.getServer().getScheduler().cancelTasks(tdg);
         HandlerList.unregisterAll(tdg);
+    }
+
+    public void checkForUpdate(@NotNull CommandSender sender) {
+        final UpdateChecker updater = new UpdateChecker(tdg, 73675);
+
+        try {
+            if (updater.checkForUpdates()) {
+                sender.sendMessage(
+                    language.generalNewVersionFound(updater.getLatestVersion())
+                );
+            } else {
+                sender.sendMessage(
+                    language.generalLatestVersion(updater.getLatestVersion())
+                );
+            }
+        } catch (Exception exception) {
+            tdg.getLogger().warning("Update checker failed, could not connect to the API.");
+        }
     }
 
 }

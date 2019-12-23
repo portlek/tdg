@@ -1,5 +1,4 @@
 error:
-  cooldown: '%prefix% &cTekrar kullanmak için %time% saniye beklemelisin!'
   already-open: '%prefix% &cZaten açıkta olan bir menün var!'
   permission: '%prefix% &cBunu yapmak için yetkin yok!'
   menu-not-found: '%prefix% &cBöyle bir menü bulunamadı! (%menu%)'
@@ -10,9 +9,12 @@ error:
 general:
   available-menus: '%prefix% &7Kullanılabilir menuler:'
   reload-complete: '%prefix% &aYeniden yüklendi'
+  new-version-found: '%prefix% &eYeni sürüm bulundu (v%version%)'
+  latest-version: '%prefix% &aEn son sürümü kullanıyorsunuz (v%version%)'
 
 commands:
   - '&8------ %prefix% &8------'
-  - '&7/tdg open &e<menu-id> &8-> &7Eğer varsa menüyü açar'
-  - '&7/tdg list &8-> &7Tüm menüleri listeler'
-  - '&7/tdg reload &8-> &7Eklentiyi yeniden yükler'
+  - '&7/tdg open &e<menu-id> &8> &7Eğer varsa menüyü açar'
+  - '&7/tdg list &8> &7Tüm menüleri listeler'
+  - '&7/tdg reload &8> &7Eklentiyi yeniden yükler'
+  - '&7/tdg version &8> &7Sürümü kontrol eder.'

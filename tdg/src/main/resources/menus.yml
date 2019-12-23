@@ -209,3 +209,222 @@ menus:
         click-actions:
           close-action-1:
             action: CLOSE_MENU
+  chinesemenus:
+    # 设置打开菜单的命令
+    commands:
+      - 'chinesemenuexample'
+    # 图标之间的距离
+    distances:
+      x1: 4
+      x2: 2
+      x4: 2
+      x5: 4
+    # 打开菜单时触发
+    open-actions:
+      # 打开菜单的条件
+      requirements:
+        # 权限条件。可删除
+        permissions:
+          fallback: '&c&l打开该菜单需要(%permissions%)权限'
+          value:
+            - 'tdg.open.example'
+        # 经济条件，支持 Vault 和 Economy插件。可删除
+        money:
+          fallback: '&c你没有足够的钱来打开菜单，你需要 (%money%)元打开该菜单'
+          value: 1000
+        # 冷却时间
+        cooldown:
+          fallback: '&c你不能在 %cooldown%秒内多次打开菜单'
+          value: 10
+      # 需要Vault 或 Economy 插件
+      # 来扣除玩家的钱
+      take-money-action:
+        action: TAKE_MONEY
+        value: 1000
+      # 发出音效
+      sound-action-1:
+        requirements:
+          #权限控制
+          perms:
+            - 'tdg.openeffect'
+        action: SOUND
+        value: 'ENTITY_ENDERMAN_TELEPORT'
+        volume: 1.0
+        pitch: 0
+      # 打开菜单发送消息
+      message-action-1:
+        action: MESSAGE
+        value:
+          - '&6你打开了菜单'
+    # 关闭菜单触发
+    close-actions:
+      # 控制台执行命令
+      command-action-1:
+        action: COMMANDS
+        #如果开启，将是作为玩家执行命令
+        as-player: false
+        value:
+          - 'give %player_name% apple 1'
+      # 粒子效果
+      particle-action-1:
+        action: PARTICLES
+        #类型
+        value: 'cloud'
+        #数量
+        amount: 10
+        #速度
+        speed: 1
+    # 图标设置
+    icons:
+      # 图标ID
+      message-test:
+        # 图标名称
+        name: '&6测试消息'
+        # 图标类型，有:ITEM/BLOCK/TOOL/HEAD
+        icon-type: ITEM
+        # 物品类型的物品
+        material: SIGN
+        material-data: 0
+        #图标位置
+        position-x: 1
+        position-y: 1
+        # 鼠标悬停时触发
+        hover-actions:
+          # 悬停操作ID
+          hover-action-1:
+            requirements:
+              permissions:
+                - 'tdg.hovereffect'
+            # 向玩家发出消息
+            action: MESSAGE
+            value:
+              - '&e&a%player_name%&e, 你将鼠标停留在了这里'
+        # 单击图标触发
+        click-actions:
+          # Plays sound
+          click-sound:
+            requirements:
+              # 点击类型有: ANY/RIGHT/LEFT/SHIFT_LEFT/SHIFT_RIGHT
+              click-type:
+                - ANY
+              #所需权限
+              permissions:
+                - 'tdg.clicksound'
+            action: SOUND
+            value: 'CHICKEN_EGG_POP'
+            volume: 1.0
+            pitch: 0
+          right-click-message:
+            requirements:
+              click-type: RIGHT
+            action: MESSAGE
+            value:
+              - '&a%player_name%&e,你右键了这个图标!'
+          left-click-message:
+            requirements:
+              click-type: LEFT
+            action: MESSAGE
+            value:
+              - '&a%player_name%&e, 你左击了这个图标'
+          shift-right-click-message:
+            requirements:
+              click-type: SHIFT_RIGHT
+            action: MESSAGE
+            value:
+              - '&a%player_name%&e, 你潜行右键了这个图标!'
+          shift-left-click-message:
+            requirements:
+              click-type: SHIFT_LEFT
+            action: MESSAGE
+            value:
+              - '&a%player_name%&e, 你潜行左击了这个图标'
+      free-diamonds:
+        name: '&b领取钻石!'
+        icon-type: ITEM
+        material: DIAMOND
+        material-data: 0
+        position-x: 2
+        position-y: 1
+        click-actions:
+          give-diamond-command:
+            action: COMMAND
+            as-player: false
+            value:
+              - 'give %player_name% diamond 2'
+      run-command-as-op:
+        name: '&9执行命令'
+        icon-type: TOOL
+        material: IRON_AXE
+        material-data: 0
+        position-x: 3
+        position-y: 1
+        click-actions:
+          give-diamond-command:
+            action: COMMAND
+            as-player: false
+            value:
+              - ''
+      open-menu-test:
+        name: '&a打开另一个菜单'
+        #头颅
+        icon-type: HEAD
+        material: none
+        material-data: 0
+        #头颅数值（皮肤）
+        value: 'http://textures.minecraft.net/texture/b1dd4fe4a429abd665dfdb3e21321d6efa6a6b5e7b956db9c5d59c9efab25'
+        position-x: 5
+        position-y: 1
+        click-actions:
+          open-menu-action:
+            action: OPEN_MENU
+            value: "other-unique-menu"
+      cooldown-test:
+        name: '&5冷却测试'
+        icon-type: TOOL
+        material: BLAZE_ROD
+        material-data: 0
+        position-x: 1
+        position-y: 2
+        click-actions:
+          #无冷却的操作
+          no-cooldown-action:
+            action: MESSAGE
+            value:
+              - '这个操作没有冷却'
+          #有冷却的操作
+          cooldown-command:
+            requirements:
+              # 提示冷却时间
+              cooldown:
+                fallback: '&c冷却时间%cooldown%'
+                value: 10
+            action: COMMAND
+            as-player: false
+            # 你可以在特定的操作内添加冷却时间，不仅仅是这一个条件
+            #requirements:
+            #  cooldown: 10
+            value:
+              - 'say 此图标不能在10秒内连续使用多次'
+      player-head:
+        name: '&e%player_name%'
+        #头颅
+        icon-type: HEAD
+        #玩家的头颅名称
+        value: '%player_name%'
+        position-x: 3
+        position-y: 2
+        click-actions:
+          open-profile-menu:
+            action: COMMAND
+            as-player: true
+            value:
+              - ''
+      close-test:
+        name: '&c关闭菜单'
+        icon-type: HEAD
+        value: 'http://textures.minecraft.net/texture/5a6787ba32564e7c2f3a0ce64498ecbb23b89845e5a66b5cec7736f729ed37'
+        position-x: 5
+        position-y: 2
+        click-actions:
+          close-action-1:
+            action: CLOSE_MENU

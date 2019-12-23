@@ -5,9 +5,6 @@ import org.jetbrains.annotations.NotNull;
 public final class Language {
 
     @NotNull
-    private final String errorCooldown;
-
-    @NotNull
     public final String errorAlreadyOpen;
 
     @NotNull
@@ -32,14 +29,20 @@ public final class Language {
     public final String generalReloadComplete;
 
     @NotNull
+    private final String generalNewVersionFound;
+
+    @NotNull
+    private final String generalLatestVersion;
+
+    @NotNull
     public final String commands;
 
-    public Language(@NotNull String errorCooldown, @NotNull String errorAlreadyOpen, @NotNull String errorPermission,
+    public Language(@NotNull String errorAlreadyOpen, @NotNull String errorPermission,
                     @NotNull String errorMenuNotFound, @NotNull String errorInvalidArgument,
                     @NotNull String errorInGameCommand, @NotNull String errorPlayerNotFound,
                     @NotNull String generalAvailableMenus, @NotNull String generalReloadComplete,
+                    @NotNull String generalNewVersionFound, @NotNull String generalLatestVersion,
                     @NotNull String commands) {
-        this.errorCooldown = errorCooldown;
         this.errorAlreadyOpen = errorAlreadyOpen;
         this.errorPermission = errorPermission;
         this.errorMenuNotFound = errorMenuNotFound;
@@ -48,12 +51,19 @@ public final class Language {
         this.errorPlayerNotFound = errorPlayerNotFound;
         this.generalAvailableMenus = generalAvailableMenus;
         this.generalReloadComplete = generalReloadComplete;
+        this.generalNewVersionFound = generalNewVersionFound;
+        this.generalLatestVersion = generalLatestVersion;
         this.commands = commands;
     }
 
     @NotNull
-    public String errorCooldown(int time) {
-        return time(time, errorCooldown);
+    public String generalNewVersionFound(@NotNull String version) {
+        return version(generalNewVersionFound, version);
+    }
+
+    @NotNull
+    public String generalLatestVersion(@NotNull String version) {
+        return version(generalLatestVersion, version);
     }
 
     @NotNull
@@ -67,8 +77,8 @@ public final class Language {
     }
 
     @NotNull
-    private String time(int time, @NotNull String text) {
-        return text.replace("%time%", String.valueOf(time));
+    private String version(@NotNull String text, @NotNull String version) {
+        return text.replace("%version%", version);
     }
 
 }
