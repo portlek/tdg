@@ -13,19 +13,20 @@ import io.github.portlek.tdg.api.events.IconHoverEvent;
 import io.github.portlek.tdg.api.events.MenuCloseEvent;
 import io.github.portlek.tdg.api.events.MenuOpenEvent;
 import io.github.portlek.tdg.api.events.abs.MenuEvent;
+import io.github.portlek.tdg.api.hook.GroupWrapped;
+import io.github.portlek.tdg.api.hook.IslandWrapped;
 import io.github.portlek.tdg.api.mock.MckMenu;
 import io.github.portlek.tdg.api.type.ActionType;
 import io.github.portlek.tdg.api.type.ClickType;
 import io.github.portlek.tdg.api.type.RequirementType;
 import io.github.portlek.tdg.api.type.TargetType;
+import io.github.portlek.tdg.hooks.ASkyBlockWrapper;
+import io.github.portlek.tdg.hooks.BentoBoxWrapper;
 import io.github.portlek.tdg.hooks.PlaceholderAPIWrapper;
 import io.github.portlek.tdg.hooks.VaultWrapper;
 import io.github.portlek.tdg.nms.v1_9_R1.Particles1_9;
 import io.github.portlek.tdg.oldparticle.ParticleEffect;
-import io.github.portlek.tdg.requirement.ClickTypeReq;
-import io.github.portlek.tdg.requirement.CooldownReq;
-import io.github.portlek.tdg.requirement.MoneyReq;
-import io.github.portlek.tdg.requirement.PermissionReq;
+import io.github.portlek.tdg.requirement.*;
 import io.github.portlek.tdg.target.BasicTarget;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -37,14 +38,18 @@ import org.cactoos.list.Mapped;
 import org.cactoos.map.MapEntry;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public final class TargetParsed<T extends MenuEvent> {
+
+    @NotNull
+    private final Supplier<Optional<IslandWrapped>> islandWrappedSupplier;
+
+    @NotNull
+    private final Supplier<Optional<GroupWrapped>> groupWrappedSupplier;
 
     @NotNull
     private final IYaml yaml;
@@ -68,6 +73,31 @@ public final class TargetParsed<T extends MenuEvent> {
         this.iconId = iconId;
         this.targetType = fromClass(tClass);
         this.api = api;
+        this.islandWrappedSupplier = () -> {
+            final AtomicReference<IslandWrapped> wrapped = new AtomicReference<>();
+
+            api.config.getWrapped("ASkyBlock").ifPresent(aSkyBlockWrapper ->
+                wrapped.set((ASkyBlockWrapper) aSkyBlockWrapper));
+
+            api.config.getWrapped("BentoBox").ifPresent(bentoBoxWrapper ->
+                wrapped.set((BentoBoxWrapper) bentoBoxWrapper));
+
+            return Optional.ofNullable(wrapped.get());
+        };
+        this.groupWrappedSupplier = () -> {
+            final AtomicReference<GroupWrapped> wrapped = new AtomicReference<>();
+
+            api.config.getWrapped("LuckPerms").ifPresent(groupWrapped ->
+                wrapped.set((GroupWrapped) groupWrapped));
+
+            api.config.getWrapped("GroupManager").ifPresent(groupWrapped ->
+                wrapped.set((GroupWrapped) groupWrapped));
+
+            api.config.getWrapped("PermissionsEx").ifPresent(groupWrapped ->
+                wrapped.set((GroupWrapped) groupWrapped));
+
+            return Optional.ofNullable(wrapped.get());
+        };
     }
 
     public TargetParsed(@NotNull Class<T> tClass, @NotNull IYaml yaml, @NotNull String menuId, @NotNull TDGAPI api) {
@@ -242,6 +272,54 @@ public final class TargetParsed<T extends MenuEvent> {
                         }
                     });
                     break;
+                case GROUP:
+                    groupWrappedSupplier.get().ifPresent(groupWrapped -> {
+                        final Object group = yaml.get(reqPath, "");
+
+                        if (group instanceof String) {
+                            requirements.add(
+                                new GroupReq(
+                                    yaml.getOrSet(reqPath, ""),
+                                    groupWrapped
+                                )
+                            );
+                        } else if (group instanceof ConfigurationSection) {
+                            requirements.add(
+                                new GroupReq(
+                                    new Colored(
+                                        yaml.getString(reqPath + ".fallback").orElse("")
+                                    ).value(),
+                                    yaml.getOrSet(reqPath + ".value", ""),
+                                    groupWrapped
+                                )
+                            );
+                        }
+                    });
+                    break;
+                case ISLAND_LEVEL:
+                    islandWrappedSupplier.get().ifPresent(islandWrapped -> {
+                        final Object level = yaml.get(reqPath, "");
+
+                        if (level instanceof Integer) {
+                            requirements.add(
+                                new IslandLevelReq(
+                                    yaml.getInt(reqPath),
+                                    islandWrapped
+                                )
+                            );
+                        } else if (level instanceof ConfigurationSection) {
+                            requirements.add(
+                                new IslandLevelReq(
+                                    new Colored(
+                                        yaml.getString(reqPath + ".fallback").orElse("")
+                                    ).value(),
+                                    yaml.getInt(reqPath + ".value"),
+                                    islandWrapped
+                                )
+                            );
+                        }
+                    });
+                    break;
                     // TODO: 24/11/2019 More requirement support
                 case NONE:
                 default:
@@ -403,6 +481,39 @@ public final class TargetParsed<T extends MenuEvent> {
                     event.getOpenedMenu().close();
                     TDG.getAPI().menus.opened.remove(event.getPlayer().getUniqueId());
                 };
+            case REMOVE_ISLAND_LEVEL:
+                return event -> islandWrappedSupplier.get().ifPresent(islandWrapped -> {
+                    final UUID uuid = event.getPlayer().getUniqueId();
+
+                    islandWrapped.removeIslandLevel(uuid, yaml.getInt(path + "level"));
+                    api.skyBlockFix.skyBlockFix.put(
+                        uuid,
+                        Math.max(
+                            0,
+                            api.skyBlockFix.skyBlockFix.getOrDefault(uuid, 0) - yaml.getInt(path + "level")
+                        )
+                    );
+                    api.skyBlockFixOptions.yaml.set(
+                        "players." + uuid.toString(),
+                        api.skyBlockFix.getOrCreate(uuid)
+                    );
+                });
+            case ADD_ISLAND_LEVEL:
+                return event -> islandWrappedSupplier.get().ifPresent(islandWrapped -> {
+                    final UUID uuid = event.getPlayer().getUniqueId();
+
+                    islandWrapped.addIslandLevel(uuid, yaml.getInt(path + "level"));
+                    api.skyBlockFix.skyBlockFix.put(
+                        uuid,
+                        api.skyBlockFix.skyBlockFix.getOrDefault(uuid, 0) +
+                            yaml.getInt(path + "level")
+                    );
+                    api.skyBlockFixOptions.yaml.set(
+                        "players." + uuid.toString(),
+                        api.skyBlockFix.getOrCreate(uuid)
+                    );
+                });
+            // TODO: 24/11/2019 More action support
             case NONE:
             default:
                 return event -> {};

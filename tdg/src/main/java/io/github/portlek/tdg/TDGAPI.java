@@ -1,5 +1,6 @@
 package io.github.portlek.tdg;
 
+import com.wasteofplastic.askyblock.events.IslandPostLevelEvent;
 import io.github.portlek.mcyaml.YamlOf;
 import io.github.portlek.tdg.api.Menu;
 import io.github.portlek.tdg.api.OpenedMenu;
@@ -8,6 +9,8 @@ import io.github.portlek.tdg.api.mock.MckMenu;
 import io.github.portlek.tdg.api.mock.MckOpenMenu;
 import io.github.portlek.tdg.api.type.ClickType;
 import io.github.portlek.tdg.file.*;
+import io.github.portlek.tdg.hooks.ASkyBlockWrapper;
+import io.github.portlek.tdg.hooks.BentoBoxWrapper;
 import io.github.portlek.tdg.util.ListenerBasic;
 import io.github.portlek.tdg.util.UpdateChecker;
 import org.bukkit.command.CommandSender;
@@ -16,6 +19,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.*;
 import org.jetbrains.annotations.NotNull;
+import world.bentobox.level.event.IslandLevelCalculatedEvent;
 
 public class TDGAPI {
 
@@ -32,6 +36,9 @@ public class TDGAPI {
     private final MenusOptions menusOptions;
 
     @NotNull
+    public final SkyBlockFixOptions skyBlockFixOptions;
+
+    @NotNull
     public Config config;
 
     @NotNull
@@ -39,6 +46,9 @@ public class TDGAPI {
 
     @NotNull
     public Menus menus;
+
+    @NotNull
+    public SkyBlockFix skyBlockFix;
 
     public TDGAPI(@NotNull TDG tdg) {
         this.tdg = tdg;
@@ -56,6 +66,10 @@ public class TDGAPI {
             this
         );
         this.menus = menusOptions.value();
+        this.skyBlockFixOptions = new SkyBlockFixOptions(
+            new YamlOf(tdg, "skyblockfix")
+        );
+        this.skyBlockFix = skyBlockFixOptions.value();
     }
 
     public void reloadPlugin(boolean first) {
@@ -65,6 +79,7 @@ public class TDGAPI {
             config = configOptions.value();
             language = languageOptions.value();
             menus = menusOptions.value();
+            skyBlockFix = skyBlockFixOptions.value();
         } else {
             checkForUpdate(tdg.getServer().getConsoleSender());
         }
@@ -165,6 +180,34 @@ public class TDGAPI {
             event -> event.getPlayer().hasPermission("kekorank.version"),
             event -> checkForUpdate(event.getPlayer())
         ).register(tdg);
+
+        config.getWrapped("ASkyBlock").ifPresent(wrapped ->
+            new ListenerBasic<>(IslandPostLevelEvent.class, event -> {
+                if (ASkyBlockWrapper.isTDG) {
+                    ASkyBlockWrapper.isTDG = false;
+                    return;
+                }
+
+                ((ASkyBlockWrapper) wrapped).addIslandLevel(
+                    event.getPlayer(),
+                    skyBlockFix.getOrCreate(event.getPlayer())
+                );
+            }).register(tdg)
+        );
+
+        config.getWrapped("BentoBox").ifPresent(wrapped ->
+            new ListenerBasic<>(IslandLevelCalculatedEvent.class, event -> {
+                if (BentoBoxWrapper.isTDG) {
+                    BentoBoxWrapper.isTDG = false;
+                    return;
+                }
+
+                ((BentoBoxWrapper) wrapped).addIslandLevel(
+                    event.getPlayerUUID(),
+                    skyBlockFix.getOrCreate(event.getPlayerUUID())
+                );
+            }).register(tdg)
+        );
     }
 
     public void disablePlugin() {

@@ -188,6 +188,35 @@ menus:
             #  cooldown: 10
             value:
               - 'say This icon cannot be used more than once in 10 seconds!'
+      island-level-test:
+        name: '&aIsland Level Test'
+        icon-type: ITEM
+        material: RED_WOOL
+        position-x: 2
+        position-y: 2
+        click-actions:
+          add-island-level:
+            requirements:
+              click-type: LEFT
+            action: ADD_ISLAND_LEVEL
+            value: 10
+          remove-island-level:
+            requirements:
+              click-type: RIGHT
+              island-level: 1
+            action: REMOVE_ISLAND_LEVEL
+            value: 1
+          message-add-level:
+            requirements:
+              click-type: LEFT
+            action: MESSAGE
+            value: '&aYou gain 10 island level'
+          message-remove-level:
+            requirements:
+              click-type: RIGHT
+              island-level: 1
+            action: MESSAGE
+            value: '&c1 island level took from you'
       player-head:
         name: '&e%player_name%'
         icon-type: HEAD
@@ -200,6 +229,25 @@ menus:
             as-player: true
             value:
               - 'profile'
+      group-test:
+        name: '&aGroup Test'
+        icon-type: ITEM
+        material: RED_WOOL
+        position-x: 4
+        position-y: 2
+        click-actions:
+          message-admin:
+            requirements:
+              group: admin
+              click-type: LEFT
+            action: MESSAGE
+            value: '&aYou have admin group!'
+          message-player:
+            requirements:
+              group: defualt
+              click-type: RIGHT
+            action: MESSAGE
+            value: '&aYou have default group!'
       close-test:
         name: '&cClose menu'
         icon-type: HEAD

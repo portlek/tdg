@@ -4,5 +4,10 @@ main: io.github.portlek.tdg.TDG
 api-version: 1.13
 authors: [portlek]
 softdepend:
-  - PlaceholderAPI
+  - ASkyBlock
   - Vault
+  - GroupManager
+  - PermissionsEx
+  - LuckPerms
+  - BentoBox
+  - PlaceholderAPI
