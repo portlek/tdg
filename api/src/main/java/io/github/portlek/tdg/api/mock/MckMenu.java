@@ -3,12 +3,13 @@ package io.github.portlek.tdg.api.mock;
 import io.github.portlek.tdg.api.Menu;
 import io.github.portlek.tdg.api.events.MenuCloseEvent;
 import io.github.portlek.tdg.api.events.MenuOpenEvent;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public final class MckMenu implements Menu {
     @Override
-    public boolean hasPermission(@NotNull Player player) {
+    public boolean hasPermission(@NotNull CommandSender sender) {
         throw new UnsupportedOperationException();
     }
 

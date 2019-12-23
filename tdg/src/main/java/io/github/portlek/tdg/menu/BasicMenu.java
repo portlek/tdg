@@ -8,6 +8,7 @@ import io.github.portlek.tdg.api.events.MenuOpenEvent;
 import io.github.portlek.tdg.api.mock.MckOpenMenu;
 import io.github.portlek.tdg.target.BasicTarget;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.cactoos.list.Joined;
 import org.cactoos.map.MapEntry;
@@ -60,8 +61,8 @@ public final class BasicMenu implements Menu {
     }
 
     @Override
-    public boolean hasPermission(@NotNull Player player) {
-        return player.hasPermission("tdg.open." + id);
+    public boolean hasPermission(@NotNull CommandSender sender) {
+        return sender.hasPermission("tdg.open." + id);
     }
 
     @Override

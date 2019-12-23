@@ -1,8 +1,6 @@
 # Plugin language supports 'en' and 'tr'
 Language: 'en'
 
-Update-Check: true
-
 Plugin-Prefix: '&6[&a&lTDG&6]'
 
 # Enables icon hover effect

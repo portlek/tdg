@@ -56,9 +56,9 @@ public class TDGAPI {
     }
 
     public void reloadPlugin(boolean first) {
-        disablePlugin();
-
         if (!first) {
+            disablePlugin();
+
             config = configOptions.value();
             language = languageOptions.value();
             menus = menusOptions.value();

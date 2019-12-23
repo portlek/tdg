@@ -91,8 +91,11 @@ public final class TDGCommand extends BaseCommand {
                     );
                     return;
                 }
-            } else {
+            } else if (sender.hasPermission("tdg.command.open.target")) {
                 target = Objects.requireNonNull(Bukkit.getPlayer(args[1]));
+            } else {
+                sender.sendMessage(api.language.errorPermission);
+                return;
             }
 
             menu = api.menus.findMenuById(args[0]);
@@ -107,6 +110,11 @@ public final class TDGCommand extends BaseCommand {
 
         if (api.menus.opened.containsKey(target.getUniqueId())) {
             sender.sendMessage(api.language.errorAlreadyOpen);
+            return;
+        }
+
+        if (!menu.hasPermission(sender)) {
+            sender.sendMessage(api.language.errorPermission);
             return;
         }
 

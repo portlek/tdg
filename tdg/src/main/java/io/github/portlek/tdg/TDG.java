@@ -84,7 +84,7 @@ public final class TDG extends JavaPlugin {
             )
         );
         manager.getCommandConditions().addCondition(String[].class, "player", (c, exec, value) -> {
-            if (value == null || value.length == 0) {
+            if (value == null || value.length <= c.getConfigValue("arg", 0)) {
                 return;
             }
 
