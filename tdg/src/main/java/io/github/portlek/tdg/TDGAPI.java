@@ -64,6 +64,8 @@ public class TDGAPI {
             config = configOptions.value();
             language = languageOptions.value();
             menus = menusOptions.value();
+        } else {
+            checkForUpdate(tdg.getServer().getConsoleSender());
         }
 
         new ListenerBasic<>(
