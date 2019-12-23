@@ -27,7 +27,7 @@ public final class MoneyReq implements Requirement {
 
     @Override
     public boolean control(@NotNull MenuEvent event) {
-        final boolean check = wrapper.getMoney(event.getPlayer()) < money;
+        final boolean check = wrapper.getMoney(event.getPlayer()) >= money;
 
         if (!check && !fallback.isEmpty()) {
             event.getPlayer().sendMessage(fallback

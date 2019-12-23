@@ -133,27 +133,14 @@ menus:
         position-x: 2
         position-y: 1
         click-actions:
+          requirements:
+            money: 1000
           give-diamond-command:
-            requirements:
-              money: 1000
             action: COMMAND
             as-player: false
             value:
               - 'give %player_name% diamond 1'
               - 'eco take %player_name% 1000'
-      free-diamonds:
-        name: '&bFree diamonds!'
-        icon-type: ITEM
-        material: DIAMOND
-        material-data: 0
-        position-x: 2
-        position-y: 1
-        click-actions:
-          give-diamond-command:
-            action: COMMAND
-            as-player: false
-            value:
-              - 'give %player_name% diamond 2'
       run-command-as-op:
         name: '&9Command as op'
         icon-type: TOOL

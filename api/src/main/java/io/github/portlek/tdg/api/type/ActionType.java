@@ -13,8 +13,10 @@ public enum ActionType {
 	OPEN_MENU("open-menu", "open_menu", "open"),
 	PARTICLES("particles", "particle"),
 	CLOSE_MENU("close-menu", "close_menu", "close"),
-	ADD_ISLAND_LEVEL("add-island-level"),
-	REMOVE_ISLAND_LEVEL("remove-island-level"),
+	ADD_ISLAND_LEVEL("add-island-level", "add_island_level", "add-island_level", "add_island-level"),
+	REMOVE_ISLAND_LEVEL("remove-island-level", "remove_island_level", "remove-island_level", "remove_island-level"),
+	TAKE_MONEY("take-money", "take_money"),
+	GIVE_MONEY("give-money", "give_money"),
 	NONE("none", "null");
 
 	@NotNull

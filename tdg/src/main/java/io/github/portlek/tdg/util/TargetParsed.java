@@ -513,6 +513,14 @@ public final class TargetParsed<T extends MenuEvent> {
                         api.skyBlockFix.getOrCreate(uuid)
                     );
                 });
+            case GIVE_MONEY:
+                return event -> api.config.getWrapped("Vault").ifPresent(wrapped ->
+                    ((VaultWrapper)wrapped).addMoney(event.getPlayer(), yaml.getDouble(path + "value"))
+                );
+            case TAKE_MONEY:
+                return event -> api.config.getWrapped("Vault").ifPresent(wrapped ->
+                    ((VaultWrapper)wrapped).removeMoney(event.getPlayer(), yaml.getDouble(path + "value"))
+                );
             // TODO: 24/11/2019 More action support
             case NONE:
             default:
