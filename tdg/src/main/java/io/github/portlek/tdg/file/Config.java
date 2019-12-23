@@ -1,34 +1,41 @@
 package io.github.portlek.tdg.file;
 
-import io.github.portlek.tdg.hooks.VaultHook;
+import io.github.portlek.tdg.api.hook.Wrapped;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Map;
+import java.util.Optional;
 
 public final class Config {
 
     @NotNull
-    public final String language;
-
-    public final boolean updateCheck;
+    public final String pluginLanguage;
 
     @NotNull
     public final String pluginPrefix;
 
+    public final boolean checkForUpdate;
+
     public final boolean hoverEffect;
 
-    public final boolean hooksPlaceholderAPI;
+    @NotNull
+    private final Map<String, Wrapped> wrapped;
 
-    public final boolean hooksVault;
-
-    public final VaultHook vault;
-
-    public Config(@NotNull String language, boolean updateCheck, @NotNull String pluginPrefix, boolean hoverEffect,
-                  boolean hooksPlaceholderAPI, boolean hooksVault, VaultHook vault) {
-        this.language = language;
-        this.updateCheck = updateCheck;
+    public Config(@NotNull String pluginLanguage, @NotNull String pluginPrefix, boolean checkForUpdate,
+                  boolean hoverEffect, @NotNull Map<String, Wrapped> wrapped) {
+        this.pluginLanguage = pluginLanguage;
         this.pluginPrefix = pluginPrefix;
+        this.checkForUpdate = checkForUpdate;
         this.hoverEffect = hoverEffect;
-        this.hooksPlaceholderAPI = hooksPlaceholderAPI;
-        this.hooksVault = hooksVault;
-        this.vault = vault;
+        this.wrapped = wrapped;
     }
+
+    @NotNull
+    @SuppressWarnings("unchecked")
+    public <T extends Wrapped> Optional<T> getWrapped(@NotNull String wrappedId) {
+        return Optional.ofNullable(
+            (T) wrapped.get(wrappedId)
+        );
+    }
+
 }

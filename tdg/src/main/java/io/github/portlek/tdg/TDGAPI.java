@@ -47,12 +47,13 @@ public class TDGAPI {
         );
         this.config = configOptions.value();
         this.languageOptions = new LanguageOptions(
-            new YamlOf(tdg, "languages", config.language),
+            new YamlOf(tdg, "languages", config.pluginLanguage),
             config
         );
         this.language = languageOptions.value();
         this.menusOptions = new MenusOptions(
-            new YamlOf(tdg, "menus")
+            new YamlOf(tdg, "menus"),
+            this
         );
         this.menus = menusOptions.value();
     }

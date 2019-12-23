@@ -1,7 +1,7 @@
 package io.github.portlek.tdg.created.util;
 
 import io.github.portlek.tdg.TDG;
-import me.clip.placeholderapi.PlaceholderAPI;
+import io.github.portlek.tdg.hooks.PlaceholderAPIWrapper;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -27,10 +27,9 @@ public final class SetupArmorStand implements Runnable {
     public void run() {
         armorStand.setGravity(false);
         armorStand.setVisible(false);
-        armorStand.setCustomName(
-            TDG.getAPI().config.hooksPlaceholderAPI
-                ? PlaceholderAPI.setPlaceholders(player, name)
-                : name.replace("%player_name%", player.getName())
+        armorStand.setCustomName(name.replace("%player_name%", player.getName()));
+        TDG.getAPI().config.getWrapped("PlaceholderAPI").ifPresent(wrapped ->
+            ((PlaceholderAPIWrapper)wrapped).apply(player, name)
         );
     }
 

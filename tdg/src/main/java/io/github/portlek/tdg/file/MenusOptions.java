@@ -2,6 +2,7 @@ package io.github.portlek.tdg.file;
 
 import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
+import io.github.portlek.tdg.TDGAPI;
 import io.github.portlek.tdg.api.Icon;
 import io.github.portlek.tdg.api.Menu;
 import io.github.portlek.tdg.api.events.IconClickEvent;
@@ -25,8 +26,12 @@ public final class MenusOptions implements Scalar<Menus> {
     @NotNull
     private final IYaml yaml;
 
-    public MenusOptions(@NotNull IYaml yaml) {
+    @NotNull
+    private final TDGAPI api;
+
+    public MenusOptions(@NotNull IYaml yaml, @NotNull TDGAPI api) {
         this.yaml = yaml;
+        this.api = api;
     }
 
     @Override
@@ -55,8 +60,8 @@ public final class MenusOptions implements Scalar<Menus> {
                         yaml.getByte("menus." + menuId + ".icons." + iconId + ".material-data"),
                         yaml.getString("menus." + menuId + ".icons." + iconId + ".value")
                             .orElse(""),
-                        new TargetParsed<>(IconClickEvent.class, yaml, menuId, iconId).parse(),
-                        new TargetParsed<>(IconHoverEvent.class, yaml, menuId, iconId).parse(),
+                        new TargetParsed<>(IconClickEvent.class, yaml, menuId, iconId, api).parse(),
+                        new TargetParsed<>(IconHoverEvent.class, yaml, menuId, iconId, api).parse(),
                         yaml.getInt("menus." + menuId + ".icons." + iconId + ".position-x"),
                         yaml.getInt("menus." + menuId + ".icons." + iconId + ".position-y")
                     )
@@ -68,8 +73,8 @@ public final class MenusOptions implements Scalar<Menus> {
                 new BasicMenu(
                     menuId,
                     yaml.getStringList("menus." + menuId + ".commands"),
-                    new TargetParsed<>(MenuCloseEvent.class, yaml, menuId).parse(),
-                    new TargetParsed<>(MenuOpenEvent.class, yaml, menuId).parse(),
+                    new TargetParsed<>(MenuCloseEvent.class, yaml, menuId, api).parse(),
+                    new TargetParsed<>(MenuOpenEvent.class, yaml, menuId, api).parse(),
                     yaml.getInt("menus." + menuId + ".distances.x1"),
                     yaml.getInt("menus." + menuId + ".distances.x2"),
                     yaml.getInt("menus." + menuId + ".distances.x4"),

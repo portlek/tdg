@@ -1,12 +1,12 @@
-package io.github.portlek.tdg.api;
+package io.github.portlek.tdg.api.hook;
 
 import org.jetbrains.annotations.NotNull;
 
-public interface Hook<T> {
+public interface Hook {
 
     boolean initiate();
 
     @NotNull
-    T get();
+    Wrapped create();
 
 }

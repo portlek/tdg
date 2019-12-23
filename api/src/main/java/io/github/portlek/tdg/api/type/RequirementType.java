@@ -11,6 +11,8 @@ public enum RequirementType {
     PERMISSIONS("permission", "permissions", "perm", "perms"),
     MONEY("money", "vault", "balance"),
     COOLDOWN("cooldown", "cd"),
+    ISLAND_LEVEL("island-level"),
+    GROUP("group"),
     NONE("none");
 
     private final List<String> types;

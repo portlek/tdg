@@ -4,6 +4,7 @@ import io.github.portlek.itemstack.util.Colored;
 import io.github.portlek.mcyaml.IYaml;
 import io.github.portlek.mcyaml.mck.MckFileConfiguration;
 import io.github.portlek.tdg.TDG;
+import io.github.portlek.tdg.TDGAPI;
 import io.github.portlek.tdg.api.Menu;
 import io.github.portlek.tdg.api.Requirement;
 import io.github.portlek.tdg.api.Target;
@@ -17,6 +18,8 @@ import io.github.portlek.tdg.api.type.ActionType;
 import io.github.portlek.tdg.api.type.ClickType;
 import io.github.portlek.tdg.api.type.RequirementType;
 import io.github.portlek.tdg.api.type.TargetType;
+import io.github.portlek.tdg.hooks.PlaceholderAPIWrapper;
+import io.github.portlek.tdg.hooks.VaultWrapper;
 import io.github.portlek.tdg.nms.v1_9_R1.Particles1_9;
 import io.github.portlek.tdg.oldparticle.ParticleEffect;
 import io.github.portlek.tdg.requirement.ClickTypeReq;
@@ -24,7 +27,6 @@ import io.github.portlek.tdg.requirement.CooldownReq;
 import io.github.portlek.tdg.requirement.MoneyReq;
 import io.github.portlek.tdg.requirement.PermissionReq;
 import io.github.portlek.tdg.target.BasicTarget;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -39,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 public final class TargetParsed<T extends MenuEvent> {
@@ -55,15 +58,20 @@ public final class TargetParsed<T extends MenuEvent> {
     @NotNull
     private final TargetType targetType;
 
-    public TargetParsed(@NotNull Class<T> tClass, @NotNull IYaml yaml, @NotNull String menuId, @NotNull String iconId) {
+    @NotNull
+    private final TDGAPI api;
+
+    public TargetParsed(@NotNull Class<T> tClass, @NotNull IYaml yaml, @NotNull String menuId, @NotNull String iconId,
+                        @NotNull TDGAPI api) {
         this.yaml = yaml;
         this.menuId = menuId;
         this.iconId = iconId;
         this.targetType = fromClass(tClass);
+        this.api = api;
     }
 
-    public TargetParsed(@NotNull Class<T> tClass, @NotNull IYaml yaml, @NotNull String menuId) {
-        this(tClass, yaml, menuId, "");
+    public TargetParsed(@NotNull Class<T> tClass, @NotNull IYaml yaml, @NotNull String menuId, @NotNull TDGAPI api) {
+        this(tClass, yaml, menuId, "", api);
     }
 
     @NotNull
@@ -211,24 +219,28 @@ public final class TargetParsed<T extends MenuEvent> {
                     }
                     break;
                 case MONEY:
-                    final Object money = yaml.get(reqPath, "");
+                    api.config.getWrapped("Vault").ifPresent(wrapped -> {
+                        final Object money = yaml.get(reqPath, "");
 
-                    if (money instanceof Integer) {
-                        requirements.add(
-                            new MoneyReq(
-                                yaml.getInt(reqPath)
-                            )
-                        );
-                    } else if (money instanceof ConfigurationSection) {
-                        requirements.add(
-                            new MoneyReq(
-                                new Colored(
-                                    yaml.getString(reqPath + ".fallback").orElse("")
-                                ).value(),
-                                yaml.getInt(reqPath + ".value")
-                            )
-                        );
-                    }
+                        if (money instanceof Integer) {
+                            requirements.add(
+                                new MoneyReq(
+                                    yaml.getInt(reqPath),
+                                    (VaultWrapper) wrapped
+                                )
+                            );
+                        } else if (money instanceof ConfigurationSection) {
+                            requirements.add(
+                                new MoneyReq(
+                                    new Colored(
+                                        yaml.getString(reqPath + ".fallback").orElse("")
+                                    ).value(),
+                                    yaml.getInt(reqPath + ".value"),
+                                    (VaultWrapper) wrapped
+                                )
+                            );
+                        }
+                    });
                     break;
                     // TODO: 24/11/2019 More requirement support
                 case NONE:
@@ -253,15 +265,15 @@ public final class TargetParsed<T extends MenuEvent> {
                     final Player player = event.getPlayer();
                     final List<String> value = new Mapped<>(
                         list -> {
-                            final String colored = new Colored(
-                                list
-                            ).value();
+                            final AtomicReference<String> colored = new AtomicReference<>(
+                                new Colored(
+                                    list
+                                ).value()
+                            );
 
-                            if (TDG.getAPI().config.hooksPlaceholderAPI) {
-                                return PlaceholderAPI.setPlaceholders(player, colored);
-                            }
+                            placeholder(colored, player);
 
-                            return colored.replace("%player_name%", player.getName());
+                            return colored.get().replace("%player_name%", player.getName());
                         },
                         yaml.getStringList(path + "value")
                     );
@@ -271,23 +283,16 @@ public final class TargetParsed<T extends MenuEvent> {
                         return;
                     }
 
-                    final String message = yaml.getString(path + "value").orElse("");
+                    final AtomicReference<String> colored = new AtomicReference<>(
+                        new Colored(
+                            yaml.getString(path + "value").orElse("")
+                        ).value()
+                    );
 
-                    if (!message.isEmpty()) {
-                        if (TDG.getAPI().config.hooksPlaceholderAPI) {
-                            player.sendMessage(
-                                new Colored(
-                                    PlaceholderAPI.setPlaceholders(player, message)
-                                ).value()
-                            );
-
-                            return;
-                        }
-
+                    if (!colored.get().isEmpty()) {
+                        placeholder(colored, player);
                         player.sendMessage(
-                            new Colored(
-                                message.replaceAll("%player_name%", player.getName())
-                            ).value()
+                            colored.get().replace("%player_name%", player.getName())
                         );
                     }
                 };
@@ -296,11 +301,13 @@ public final class TargetParsed<T extends MenuEvent> {
                     final List<String> commands = new ArrayList<>();
                     final List<String> value = new Mapped<>(
                         list -> {
-                            if (TDG.getAPI().config.hooksPlaceholderAPI) {
-                                return PlaceholderAPI.setPlaceholders(event.getPlayer(), list);
-                            }
+                            final AtomicReference<String> cmd = new AtomicReference<>(
+                                list
+                            );
 
-                            return list.replaceAll("%player_name%", event.getPlayer().getName());
+                            placeholder(cmd, event.getPlayer());
+
+                            return cmd.get().replace("%player_name%", event.getPlayer().getName());
                         },
                         yaml.getStringList(path + "value")
                     );
@@ -308,16 +315,13 @@ public final class TargetParsed<T extends MenuEvent> {
                     if (!value.isEmpty()) {
                         commands.addAll(value);
                     } else {
-                        final String command = yaml.getString(path + "value").orElse("");
+                        final AtomicReference<String> command = new AtomicReference<>(
+                            yaml.getString(path + "value").orElse("")
+                        );
 
-                        if (!command.isEmpty()) {
-                            if (TDG.getAPI().config.hooksPlaceholderAPI) {
-                                commands.add(
-                                    PlaceholderAPI.setPlaceholders(event.getPlayer(), command)
-                                );
-                            } else {
-                                commands.add(command.replaceAll("%player_name%", event.getPlayer().getName()));
-                            }
+                        if (!command.get().isEmpty()) {
+                            placeholder(command, event.getPlayer());
+                            commands.add(command.get().replace("%player_name%", event.getPlayer().getName()));
                         }
                     }
 
@@ -418,6 +422,12 @@ public final class TargetParsed<T extends MenuEvent> {
         }
 
         throw new UnsupportedOperationException();
+    }
+
+    private void placeholder(@NotNull AtomicReference<String> text, @NotNull Player player) {
+        TDG.getAPI().config.getWrapped("PlaceholderAPI").ifPresent(wrapped ->
+            text.set(((PlaceholderAPIWrapper)wrapped).apply(player, text.get()))
+        );
     }
 
 }

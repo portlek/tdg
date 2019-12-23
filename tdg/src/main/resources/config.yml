@@ -1,11 +1,14 @@
-# Plugin language supports 'en' for English, 'tr' for Turkish, and 'ch' for Chinese
-Language: 'en'
-
-Plugin-Prefix: '&6[&a&lTDG&6]'
-
-# Enables icon hover effect
-Hover-Effect: true
-
-Hooks:
+# 'en', 'tr', 'ch'
+plugin-language: 'en'
+plugin-prefix: '&6[&eTDG&6]'
+check-for-update: true
+hover-effect: true
+hooks:
+  auto-detect: true
   PlaceholderAPI: false
+  GroupManager: false
+  LuckPerms: false
+  PermissionsEx: false
   Vault: false
+  BentoBox: false
+  ASkyBlock: false

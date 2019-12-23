@@ -13,6 +13,8 @@ public enum ActionType {
 	OPEN_MENU("open-menu", "open_menu", "open"),
 	PARTICLES("particles", "particle"),
 	CLOSE_MENU("close-menu", "close_menu", "close"),
+	ADD_ISLAND_LEVEL("add-island-level"),
+	REMOVE_ISLAND_LEVEL("remove-island-level"),
 	NONE("none", "null");
 
 	@NotNull

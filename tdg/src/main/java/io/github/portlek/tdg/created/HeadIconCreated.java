@@ -5,7 +5,7 @@ import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.created.util.FinishInitiating;
 import io.github.portlek.tdg.created.util.InitiatedIcon;
 import io.github.portlek.tdg.created.util.SetupArmorStand;
-import me.clip.placeholderapi.PlaceholderAPI;
+import io.github.portlek.tdg.hooks.PlaceholderAPIWrapper;
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
@@ -56,10 +56,11 @@ public final class HeadIconCreated implements Scalar<ArmorStand> {
             final ItemStack skull = new ItemStack(XMaterial.PLAYER_HEAD.parseMaterial(), 1, (short)3);
             final SkullMeta meta = (SkullMeta)skull.getItemMeta();
 
-            meta.setOwner(
-                TDG.getAPI().config.hooksPlaceholderAPI
-                    ? PlaceholderAPI.setPlaceholders(player, texture)
-                    : texture.replaceAll("%player_name%", player.getName())
+            meta.setOwner(texture.replace("%player_name%", player.getName()));
+            TDG.getAPI().config.getWrapped("PlaceholderAPI").ifPresent(wrapped ->
+                meta.setOwner(
+                    ((PlaceholderAPIWrapper)wrapped).apply(player, texture)
+                )
             );
             skull.setItemMeta(meta);
             armorStand.setHelmet(skull);

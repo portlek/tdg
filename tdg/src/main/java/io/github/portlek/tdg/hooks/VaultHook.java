@@ -1,19 +1,23 @@
 package io.github.portlek.tdg.hooks;
 
-import io.github.portlek.tdg.api.Hook;
+import io.github.portlek.tdg.api.hook.Hook;
+import io.github.portlek.tdg.api.hook.Wrapped;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.jetbrains.annotations.NotNull;
 
-public class VaultHook implements Hook<Economy> {
+public final class VaultHook implements Hook {
 
-    private static Economy economy;
+    private Economy economy;
 
     @Override
     public boolean initiate() {
-        final RegisteredServiceProvider<Economy> economyProvider =
-            Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
+        if (Bukkit.getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+
+        final RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServicesManager().getRegistration(Economy.class);
 
         if (economyProvider != null) {
             economy = economyProvider.getProvider();
@@ -24,12 +28,12 @@ public class VaultHook implements Hook<Economy> {
 
     @NotNull
     @Override
-    public Economy get() {
+    public Wrapped create() {
         if (economy == null) {
-            throw new RuntimeException("Vault not initiated! Use VaultHook#initiate() method.");
+            throw new IllegalStateException("Vault not initiated! Use VaultHook#initiate() method.");
         }
 
-        return economy;
+        return new VaultWrapper(economy);
     }
 
 }

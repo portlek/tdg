@@ -3,11 +3,12 @@ package io.github.portlek.tdg.requirement;
 import io.github.portlek.tdg.TDG;
 import io.github.portlek.tdg.api.Requirement;
 import io.github.portlek.tdg.api.events.abs.MenuEvent;
-import me.clip.placeholderapi.PlaceholderAPI;
+import io.github.portlek.tdg.hooks.PlaceholderAPIWrapper;
 import org.cactoos.list.Mapped;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 public final class PermissionReq implements Requirement {
 
@@ -28,23 +29,25 @@ public final class PermissionReq implements Requirement {
 
     @Override
     public boolean control(@NotNull MenuEvent event) {
-        final List<String> permissions = new Mapped<>(
+        final List<String> permission = new Mapped<>(
             perm -> {
-                if (TDG.getAPI().config.hooksPlaceholderAPI) {
-                    return PlaceholderAPI.setPlaceholders(event.getPlayer(), perm);
-                }
+                final AtomicReference<String> atomicReference = new AtomicReference<>(
+                    perm
+                );
+                TDG.getAPI().config.getWrapped("PlaceholderAPI").ifPresent(wrapped ->
+                    atomicReference.set(((PlaceholderAPIWrapper)wrapped).apply(event.getPlayer(), perm)));
 
-                return perm.replace("%player_name%", event.getPlayer().getName());
+                return atomicReference.get().replace("%player_name%", event.getPlayer().getName());
             },
-            this.permissions
+            permissions
         );
 
-        final boolean check = permissions.stream().allMatch(s -> event.getPlayer().hasPermission(s));
+        final boolean check = permission.stream().allMatch(s -> event.getPlayer().hasPermission(s));
 
         if (!check && !fallback.isEmpty()) {
             event.getPlayer().sendMessage(
                 fallback
-                    .replace("%permissions%", permissions.toString())
+                    .replace("%permissions%", permission.toString())
             );
         }
 
