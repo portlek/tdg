@@ -125,6 +125,22 @@ menus:
             action: MESSAGE
             value:
               - '&eHey, &a%player_name%&e, you shift-left clicked!'
+      store-1-item:
+        name: '&bFree diamonds!'
+        icon-type: ITEM
+        material: DIAMOND
+        material-data: 0
+        position-x: 2
+        position-y: 1
+        click-actions:
+          give-diamond-command:
+            requirements:
+              money: 1000
+            action: COMMAND
+            as-player: false
+            value:
+              - 'give %player_name% diamond 1'
+              - 'eco take %player_name% 1000'
       free-diamonds:
         name: '&bFree diamonds!'
         icon-type: ITEM
