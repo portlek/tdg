@@ -5,13 +5,14 @@ error:
   menu-not-found: '%prefix% &cThe menu called %menu% could not find!'
   invalid-argument: '%prefix% &cInvalid arguments!'
   in-game-command: '%prefix% &cTo use this command you have to be in the game!'
+  player-not-found: '%prefix% &cPlayer not found!'
 
 general:
   available-menus: '%prefix% &7Available menus:'
   reload-complete: '%prefix% &aReload completed'
 
 commands:
-  - '&8------[ &e&lTDG &8]------'
+  - '&8------ %prefix% &8------'
   - '&7/tdg open &e<menu-id> &8> &7Opens the menu if exist'
   - '&7/tdg list &8> &7Displays the list of menus'
   - '&7/tdg reload &8> &7Reloads the plugin configuration'

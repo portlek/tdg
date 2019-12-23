@@ -5,13 +5,14 @@ error:
   menu-not-found: '%prefix% &cBöyle bir menü bulunamadı! (%menu%)'
   invalid-argument: '%prefix% &cGeçersiz arguman!'
   in-game-command: '%prefix% &cBu komut yalnıca oyun içinden kullanılabilir!'
+  player-not-found: '%prefix% &cOyuncu bulunamadı!'
 
 general:
   available-menus: '%prefix% &7Kullanılabilir menuler:'
   reload-complete: '%prefix% &aYeniden yüklendi'
 
 commands:
-  - '&8------[ &e&lTDG &8]------'
+  - '&8------ %prefix% &8------'
   - '&7/tdg open &e<menu-id> &8-> &7Eğer varsa menüyü açar'
   - '&7/tdg list &8-> &7Tüm menüleri listeler'
   - '&7/tdg reload &8-> &7Eklentiyi yeniden yükler'

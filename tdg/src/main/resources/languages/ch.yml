@@ -1,0 +1,18 @@
+error:
+  cooldown: '%prefix% &c你需要等待 %time% 秒才能执行操作!'
+  already-open: '%prefix% &c你已经打开了这个菜单!'
+  permission: '%prefix% &c你没有权限执行命令!'
+  menu-not-found: '%prefix% &c找不到叫 %menu% 的菜单!'
+  invalid-argument: '%prefix% &c无效参数!'
+  in-game-command: '%prefix% &c必须在游戏内执行此命令!'
+  player-not-found: '%prefix% &c该玩家不在线!'
+
+general:
+  available-menus: '%prefix% &7可用菜单列表:'
+  reload-complete: '%prefix% &a插件已经重载成功'
+
+commands:
+  - '&8------ %prefix% &8------'
+  - '&7/tdg open &e<菜单ID> <玩家ID.可不填> &8> &7打开菜单/给指定玩家打开菜单.'
+  - '&7/tdg list &8> &7列出可用菜单.'
+  - '&7/tdg reload &8> &7重载插件配置文件和菜单.'

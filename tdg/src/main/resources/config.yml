@@ -1,4 +1,4 @@
-# Plugin language supports 'en' and 'tr'
+# Plugin language supports 'en' for English, 'tr' for Turkish, and 'ch' for Chinese
 Language: 'en'
 
 Plugin-Prefix: '&6[&a&lTDG&6]'

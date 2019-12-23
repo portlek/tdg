@@ -33,16 +33,16 @@ public final class LanguageOptions implements Scalar<Language> {
             yaml.getOrSet("error.already-open", "%prefix% &cYou already have this menu open.")
         );
         final String permission = c(
-            yaml.getOrSet("error.permission", "error.permission")
+            yaml.getOrSet("error.permission", "%prefix% &cYou don''t have permission to do this.")
         );
         final String menuNotFound = c(
-            yaml.getOrSet("error.menu-not-found", "error.menu-not-found")
+            yaml.getOrSet("error.menu-not-found", "%prefix% &cThe menu called %menu% could not find!")
         );
         final String invalidArgument = c(
-            yaml.getOrSet("error.invalid-argument", "error.invalid-argument")
+            yaml.getOrSet("error.invalid-argument", "%prefix% &cInvalid arguments!")
         );
         final String inGameCommand = c(
-            yaml.getOrSet("error.in-game-command", "error.in-game-command")
+            yaml.getOrSet("error.in-game-command", "%prefix% &cTo use this command you have to be in the game!")
         );
         final String playerNotFound = c(
             yaml.getOrSet("error.player-not-found", "error.player-not-found")
